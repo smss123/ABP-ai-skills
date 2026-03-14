@@ -1,5 +1,13 @@
 # ABP: DDD Domain Layer
 
+> 📖 Official docs:
+> - Entities & Aggregate Roots: https://docs.abp.io/en/abp/latest/Entities
+> - Domain Services: https://docs.abp.io/en/abp/latest/Domain-Services
+> - Value Objects: https://docs.abp.io/en/abp/latest/Value-Objects
+> - Repositories: https://docs.abp.io/en/abp/latest/Repositories
+>
+> Fetch these pages for the latest API details before generating domain-layer code.
+
 ## Entities & Aggregate Roots
 
 ### Base classes (choose one)
@@ -40,14 +48,14 @@ public class Book : FullAuditedAggregateRoot<Guid>
 
     public virtual string Name { get; private set; }      // private setter — enforce via method
     public virtual BookType Type { get; set; }            // direct set OK for simple value
-    public virtual float? Price { get; set; }
+    public virtual decimal? Price { get; set; }
     public virtual DateTime PublishDate { get; set; }
 
     // Required: parameterless protected constructor for ORM deserialization
     protected Book() { }
 
     // Primary constructor: enforce validity on creation
-    public Book(Guid id, [NotNull] string name, BookType type, float? price, DateTime publishDate)
+    public Book(Guid id, [NotNull] string name, BookType type, decimal? price, DateTime publishDate)
         : base(id)
     {
         SetName(name);
@@ -210,7 +218,7 @@ public class BookManager : DomainService
         _bookRepository = bookRepository;
     }
 
-    public async Task<Book> CreateAsync(string name, BookType type, float? price, DateTime publishDate)
+    public async Task<Book> CreateAsync(string name, BookType type, decimal? price, DateTime publishDate)
     {
         // Cross-entity/repo logic: enforce unique name
         if (await _bookRepository.FindByNameAsync(name) != null)

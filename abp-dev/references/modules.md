@@ -1,5 +1,12 @@
 # ABP: Module System
 
+> 📖 Official docs:
+> - Module Development Basics: https://docs.abp.io/en/abp/latest/Module-Development-Basics
+> - Dependency Injection: https://docs.abp.io/en/abp/latest/Dependency-Injection
+> - Configuration: https://docs.abp.io/en/abp/latest/Configuration
+>
+> Fetch these pages for the latest API details before generating module or startup code.
+
 ## Module Class Basics
 
 Every ABP project has exactly one class derived from `AbpModule`. This is the entry point
@@ -19,16 +26,24 @@ namespace Acme.BookStore;
 )]
 public class BookStoreWebModule : AbpModule
 {
-    // Phase 1 — configure services (DI container is being built)
-    public override void ConfigureServices(ServiceConfigurationContext context)
+    // Phase 1a — pre-configuration (runs before ConfigureServices of all modules)
+    // Override PreConfigureServices and use the inherited PreConfigure<TOptions>() method
+    // to queue option actions before the DI container is fully built.
+    public override void PreConfigureServices(ServiceConfigurationContext context)
     {
-        // Use Configure<TOptions> to set ABP option classes
-        Configure<AbpAspNetCoreMvcOptions>(options =>
+        // Conventional controllers must be registered here (not in ConfigureServices) so that
+        // all other modules in the dependency graph can discover the auto-generated routes
+        // and apply their own middleware/policies during their own ConfigureServices phase.
+        // PreConfigure<T>() (inherited from AbpModule) enqueues the action at the pre-build stage.
+        PreConfigure<AbpAspNetCoreMvcOptions>(options =>
         {
             options.ConventionalControllers
                    .Create(typeof(BookStoreApplicationModule).Assembly);
         });
+    }
 
+    public override void ConfigureServices(ServiceConfigurationContext context)
+    {
         // Standard Microsoft DI also works
         context.Services.AddHttpClient();
     }

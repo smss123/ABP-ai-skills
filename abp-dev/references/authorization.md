@@ -1,5 +1,13 @@
 # ABP: Authorization & Permissions
 
+> 📖 Official docs:
+> - Authorization & Permissions: https://docs.abp.io/en/abp/latest/Authorization
+> - Permission Management: https://docs.abp.io/en/abp/latest/Permission-Management
+> - Current User: https://docs.abp.io/en/abp/latest/CurrentUser
+> - Audit Logging: https://docs.abp.io/en/abp/latest/Audit-Logging
+>
+> Fetch these pages for the latest API details before generating authorization or permission code.
+
 ## Permission Definition
 
 Defined in `Application.Contracts` project. ABP auto-discovers providers.

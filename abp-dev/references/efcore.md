@@ -1,5 +1,12 @@
 # ABP: EF Core Integration & Data Seeding
 
+> 📖 Official docs:
+> - EF Core Integration: https://docs.abp.io/en/abp/latest/Entity-Framework-Core
+> - Data Seeding: https://docs.abp.io/en/abp/latest/Data-Seeding
+> - Connection Strings: https://docs.abp.io/en/abp/latest/Connection-Strings
+>
+> Fetch these pages for the latest API details before generating EF Core or data seeding code.
+
 ## DbContext
 
 Derive from `AbpDbContext<T>`. Live in `*.EntityFrameworkCore` project.
@@ -174,16 +181,21 @@ using System.Threading.Tasks;
 using Volo.Abp.Data;
 using Volo.Abp.DependencyInjection;
 using Volo.Abp.Domain.Repositories;
+using Volo.Abp.Guids;
 
 namespace Acme.BookStore.Books;
 
 public class BookStoreDataSeedContributor : IDataSeedContributor, ITransientDependency
 {
     private readonly IRepository<Book, Guid> _bookRepository;
+    private readonly IGuidGenerator _guidGenerator;
 
-    public BookStoreDataSeedContributor(IRepository<Book, Guid> bookRepository)
+    public BookStoreDataSeedContributor(
+        IRepository<Book, Guid> bookRepository,
+        IGuidGenerator guidGenerator)
     {
         _bookRepository = bookRepository;
+        _guidGenerator  = guidGenerator;
     }
 
     public async Task SeedAsync(DataSeedContext context)
@@ -193,11 +205,11 @@ public class BookStoreDataSeedContributor : IDataSeedContributor, ITransientDepe
             return;
 
         await _bookRepository.InsertAsync(
-            new Book(Guid.NewGuid(), "The Hitchhiker's Guide", BookType.ScienceFiction, 9.99f, new DateTime(1979, 10, 12)),
+            new Book(_guidGenerator.Create(), "The Hitchhiker's Guide", BookType.ScienceFiction, 9.99m, new DateTime(1979, 10, 12)),
             autoSave: true
         );
         await _bookRepository.InsertAsync(
-            new Book(Guid.NewGuid(), "1984", BookType.Dystopia, 7.99f, new DateTime(1949, 6, 8)),
+            new Book(_guidGenerator.Create(), "1984", BookType.Dystopia, 7.99m, new DateTime(1949, 6, 8)),
             autoSave: true
         );
     }
