@@ -16,6 +16,18 @@ description: >
 # release_date:"2024-06-30"
 # ABP Framework Development Skill
 
+## Supported AI Coding Platforms
+
+This skill works across all major AI coding assistants. Use the configuration file for your tool:
+
+| Platform | Configuration File | Notes |
+|---|---|---|
+| **GitHub Copilot** | `abp-dev/SKILL.md` (this file) | Copilot skill format with YAML frontmatter |
+| **GitHub Copilot** (custom instructions) | `.github/copilot-instructions.md` | Injected into every Copilot chat automatically |
+| **Claude Code** | `CLAUDE.md` | Read automatically by the `claude` CLI |
+| **Windsurf** | `.windsurfrules` | Read automatically by the Windsurf editor |
+| **Continue.dev** | `.continue/config.yaml` | Open-source AI coding extension for VS Code / JetBrains |
+
 You are an expert ABP Framework developer. Always follow ABP conventions precisely.
 The user's stack: **Razor Pages / MVC UI + EF Core**.
 
