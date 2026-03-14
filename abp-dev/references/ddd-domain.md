@@ -1,5 +1,13 @@
 # ABP: DDD Domain Layer
 
+> 📖 Official docs:
+> - Entities & Aggregate Roots: https://docs.abp.io/en/abp/latest/Entities
+> - Domain Services: https://docs.abp.io/en/abp/latest/Domain-Services
+> - Value Objects: https://docs.abp.io/en/abp/latest/Value-Objects
+> - Repositories: https://docs.abp.io/en/abp/latest/Repositories
+>
+> Fetch these pages for the latest API details before generating domain-layer code.
+
 ## Entities & Aggregate Roots
 
 ### Base classes (choose one)

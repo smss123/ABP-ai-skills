@@ -1,5 +1,13 @@
 # ABP: Auto API Controllers & HTTP API Layer
 
+> 📖 Official docs:
+> - Auto API Controllers: https://docs.abp.io/en/abp/latest/API/Auto-API-Controllers
+> - API Versioning: https://docs.abp.io/en/abp/latest/API/API-Versioning
+> - Dynamic C# API Clients: https://docs.abp.io/en/abp/latest/API/Dynamic-CSharp-API-Clients
+> - Swagger Integration: https://docs.abp.io/en/abp/latest/API/Swagger-Integration
+>
+> Fetch these pages for the latest API details before generating HTTP API or controller code.
+
 ## Auto API Controllers
 
 ABP automatically exposes Application Services as HTTP API endpoints — no manual controller needed.

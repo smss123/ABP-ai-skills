@@ -1,5 +1,12 @@
 # ABP: Module System
 
+> 📖 Official docs:
+> - Module Development Basics: https://docs.abp.io/en/abp/latest/Module-Development-Basics
+> - Dependency Injection: https://docs.abp.io/en/abp/latest/Dependency-Injection
+> - Configuration: https://docs.abp.io/en/abp/latest/Configuration
+>
+> Fetch these pages for the latest API details before generating module or startup code.
+
 ## Module Class Basics
 
 Every ABP project has exactly one class derived from `AbpModule`. This is the entry point
@@ -19,10 +26,13 @@ namespace Acme.BookStore;
 )]
 public class BookStoreWebModule : AbpModule
 {
-    // Phase 1 — configure services (DI container is being built)
+    // Phase 1a — pre-configuration (runs before ConfigureServices of all modules)
+    // Override PreConfigureServices to call PreConfigure<TOptions> — the ABP helper
+    // for registering options before the DI container is fully built.
     public override void PreConfigureServices(ServiceConfigurationContext context)
     {
-        // Register conventional controllers BEFORE ConfigureServices so other modules can see them
+        // Use PreConfigure<T> (not Configure<T>) for conventional controllers so that
+        // all modules in the graph can observe the registration during their own ConfigureServices.
         PreConfigure<AbpAspNetCoreMvcOptions>(options =>
         {
             options.ConventionalControllers

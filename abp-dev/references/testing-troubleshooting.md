@@ -1,5 +1,12 @@
 # ABP: Troubleshooting & Testing
 
+> 📖 Official docs:
+> - Testing: https://docs.abp.io/en/abp/latest/Testing
+> - AutoMapper / Object Mapping: https://docs.abp.io/en/abp/latest/Object-To-Object-Mapping
+> - EF Core Migrations: https://docs.abp.io/en/abp/latest/Entity-Framework-Core-Migrations
+>
+> Fetch these pages for the latest testing patterns and troubleshooting guidance.
+
 ## Common Errors & Fixes
 
 ### 1. AutoMapper: "Missing type map configuration"

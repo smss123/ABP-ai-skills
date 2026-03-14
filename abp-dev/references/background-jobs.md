@@ -1,5 +1,13 @@
 # ABP: Background Jobs & Workers
 
+> 📖 Official docs:
+> - Background Jobs: https://docs.abp.io/en/abp/latest/Background-Jobs
+> - Background Workers: https://docs.abp.io/en/abp/latest/Background-Workers
+> - Hangfire Integration: https://docs.abp.io/en/abp/latest/Background-Jobs-Hangfire
+> - Quartz Integration: https://docs.abp.io/en/abp/latest/Background-Jobs-Quartz
+>
+> Fetch these pages for the latest API details before generating background job or worker code.
+
 ## One-Off Background Jobs
 
 Use for fire-and-forget tasks (send email, process upload, etc.).

@@ -21,24 +21,34 @@ The user's stack: **Razor Pages / MVC UI + EF Core**.
 
 ## How to use this skill
 
-Read the relevant reference file(s) before answering:
+Follow these steps **in order** for every ABP-related question:
 
-| Topic | Reference File |
-|---|---|
-| Entities, AggregateRoot, Value Objects, Domain Services | `references/ddd-domain.md` |
-| Application Services, DTOs, CRUD patterns | `references/ddd-application.md` |
-| Module system, DependsOn, ConfigureServices | `references/modules.md` |
-| EF Core DbContext, repositories, migrations | `references/efcore.md` |
-| Data seeding (IDataSeedContributor) | `references/efcore.md` |
-| Permissions, Authorization, [Authorize] | `references/authorization.md` |
-| Auto API Controllers, HTTP API | `references/api.md` |
-| Razor Pages UI, page models, tag helpers, JS API | `references/ui-razorpages.md` |
-| ABP CLI, startup template, project structure | `references/cli-structure.md` |
-| Background Jobs (IBackgroundJob), recurring workers | `references/background-jobs.md` |
-| Testing (unit, integration, test data seed) | `references/testing-troubleshooting.md` |
-| Troubleshooting (AutoMapper, permissions, migrations) | `references/testing-troubleshooting.md` |
+1. **Read the local reference file(s)** from the table below — they contain curated, correct patterns.
+2. **Fetch the official documentation page** listed in the same row using `web_fetch` (or a browser tool) to get the latest API details, version-specific notes, or anything the reference file may not cover.
+3. Synthesise both sources before generating code or advice.
 
-For questions touching multiple areas (e.g. "build a full CRUD feature"), read all relevant files.
+> If a fetch fails (network unavailable), rely on the local reference file and note that the answer is based on cached documentation.
+
+| Topic | Reference File | Official Documentation URL |
+|---|---|---|
+| Entities, AggregateRoot, Value Objects | `references/ddd-domain.md` | https://docs.abp.io/en/abp/latest/Entities |
+| Domain Services | `references/ddd-domain.md` | https://docs.abp.io/en/abp/latest/Domain-Services |
+| Value Objects | `references/ddd-domain.md` | https://docs.abp.io/en/abp/latest/Value-Objects |
+| Repositories | `references/ddd-domain.md` | https://docs.abp.io/en/abp/latest/Repositories |
+| Application Services, DTOs, CRUD patterns | `references/ddd-application.md` | https://docs.abp.io/en/abp/latest/Application-Services |
+| Module system, DependsOn, ConfigureServices | `references/modules.md` | https://docs.abp.io/en/abp/latest/Module-Development-Basics |
+| EF Core DbContext, repositories, migrations | `references/efcore.md` | https://docs.abp.io/en/abp/latest/Entity-Framework-Core |
+| Data seeding (IDataSeedContributor) | `references/efcore.md` | https://docs.abp.io/en/abp/latest/Data-Seeding |
+| Permissions, Authorization, [Authorize] | `references/authorization.md` | https://docs.abp.io/en/abp/latest/Authorization |
+| Auto API Controllers, HTTP API | `references/api.md` | https://docs.abp.io/en/abp/latest/API/Auto-API-Controllers |
+| Razor Pages UI, page models, tag helpers, JS API | `references/ui-razorpages.md` | https://docs.abp.io/en/abp/latest/UI/AspNetCore/Razor-Pages |
+| ABP CLI, startup template, project structure | `references/cli-structure.md` | https://docs.abp.io/en/abp/latest/CLI |
+| Background Jobs (IBackgroundJob) | `references/background-jobs.md` | https://docs.abp.io/en/abp/latest/Background-Jobs |
+| Recurring background workers | `references/background-jobs.md` | https://docs.abp.io/en/abp/latest/Background-Workers |
+| Testing (unit, integration, test data seed) | `references/testing-troubleshooting.md` | https://docs.abp.io/en/abp/latest/Testing |
+| Troubleshooting (AutoMapper, permissions, migrations) | `references/testing-troubleshooting.md` | https://docs.abp.io/en/abp/latest/Customizing-Application-Modules-Guide |
+
+For questions touching multiple areas (e.g. "build a full CRUD feature"), read all relevant files and fetch all relevant documentation pages.
 
 ## Core ABP Principles (always apply)
 

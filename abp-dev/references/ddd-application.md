@@ -1,5 +1,12 @@
 # ABP: DDD Application Layer
 
+> 📖 Official docs:
+> - Application Services: https://docs.abp.io/en/abp/latest/Application-Services
+> - Data Transfer Objects: https://docs.abp.io/en/abp/latest/Data-Transfer-Objects
+> - Object-to-Object Mapping (AutoMapper): https://docs.abp.io/en/abp/latest/Object-To-Object-Mapping
+>
+> Fetch these pages for the latest API details before generating application-layer code.
+
 ## Application Service Interface
 
 Defined in `Application.Contracts` project. Inherit from `IApplicationService`.
@@ -161,9 +168,9 @@ public class BookAppService : ApplicationService, IBookAppService
 }
 ```
 
-### Object mapping (AutoMapper)
+### Object mapping (AutoMapper — default)
 
-ABP uses AutoMapper by default. Define mappers in the Application project:
+ABP uses **AutoMapper** by default (included in the startup template). Mapperly is also supported as an alternative but requires manual setup. Define AutoMapper profiles in the Application project:
 
 ```csharp
 // Application/BookStoreApplicationAutoMapperProfile.cs

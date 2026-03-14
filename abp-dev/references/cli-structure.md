@@ -1,5 +1,12 @@
 # ABP: CLI & Startup Templates
 
+> 📖 Official docs:
+> - ABP CLI: https://docs.abp.io/en/abp/latest/CLI
+> - Startup Templates: https://docs.abp.io/en/abp/latest/Startup-Templates/Application
+> - Solution Structure: https://docs.abp.io/en/abp/latest/Startup-Templates/Application#solution-structure
+>
+> Fetch these pages for the latest CLI commands, template options, and project structure details.
+
 ## ABP CLI Installation
 
 ```bash

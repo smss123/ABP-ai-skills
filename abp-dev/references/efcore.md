@@ -1,5 +1,12 @@
 # ABP: EF Core Integration & Data Seeding
 
+> 📖 Official docs:
+> - EF Core Integration: https://docs.abp.io/en/abp/latest/Entity-Framework-Core
+> - Data Seeding: https://docs.abp.io/en/abp/latest/Data-Seeding
+> - Connection Strings: https://docs.abp.io/en/abp/latest/Connection-Strings
+>
+> Fetch these pages for the latest API details before generating EF Core or data seeding code.
+
 ## DbContext
 
 Derive from `AbpDbContext<T>`. Live in `*.EntityFrameworkCore` project.

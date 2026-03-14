@@ -1,5 +1,14 @@
 # ABP: Razor Pages / MVC UI
 
+> 📖 Official docs:
+> - Razor Pages UI: https://docs.abp.io/en/abp/latest/UI/AspNetCore/Razor-Pages
+> - Tag Helpers: https://docs.abp.io/en/abp/latest/UI/AspNetCore/Tag-Helpers/Index
+> - JavaScript API / Modal Manager: https://docs.abp.io/en/abp/latest/UI/AspNetCore/JavaScript-API/Index
+> - Navigation & Menus: https://docs.abp.io/en/abp/latest/UI/AspNetCore/Navigation-Menu
+> - Localization: https://docs.abp.io/en/abp/latest/Localization
+>
+> Fetch these pages for the latest API details before generating UI, page model, or JavaScript code.
+
 ## Page Model Base Class
 
 All Razor Page models should inherit from `AbpPageModel` (not `PageModel`):
