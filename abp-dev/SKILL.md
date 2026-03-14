@@ -22,7 +22,7 @@ This skill works across all major AI coding assistants. Use the configuration fi
 
 | Platform | Instructions file | Agent / workflow files |
 |---|---|---|
-| **GitHub Copilot** | `abp-dev/SKILL.md` (this file) + `.github/copilot-instructions.md` | Agent mode reads `copilot-instructions.md` automatically |
+| **GitHub Copilot** | `abp-dev/SKILL.md` (this file) + `.github/copilot-instructions.md` | `.github/prompts/abp-crud.prompt.md` · `.github/prompts/abp-entity.prompt.md` |
 | **Claude Code** | `CLAUDE.md` | `.claude/commands/abp-crud.md` → `/project:abp-crud <Entity>` · `.claude/commands/abp-entity.md` → `/project:abp-entity <Entity>` |
 | **Windsurf** | `.windsurfrules` | `.windsurf/workflows/abp-crud.md` — Cascade CRUD scaffold workflow |
 | **Continue.dev** | `.continue/config.yaml` (`systemMessage`) | `.continue/config.yaml` (`agents:` block) — "ABP Developer" agent with file/terminal tools |
@@ -33,6 +33,8 @@ Each platform exposes an **agent** that can autonomously create files and run co
 
 | Agent | How to invoke | What it does |
 |---|---|---|
+| **Copilot `abp-crud` prompt** | Attach `#abp-crud.prompt.md` in VS Code Copilot Chat | Generates all 12 files for a full ABP CRUD feature (entity → DTO → app service → EF Core → optional Razor Pages) |
+| **Copilot `abp-entity` prompt** | Attach `#abp-entity.prompt.md` in VS Code Copilot Chat | Scaffolds the domain entity, repository interface, and domain service only |
 | **Claude Code `/project:abp-crud`** | Type `/project:abp-crud Product` in the Claude Code CLI | Generates all 12 files for a full ABP CRUD feature (entity → DTO → app service → EF Core → Razor Page) |
 | **Claude Code `/project:abp-entity`** | Type `/project:abp-entity Product` | Scaffolds the domain entity, repository interface, and domain service only |
 | **Windsurf `abp-crud` workflow** | Open Cascade, type `run workflow abp-crud` | Step-by-step guided CRUD scaffold across all layers |

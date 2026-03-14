@@ -52,3 +52,12 @@ Acme.MyApp/
 ├── Acme.MyApp.HttpApi/               ← (optional) manual API controllers
 └── Acme.MyApp.Web/                   ← Razor Pages, menus, page models
 ```
+
+## Reusable Agent Prompts
+
+Use these prompt files in VS Code Copilot Chat (attach with `#filename`) to scaffold ABP features with full agent tool access:
+
+| Prompt file | What it does |
+|---|---|
+| `#abp-crud.prompt.md` | Generates all 12 files for a full ABP CRUD feature across every layer |
+| `#abp-entity.prompt.md` | Scaffolds domain entity + repository interface + domain service only |
