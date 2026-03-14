@@ -27,14 +27,14 @@ namespace Acme.BookStore;
 public class BookStoreWebModule : AbpModule
 {
     // Phase 1a — pre-configuration (runs before ConfigureServices of all modules)
-    // Override PreConfigureServices and call PreConfigure<TOptions> — a method inherited from
-    // AbpModule that queues option actions before the DI container is fully built.
+    // Override PreConfigureServices and use the inherited PreConfigure<TOptions>() method
+    // to queue option actions before the DI container is fully built.
     public override void PreConfigureServices(ServiceConfigurationContext context)
     {
         // Conventional controllers must be registered here (not in ConfigureServices) so that
         // all other modules in the dependency graph can discover the auto-generated routes
         // and apply their own middleware/policies during their own ConfigureServices phase.
-        // PreConfigure<T> (inherited from AbpModule) enqueues the action at the pre-build stage.
+        // PreConfigure<T>() (inherited from AbpModule) enqueues the action at the pre-build stage.
         PreConfigure<AbpAspNetCoreMvcOptions>(options =>
         {
             options.ConventionalControllers

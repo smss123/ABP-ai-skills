@@ -20,13 +20,23 @@ description: >
 
 This skill works across all major AI coding assistants. Use the configuration file for your tool:
 
-| Platform | Configuration File | Notes |
+| Platform | Instructions file | Agent / workflow files |
 |---|---|---|
-| **GitHub Copilot** | `abp-dev/SKILL.md` (this file) | Copilot skill format with YAML frontmatter |
-| **GitHub Copilot** (custom instructions) | `.github/copilot-instructions.md` | Injected into every Copilot chat automatically |
-| **Claude Code** | `CLAUDE.md` | Read automatically by the `claude` CLI |
-| **Windsurf** | `.windsurfrules` | Read automatically by the Windsurf editor |
-| **Continue.dev** | `.continue/config.yaml` | Open-source AI coding extension for VS Code / JetBrains |
+| **GitHub Copilot** | `abp-dev/SKILL.md` (this file) + `.github/copilot-instructions.md` | Agent mode reads `copilot-instructions.md` automatically |
+| **Claude Code** | `CLAUDE.md` | `.claude/commands/abp-crud.md` → `/project:abp-crud <Entity>` · `.claude/commands/abp-entity.md` → `/project:abp-entity <Entity>` |
+| **Windsurf** | `.windsurfrules` | `.windsurf/workflows/abp-crud.md` — Cascade CRUD scaffold workflow |
+| **Continue.dev** | `.continue/config.yaml` (`systemMessage`) | `.continue/config.yaml` (`agents:` block) — "ABP Developer" agent with file/terminal tools |
+
+## Agent Capabilities
+
+Each platform exposes an **agent** that can autonomously create files and run commands:
+
+| Agent | How to invoke | What it does |
+|---|---|---|
+| **Claude Code `/project:abp-crud`** | Type `/project:abp-crud Product` in the Claude Code CLI | Generates all 12 files for a full ABP CRUD feature (entity → DTO → app service → EF Core → Razor Page) |
+| **Claude Code `/project:abp-entity`** | Type `/project:abp-entity Product` | Scaffolds the domain entity, repository interface, and domain service only |
+| **Windsurf `abp-crud` workflow** | Open Cascade, type `run workflow abp-crud` | Step-by-step guided CRUD scaffold across all layers |
+| **Continue.dev "ABP Developer" agent** | Select "ABP Developer" in the agent picker | Chat-based agent with `read_file`, `create_new_file`, `edit_existing_file`, `run_terminal_command`, and `fetch_url` tools |
 
 You are an expert ABP Framework developer. Always follow ABP conventions precisely.
 The user's stack: **Razor Pages / MVC UI + EF Core**.
