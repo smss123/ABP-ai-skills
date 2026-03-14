@@ -22,18 +22,49 @@ This skill works across all major AI coding assistants. Use the configuration fi
 
 | Platform | Instructions file | Agent / workflow files |
 |---|---|---|
-| **GitHub Copilot** | `abp-dev/SKILL.md` (this file) + `.github/copilot-instructions.md` | `.github/prompts/` — 10 reusable agent prompts (see table below) |
-| **Claude Code** | `CLAUDE.md` | `.claude/commands/` — 10 slash commands (see table below) |
-| **Windsurf** | `.windsurfrules` | `.windsurf/workflows/` — 10 Cascade workflows (see table below) |
-| **Continue.dev** | `.continue/config.yaml` (`systemMessage`) | `.continue/config.yaml` (`agents:` block) — 9 specialized agents |
+| **GitHub Copilot** | `abp-dev/SKILL.md` (this file) + `.github/copilot-instructions.md` | `.github/prompts/` — 11 reusable agent prompts (see table below) |
+| **Claude Code** | `CLAUDE.md` | `.claude/commands/` — 11 slash commands (see table below) |
+| **Windsurf** | `.windsurfrules` | `.windsurf/workflows/` — 11 Cascade workflows (see table below) |
+| **Continue.dev** | `.continue/config.yaml` (`systemMessage`) | `.continue/config.yaml` (`agents:` block) — 10 specialized agents |
+
+## 🚀 Super Agent — Start here for full-feature scaffolding
+
+The **`abp-super`** agent is the top-level orchestrator. Give it a plain-language description of your feature and it will:
+
+1. Parse entities, properties, and optional features from your description
+2. Show you a confirmed analysis table
+3. Present a phase-by-phase execution plan with file counts
+4. Execute each sub-agent in the correct layer order:
+
+```
+Phase 1 → Domain layer     (entity, domain service, repository interface)
+Phase 2 → App.Contracts    (permissions, DTOs, app service interface)
+Phase 3 → Application      (app service impl, AutoMapper, specification, background worker)
+Phase 4 → EF Core          (EfCore repository, DbSet, model config, module registration)
+Phase 5 → Database         (migration commands)
+Phase 6 → UI               (Razor Pages — optional)
+Phase 7 → Seed data        (IDataSeedContributor — optional)
+```
+
+**How to invoke:**
+
+| Platform | Command |
+|---|---|
+| GitHub Copilot | Attach `#abp-super.prompt.md` in Copilot Chat and describe your scenario |
+| Claude Code | `/project:abp-super Build a product catalog with category filter, nightly archiver, and Razor Pages UI` |
+| Windsurf | `run workflow abp-super` in Cascade |
+| Continue.dev | Select **"ABP Super Agent"** from the agent picker |
+
+---
 
 ## Agent Capabilities
 
-Each platform exposes agents / commands / workflows that can autonomously create files and run commands.  
+Each platform also exposes focused single-responsibility agents for targeted scaffolding.  
 All agents read the relevant reference file(s) and fetch official ABP docs before generating code.
 
 | Agent / Command / Workflow | Copilot (`#`) | Claude (`/project:`) | Windsurf (`run workflow`) | What it does |
 |---|---|---|---|---|
+| **⭐ abp-super** | `#abp-super.prompt.md` | `/project:abp-super` | `abp-super` | **Orchestrator** — parses scenario, runs all sub-agents in phase order, produces complete feature |
 | **abp-crud** | `#abp-crud.prompt.md` | `/project:abp-crud` | `abp-crud` | Full CRUD — entity + domain service + repository + DTOs + app service + EF Core + optional Razor Pages (12 files) |
 | **abp-entity** | `#abp-entity.prompt.md` | `/project:abp-entity` | *(use abp-crud)* | Domain entity class + repository interface + domain service (domain layer only) |
 | **abp-domain-service** | `#abp-domain-service.prompt.md` | `/project:abp-domain-service` | `abp-domain-service` | Manager class only — uniqueness enforcement, `GuidGenerator.Create()` |

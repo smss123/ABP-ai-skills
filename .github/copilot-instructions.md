@@ -59,6 +59,7 @@ Use these prompt files in VS Code Copilot Chat (attach with `#filename`) to scaf
 
 | Prompt file | What it does |
 |---|---|
+| `#abp-super.prompt.md` | **⭐ Super agent** — describe your scenario in plain language; it orchestrates all sub-agents in phase order to scaffold the complete feature end-to-end |
 | `#abp-crud.prompt.md` | Generates all 12 files for a full ABP CRUD feature across every layer |
 | `#abp-entity.prompt.md` | Scaffolds domain entity + repository interface + domain service only |
 | `#abp-domain-service.prompt.md` | Scaffolds only the Manager domain service class |
