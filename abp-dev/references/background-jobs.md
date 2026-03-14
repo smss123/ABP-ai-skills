@@ -88,6 +88,7 @@ public class BookStoreApplicationModule : AbpModule
         });
 
         // Use Hangfire as the background job store
+        var configuration = context.Services.GetConfiguration();
         context.Services.AddHangfire(config =>
             config.UseSqlServerStorage(configuration.GetConnectionString("Default"))
         );

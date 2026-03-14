@@ -40,7 +40,7 @@ public class BookDto : AuditedEntityDto<Guid>  // includes CreationTime, LastMod
 {
     public string Name { get; set; } = string.Empty;
     public BookType Type { get; set; }
-    public float? Price { get; set; }
+    public decimal? Price { get; set; }
     public DateTime PublishDate { get; set; }
 }
 
@@ -59,7 +59,7 @@ public class CreateUpdateBookDto
     [Required]
     public BookType Type { get; set; }
 
-    public float? Price { get; set; }
+    public decimal? Price { get; set; }
 
     [Required]
     public DateTime PublishDate { get; set; }
@@ -119,7 +119,7 @@ public class BookAppService : ApplicationService, IBookAppService
 
     public async Task<PagedResultDto<BookDto>> GetListAsync(GetBooksInput input)
     {
-        var totalCount = await _bookRepository.CountAsync();
+        var totalCount = await _bookRepository.GetCountAsync();
         var books = await _bookRepository.GetListAsync(
             input.FilterText, input.Type,
             input.MaxResultCount, input.SkipCount, input.Sorting
@@ -161,13 +161,13 @@ public class BookAppService : ApplicationService, IBookAppService
 }
 ```
 
-### Object mapping (Mapperly)
+### Object mapping (AutoMapper)
 
-ABP uses Mapperly by default. Define mappers in the Application project:
+ABP uses AutoMapper by default. Define mappers in the Application project:
 
 ```csharp
 // Application/BookStoreApplicationAutoMapperProfile.cs
-using AutoMapper;   // OR Mapperly — both work with ABP
+using AutoMapper;
 
 namespace Acme.BookStore;
 

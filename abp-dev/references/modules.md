@@ -20,15 +20,18 @@ namespace Acme.BookStore;
 public class BookStoreWebModule : AbpModule
 {
     // Phase 1 — configure services (DI container is being built)
-    public override void ConfigureServices(ServiceConfigurationContext context)
+    public override void PreConfigureServices(ServiceConfigurationContext context)
     {
-        // Use Configure<TOptions> to set ABP option classes
-        Configure<AbpAspNetCoreMvcOptions>(options =>
+        // Register conventional controllers BEFORE ConfigureServices so other modules can see them
+        PreConfigure<AbpAspNetCoreMvcOptions>(options =>
         {
             options.ConventionalControllers
                    .Create(typeof(BookStoreApplicationModule).Assembly);
         });
+    }
 
+    public override void ConfigureServices(ServiceConfigurationContext context)
+    {
         // Standard Microsoft DI also works
         context.Services.AddHttpClient();
     }

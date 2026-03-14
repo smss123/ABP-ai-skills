@@ -158,7 +158,7 @@ public class BookManagerTests : BookStoreDomainTestBase
     [Fact]
     public async Task Should_Create_Valid_Book()
     {
-        var book = await _bookManager.CreateAsync("Clean Code", BookType.Technology, 29.99f, DateTime.Now);
+        var book = await _bookManager.CreateAsync("Clean Code", BookType.Technology, 29.99m, DateTime.Now);
 
         book.ShouldNotBeNull();
         book.Name.ShouldBe("Clean Code");
@@ -168,16 +168,17 @@ public class BookManagerTests : BookStoreDomainTestBase
     [Fact]
     public async Task Should_Not_Create_Book_With_Duplicate_Name()
     {
-        // Arrange — seed a book with known name via test data seeder
+        // Arrange — create and persist a book with a known name
         await WithUnitOfWorkAsync(async () =>
         {
-            await _bookManager.CreateAsync("Existing Book", BookType.Technology, 10f, DateTime.Now);
+            var book = await _bookManager.CreateAsync("Existing Book", BookType.Technology, 10m, DateTime.Now);
+            await _bookRepository.InsertAsync(book, autoSave: true);
         });
 
         // Act & Assert
         await Should.ThrowAsync<UserFriendlyException>(async () =>
         {
-            await _bookManager.CreateAsync("Existing Book", BookType.Technology, 20f, DateTime.Now);
+            await _bookManager.CreateAsync("Existing Book", BookType.Technology, 20m, DateTime.Now);
         });
     }
 }
@@ -218,7 +219,7 @@ public class BookAppServiceTests : BookStoreApplicationTestBase
         {
             Name        = "New Test Book",
             Type        = BookType.Technology,
-            Price       = 14.99f,
+            Price       = 14.99m,
             PublishDate = DateTime.Now
         });
 
@@ -273,7 +274,7 @@ public class BookStoreTestDataSeedContributor : IDataSeedContributor, ITransient
         var book = await _bookManager.CreateAsync(
             "The Hitchhiker's Guide",
             BookType.ScienceFiction,
-            9.99f,
+            9.99m,
             new DateTime(1979, 10, 12)
         );
         await _bookRepository.InsertAsync(book, autoSave: true);
