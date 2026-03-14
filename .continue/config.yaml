@@ -117,6 +117,14 @@ agents:
 
       - "scaffold crud <EntityName>" → generate all layers of a CRUD feature
       - "scaffold entity <EntityName>" → generate domain entity + repository interface + domain service
+      - "scaffold domain-service <EntityName>" → generate only the Manager domain service class
+      - "scaffold repository <EntityName>" → generate repository interface + EF Core implementation
+      - "scaffold app-service <EntityName>" → generate DTOs + app service interface + implementation
+      - "scaffold permissions <EntityName>" → generate permission constants + definition provider
+      - "scaffold specification <EntityName> <CriteriaName>" → generate a Specification<T> class
+      - "scaffold background-worker <WorkerName>" → generate background job or periodic worker
+      - "scaffold razor-page <EntityName>" → generate Razor Pages UI (list + create/edit modals)
+      - "scaffold data-seed <EntityName>" → generate an IDataSeedContributor
       - "review abp code" → review the current file or selection for ABP convention violations
     tools:
       - type: builtin
@@ -127,5 +135,153 @@ agents:
         name: edit_existing_file
       - type: builtin
         name: run_terminal_command
+      - type: builtin
+        name: fetch_url
+
+  - name: ABP Domain Service
+    description: >
+      Scaffolds only the domain service (Manager class) for an ABP entity.
+      Reads ddd-domain.md and fetches official docs before generating code.
+    systemMessage: |
+      You are an expert ABP Framework developer. Scaffold an ABP domain service (Manager class).
+      Read abp-dev/references/ddd-domain.md (Domain Services section) first.
+      Use GuidGenerator.Create() — never Guid.NewGuid(). Extend DomainService.
+      CreateAsync must enforce uniqueness via the repository and throw BusinessException on duplicate.
+    tools:
+      - type: builtin
+        name: read_file
+      - type: builtin
+        name: create_new_file
+      - type: builtin
+        name: edit_existing_file
+      - type: builtin
+        name: fetch_url
+
+  - name: ABP Repository
+    description: >
+      Scaffolds the repository interface (Domain layer) and EF Core implementation for an ABP entity.
+    systemMessage: |
+      You are an expert ABP Framework developer. Scaffold the repository interface and EF Core implementation.
+      Read abp-dev/references/ddd-domain.md (Repository Interfaces) and abp-dev/references/efcore.md first.
+      Interface: extend IRepository<Entity, Guid>. Add GetListAsync and FindByNameAsync.
+      Implementation: extend EfCoreRepository, use WhereIf/OrderBy/PageBy. Always call ConfigureByConvention().
+      Also show the DbSet, model config, and module registration snippets.
+    tools:
+      - type: builtin
+        name: read_file
+      - type: builtin
+        name: create_new_file
+      - type: builtin
+        name: edit_existing_file
+      - type: builtin
+        name: fetch_url
+
+  - name: ABP App Service
+    description: >
+      Scaffolds the application layer: DTOs, app service interface, implementation, and AutoMapper entries.
+    systemMessage: |
+      You are an expert ABP Framework developer. Scaffold the full application service layer.
+      Read abp-dev/references/ddd-application.md and abp-dev/references/authorization.md first.
+      Create: EntityDto, CreateUpdateEntityDto, GetEntitiesInput, IEntityAppService, EntityAppService.
+      Apply [Authorize] attributes using BookStorePermissions constants. Use ObjectMapper.Map<>() for mapping.
+      Show the two CreateMap lines for BookStoreApplicationAutoMapperProfile.
+    tools:
+      - type: builtin
+        name: read_file
+      - type: builtin
+        name: create_new_file
+      - type: builtin
+        name: edit_existing_file
+      - type: builtin
+        name: fetch_url
+
+  - name: ABP Permissions
+    description: >
+      Scaffolds permission constants and PermissionDefinitionProvider for an entity or feature.
+    systemMessage: |
+      You are an expert ABP Framework developer. Scaffold ABP permission constants and definition provider.
+      Read abp-dev/references/authorization.md first.
+      Add a nested static class to BookStorePermissions with Default/Create/Edit/Delete constants.
+      Add AddPermission and AddChild calls to BookStorePermissionDefinitionProvider.
+      Add localization keys to en.json. ABP auto-discovers PermissionDefinitionProvider — no registration needed.
+    tools:
+      - type: builtin
+        name: read_file
+      - type: builtin
+        name: edit_existing_file
+      - type: builtin
+        name: fetch_url
+
+  - name: ABP Specification
+    description: >
+      Scaffolds an ABP Specification<T> class for domain query filtering.
+    systemMessage: |
+      You are an expert ABP Framework developer. Scaffold a Specification<T> class.
+      Read abp-dev/references/ddd-domain.md and fetch https://docs.abp.io/en/abp/latest/Specifications.
+      Extend Volo.Abp.Specifications.Specification<TEntity>. Override ToExpression() returning Expression<Func<T,bool>>.
+      Show how to use .And(), .Or(), .Not() combinators and how to pass to repository.GetListAsync(spec).
+    tools:
+      - type: builtin
+        name: read_file
+      - type: builtin
+        name: create_new_file
+      - type: builtin
+        name: fetch_url
+
+  - name: ABP Background Worker
+    description: >
+      Scaffolds a fire-and-forget background job (AsyncBackgroundJob) or periodic worker (AsyncPeriodicBackgroundWorkerBase).
+    systemMessage: |
+      You are an expert ABP Framework developer. Scaffold background jobs or workers.
+      Read abp-dev/references/background-jobs.md first.
+      For jobs: create Args POCO + AsyncBackgroundJob<TArgs> + enqueue snippet.
+      For workers: create AsyncPeriodicBackgroundWorkerBase, set Timer.Period in milliseconds,
+      resolve scoped services via workerContext.ServiceProvider (never inject in constructor),
+      register with context.AddBackgroundWorkerAsync<TWorker>() in the module.
+    tools:
+      - type: builtin
+        name: read_file
+      - type: builtin
+        name: create_new_file
+      - type: builtin
+        name: edit_existing_file
+      - type: builtin
+        name: fetch_url
+
+  - name: ABP Razor Page
+    description: >
+      Scaffolds Razor Pages UI for an entity: list page, create/edit modals, DataTable JS, and menu registration.
+    systemMessage: |
+      You are an expert ABP Framework developer. Scaffold Razor Pages UI.
+      Read abp-dev/references/ui-razorpages.md and abp-dev/references/authorization.md first.
+      Create: Index.cshtml + .cs, Index.js (abp.ModalManager + DataTable), CreateModal.cshtml + .cs,
+      EditModal.cshtml + .cs. Use AbpPageModel, abp tag helpers, abp.auth.isGranted for permission guards.
+      Show menu contributor snippet and AuthorizePage conventions. Show reverse CreateMap for WebAutoMapperProfile.
+    tools:
+      - type: builtin
+        name: read_file
+      - type: builtin
+        name: create_new_file
+      - type: builtin
+        name: edit_existing_file
+      - type: builtin
+        name: fetch_url
+
+  - name: ABP Data Seed
+    description: >
+      Scaffolds an IDataSeedContributor to populate initial data for an entity.
+    systemMessage: |
+      You are an expert ABP Framework developer. Scaffold an IDataSeedContributor.
+      Read abp-dev/references/efcore.md (Data Seeding section) first.
+      Implement IDataSeedContributor + ITransientDependency. Always guard with GetCountAsync() > 0 (idempotent).
+      Use IGuidGenerator.Create() — never Guid.NewGuid(). Use autoSave: true on InsertAsync.
+      ABP auto-discovers the contributor — no registration needed. Run via DbMigrator.
+    tools:
+      - type: builtin
+        name: read_file
+      - type: builtin
+        name: create_new_file
+      - type: builtin
+        name: edit_existing_file
       - type: builtin
         name: fetch_url

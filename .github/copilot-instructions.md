@@ -61,3 +61,11 @@ Use these prompt files in VS Code Copilot Chat (attach with `#filename`) to scaf
 |---|---|
 | `#abp-crud.prompt.md` | Generates all 12 files for a full ABP CRUD feature across every layer |
 | `#abp-entity.prompt.md` | Scaffolds domain entity + repository interface + domain service only |
+| `#abp-domain-service.prompt.md` | Scaffolds only the Manager domain service class |
+| `#abp-repository.prompt.md` | Scaffolds repository interface (Domain) + EF Core implementation + config snippets |
+| `#abp-app-service.prompt.md` | Scaffolds DTOs + app service interface + implementation + AutoMapper entries |
+| `#abp-permissions.prompt.md` | Scaffolds permission constants + PermissionDefinitionProvider + localization keys |
+| `#abp-specification.prompt.md` | Scaffolds a `Specification<T>` class for domain query filtering |
+| `#abp-background-worker.prompt.md` | Scaffolds a background job (fire-and-forget) or periodic background worker |
+| `#abp-razor-page.prompt.md` | Scaffolds Razor Pages UI — list page, create/edit modals, JS DataTable, menu |
+| `#abp-data-seed.prompt.md` | Scaffolds an `IDataSeedContributor` to populate initial data |

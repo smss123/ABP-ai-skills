@@ -22,23 +22,28 @@ This skill works across all major AI coding assistants. Use the configuration fi
 
 | Platform | Instructions file | Agent / workflow files |
 |---|---|---|
-| **GitHub Copilot** | `abp-dev/SKILL.md` (this file) + `.github/copilot-instructions.md` | `.github/prompts/abp-crud.prompt.md` · `.github/prompts/abp-entity.prompt.md` |
-| **Claude Code** | `CLAUDE.md` | `.claude/commands/abp-crud.md` → `/project:abp-crud <Entity>` · `.claude/commands/abp-entity.md` → `/project:abp-entity <Entity>` |
-| **Windsurf** | `.windsurfrules` | `.windsurf/workflows/abp-crud.md` — Cascade CRUD scaffold workflow |
-| **Continue.dev** | `.continue/config.yaml` (`systemMessage`) | `.continue/config.yaml` (`agents:` block) — "ABP Developer" agent with file/terminal tools |
+| **GitHub Copilot** | `abp-dev/SKILL.md` (this file) + `.github/copilot-instructions.md` | `.github/prompts/` — 10 reusable agent prompts (see table below) |
+| **Claude Code** | `CLAUDE.md` | `.claude/commands/` — 10 slash commands (see table below) |
+| **Windsurf** | `.windsurfrules` | `.windsurf/workflows/` — 10 Cascade workflows (see table below) |
+| **Continue.dev** | `.continue/config.yaml` (`systemMessage`) | `.continue/config.yaml` (`agents:` block) — 9 specialized agents |
 
 ## Agent Capabilities
 
-Each platform exposes an **agent** that can autonomously create files and run commands:
+Each platform exposes agents / commands / workflows that can autonomously create files and run commands.  
+All agents read the relevant reference file(s) and fetch official ABP docs before generating code.
 
-| Agent | How to invoke | What it does |
-|---|---|---|
-| **Copilot `abp-crud` prompt** | Attach `#abp-crud.prompt.md` in VS Code Copilot Chat | Generates all 12 files for a full ABP CRUD feature (entity → DTO → app service → EF Core → optional Razor Pages) |
-| **Copilot `abp-entity` prompt** | Attach `#abp-entity.prompt.md` in VS Code Copilot Chat | Scaffolds the domain entity, repository interface, and domain service only |
-| **Claude Code `/project:abp-crud`** | Type `/project:abp-crud Product` in the Claude Code CLI | Generates all 12 files for a full ABP CRUD feature (entity → DTO → app service → EF Core → Razor Page) |
-| **Claude Code `/project:abp-entity`** | Type `/project:abp-entity Product` | Scaffolds the domain entity, repository interface, and domain service only |
-| **Windsurf `abp-crud` workflow** | Open Cascade, type `run workflow abp-crud` | Step-by-step guided CRUD scaffold across all layers |
-| **Continue.dev "ABP Developer" agent** | Select "ABP Developer" in the agent picker | Chat-based agent with `read_file`, `create_new_file`, `edit_existing_file`, `run_terminal_command`, and `fetch_url` tools |
+| Agent / Command / Workflow | Copilot (`#`) | Claude (`/project:`) | Windsurf (`run workflow`) | What it does |
+|---|---|---|---|---|
+| **abp-crud** | `#abp-crud.prompt.md` | `/project:abp-crud` | `abp-crud` | Full CRUD — entity + domain service + repository + DTOs + app service + EF Core + optional Razor Pages (12 files) |
+| **abp-entity** | `#abp-entity.prompt.md` | `/project:abp-entity` | *(use abp-crud)* | Domain entity class + repository interface + domain service (domain layer only) |
+| **abp-domain-service** | `#abp-domain-service.prompt.md` | `/project:abp-domain-service` | `abp-domain-service` | Manager class only — uniqueness enforcement, `GuidGenerator.Create()` |
+| **abp-repository** | `#abp-repository.prompt.md` | `/project:abp-repository` | `abp-repository` | Repository interface (Domain) + EF Core implementation + model config + module registration snippets |
+| **abp-app-service** | `#abp-app-service.prompt.md` | `/project:abp-app-service` | `abp-app-service` | DTOs + app service interface + implementation + AutoMapper entries |
+| **abp-permissions** | `#abp-permissions.prompt.md` | `/project:abp-permissions` | `abp-permissions` | Permission constants + `PermissionDefinitionProvider` + localization keys |
+| **abp-specification** | `#abp-specification.prompt.md` | `/project:abp-specification` | `abp-specification` | `Specification<T>` class for domain query filtering with `.And()/.Or()/.Not()` combinators |
+| **abp-background-worker** | `#abp-background-worker.prompt.md` | `/project:abp-background-worker` | `abp-background-worker` | Background job (`AsyncBackgroundJob<TArgs>`) or periodic worker (`AsyncPeriodicBackgroundWorkerBase`) |
+| **abp-razor-page** | `#abp-razor-page.prompt.md` | `/project:abp-razor-page` | `abp-razor-page` | Razor Pages UI — list page + JS DataTable + create/edit modals + menu registration |
+| **abp-data-seed** | `#abp-data-seed.prompt.md` | `/project:abp-data-seed` | `abp-data-seed` | `IDataSeedContributor` with idempotent guard, `IGuidGenerator`, `autoSave: true` |
 
 You are an expert ABP Framework developer. Always follow ABP conventions precisely.
 The user's stack: **Razor Pages / MVC UI + EF Core**.
