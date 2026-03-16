@@ -10,10 +10,10 @@
 
 ABP builds on top of ASP.NET Core's `IDistributedCache` and adds:
 - Strongly-typed wrapper `IDistributedCache<TCacheItem>` — eliminates manual serialization
-- `IDistributedCache<TCacheItem, TCacheKey>` — custom key types
-- Automatic cache key generation based on class name + optional key suffix
-- `[CacheName]` attribute to customize the cache key prefix
-- Multi-tenancy support — cache items are automatically partitioned by tenant
+- `IDistributedCache<TCacheItem, TCacheKey>` — custom compound key types (key is serialized to JSON)
+- Automatic cache key generation: `{TenantId}:{CacheName}:{key}` — no manual prefix work needed
+- `[CacheName]` attribute to override the per-type key prefix (defaults to the class name)
+- Multi-tenancy support — cache items are automatically partitioned by tenant ID
 
 ---
 

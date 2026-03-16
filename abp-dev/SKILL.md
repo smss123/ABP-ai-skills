@@ -25,7 +25,7 @@ This skill works across all major AI coding assistants. Use the configuration fi
 | **GitHub Copilot** | `abp-dev/SKILL.md` (this file) + `.github/copilot-instructions.md` | `.github/prompts/` — 15 reusable agent prompts (see table below) |
 | **Claude Code** | `CLAUDE.md` | `.claude/commands/` — 15 slash commands (see table below) |
 | **Windsurf** | `.windsurfrules` | `.windsurf/workflows/` — 15 Cascade workflows (see table below) |
-| **Continue.dev** | `.continue/config.yaml` (`systemMessage`) | `.continue/config.yaml` (`agents:` block) — 13 specialized agents |
+| **Continue.dev** | `.continue/config.yaml` (`systemMessage`) | `.continue/config.yaml` (`agents:` block) — 14 specialized agents |
 
 ## 🚀 Super Agent — Start here for full-feature scaffolding
 

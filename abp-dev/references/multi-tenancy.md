@@ -158,7 +158,11 @@ Configure<AbpTenantResolveOptions>(options =>
 ## Accessing Tenant Data in Background Workers
 
 Background workers run outside a normal HTTP request — no tenant context by default.
-Use `ICurrentTenant.Change()` to process each tenant:
+Use `ICurrentTenant.Change()` to process each tenant.
+
+> **Performance note:** If you have many tenants (hundreds or thousands), avoid fetching all tenants
+> at once. Use `GetPagedListAsync` / pagination when iterating, and consider throttling or
+> parallelizing with a controlled degree of concurrency to avoid overloading the database.
 
 ```csharp
 protected override async Task DoWorkAsync(PeriodicBackgroundWorkerContext workerContext)

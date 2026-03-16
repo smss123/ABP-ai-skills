@@ -32,7 +32,7 @@ A collection of curated AI agent prompts, slash commands, and workflow definitio
 | What | Where | Purpose |
 |---|---|---|
 | **Super agent** | platform-specific (see below) | Orchestrates all sub-agents from a plain-language scenario |
-| **14 scaffold agents** | `.github/prompts/`, `.claude/commands/`, `.windsurf/workflows/`, `.continue/config.yaml` | One agent per ABP layer / concern |
+| **14 scaffold agents** | `.github/prompts/`, `.claude/commands/`, `.windsurf/workflows/`, `.continue/config.yaml` | One agent per ABP layer / concern (plus super agent = 15 total per platform) |
 | **14 reference files** | `abp-dev/references/` | Curated, correct ABP patterns for every topic |
 | **Platform instructions** | `.github/copilot-instructions.md`, `CLAUDE.md`, `.windsurfrules`, `.continue/config.yaml` | Injects ABP expertise into the AI assistant |
 

@@ -1,4 +1,4 @@
-# ABP: Settings System
+# ABP: Settings
 
 > 📖 Official docs:
 > - Settings: https://docs.abp.io/en/abp/latest/Settings
@@ -11,6 +11,11 @@
 ABP's settings system lets you define typed, hierarchical configuration values that can be scoped
 to the application (global), a specific tenant, or a specific user.
 Scope priority (highest wins): **User → Tenant → Global → Default**
+
+> **ABP Settings vs `appsettings.json`**: Use ABP Settings for values that should be
+> **changeable at runtime** (e.g. per-tenant SMTP host, upload limits, feature flags).
+> Use `appsettings.json` / environment variables for infrastructure configuration that
+> should **not change after deployment** (e.g. database connection strings, ports, secrets).
 
 ---
 
