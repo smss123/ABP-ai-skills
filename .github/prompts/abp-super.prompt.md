@@ -30,6 +30,7 @@ Read ALL the following reference files before generating anything:
 - `abp-dev/references/authorization.md`
 - `abp-dev/references/ui-razorpages.md`
 - `abp-dev/references/background-jobs.md`
+- `abp-dev/references/event-bus.md`
 
 From the scenario, extract and list:
 
@@ -43,7 +44,8 @@ From the scenario, extract and list:
 | 6 | Needs Periodic Worker? | Yes / No — interval if yes |
 | 7 | Needs Specification(s)? | Yes / No — filter criteria if yes |
 | 8 | Needs Data Seed? | Yes / No — seed records if yes |
-| 9 | Entity relationships | e.g. Product has many OrderLines |
+| 9 | Needs Domain Events? | Yes / No — Local or Distributed, event name if yes |
+| 10 | Entity relationships | e.g. Product has many OrderLines |
 
 Show this table to the user and ask: **"Does this look correct? Shall I proceed?"**
 
@@ -128,6 +130,9 @@ For **each entity**:
 
 8. **Background Job or Worker** (if applicable — `abp-background-worker` pattern):
    - Args class + job/worker class + module registration or enqueue snippet
+
+9. **Domain Events** (if applicable — `abp-event-bus` pattern):
+   - ETO class + raise point in aggregate root or domain service + event handler class
 
 ### Phase 4 — EF Core / Infrastructure
 

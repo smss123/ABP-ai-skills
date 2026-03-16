@@ -17,6 +17,7 @@ Before analysing or generating anything, read:
 - `abp-dev/references/authorization.md`
 - `abp-dev/references/ui-razorpages.md`
 - `abp-dev/references/background-jobs.md`
+- `abp-dev/references/event-bus.md`
 
 ---
 
@@ -62,6 +63,7 @@ For each entity:
 6. **App service** — `<Entity>AppService.cs` + AutoMapper entries
 7. **Specification** (if needed) — `<Criteria><Entity>Specification.cs`
 8. **Background job/worker** (if needed) — Args class + job or worker class + registration
+9. **Domain Events** (if needed — sub-command: `/project:abp-event-bus`) — ETO class + raise point + event handler
 
 ### Phase 4 — EF Core / Infrastructure  (sub-command: `/project:abp-repository`)
 
