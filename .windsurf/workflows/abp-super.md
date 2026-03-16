@@ -19,7 +19,8 @@ Ask the user the following questions before proceeding:
 4. **Razor Pages UI?** — Yes / No
 5. **Background job or worker?** — Yes / No. If yes: fire-and-forget job or periodic worker? What does it do?
 6. **Specification(s)?** — Yes / No. If yes: what are the filter criteria?
-7. **Data seed?** — Yes / No. If yes: what seed records?
+7. **Domain Events?** — Yes / No. If yes: Local or Distributed? What event(s) should be raised and handled?
+8. **Data seed?** — Yes / No. If yes: what seed records?
 
 ---
 
@@ -32,6 +33,7 @@ Read ALL of the following before generating any code:
 - `abp-dev/references/authorization.md`
 - `abp-dev/references/ui-razorpages.md`
 - `abp-dev/references/background-jobs.md`
+- `abp-dev/references/event-bus.md`
 
 ---
 
@@ -126,6 +128,7 @@ Run the logic of:
 - **workflow: `abp-app-service`** → implementation + AutoMapper entries
 - **workflow: `abp-specification`** (if applicable)
 - **workflow: `abp-background-worker`** (if applicable)
+- **workflow: `abp-event-bus`** (if applicable — for domain events)
 
 ---
 

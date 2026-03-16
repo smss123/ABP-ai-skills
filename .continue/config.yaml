@@ -34,6 +34,8 @@ systemMessage: |
   | Razor Pages UI, tag helpers            | abp-dev/references/ui-razorpages.md           | https://docs.abp.io/en/abp/latest/UI/AspNetCore/Razor-Pages     |
   | ABP CLI, solution structure            | abp-dev/references/cli-structure.md           | https://docs.abp.io/en/abp/latest/CLI                           |
   | Background Jobs & Workers              | abp-dev/references/background-jobs.md         | https://docs.abp.io/en/abp/latest/Background-Jobs               |
+  | Local Event Bus, Domain Events         | abp-dev/references/event-bus.md               | https://docs.abp.io/en/abp/latest/Local-Event-Bus               |
+  | Distributed Event Bus                  | abp-dev/references/event-bus.md               | https://docs.abp.io/en/abp/latest/Distributed-Event-Bus         |
   | Testing & Troubleshooting              | abp-dev/references/testing-troubleshooting.md | https://docs.abp.io/en/abp/latest/Testing                       |
 
   ## Core ABP Principles (always apply)
@@ -81,9 +83,9 @@ agents:
       Your job:
       1. Ask the user to describe what they want to build (if not already provided).
       2. Read ALL reference files: abp-dev/references/ddd-domain.md, ddd-application.md,
-         efcore.md, authorization.md, ui-razorpages.md, background-jobs.md.
+         efcore.md, authorization.md, ui-razorpages.md, background-jobs.md, event-bus.md.
       3. Extract: entity names, properties, audit level, optional features (background jobs,
-         specifications, Razor Pages UI, data seeding).
+         specifications, domain events, Razor Pages UI, data seeding).
       4. Show a parsed summary table and ask the user to confirm before proceeding.
       5. Present a full file-by-file execution plan grouped by layer.
       6. Execute phase by phase in strict dependency order:
@@ -99,6 +101,7 @@ agents:
            AppService implementation + AutoMapper entries
            Specification<T> classes (if requested)
            Background job/worker (if requested)
+           Domain event ETO + handler (if requested)
 
          Phase 4 — EF Core / Infrastructure
            EfCoreRepository + DbSet + model config block + module registration
@@ -122,6 +125,8 @@ agents:
       - Background workers: resolve scoped services via workerContext.ServiceProvider
       - Permissions: defined in Application.Contracts, enforced with [Authorize] in app services
       - IDataSeedContributor: always guard with GetCountAsync() > 0 (idempotent)
+      - Domain events: local ETOs in Domain layer; distributed ETOs in Application.Contracts
+      - ILocalEventHandler<T>/IDistributedEventHandler<T> with ITransientDependency = auto-discovered
 
       ## Reference files
       | Topic                            | File                                    |
@@ -132,6 +137,7 @@ agents:
       | Permissions, Authorization       | abp-dev/references/authorization.md     |
       | Razor Pages UI                   | abp-dev/references/ui-razorpages.md     |
       | Background Jobs & Workers        | abp-dev/references/background-jobs.md   |
+      | Local & Distributed Event Bus    | abp-dev/references/event-bus.md         |
     tools:
       - type: builtin
         name: read_file
@@ -350,6 +356,45 @@ agents:
       Implement IDataSeedContributor + ITransientDependency. Always guard with GetCountAsync() > 0 (idempotent).
       Use IGuidGenerator.Create() — never Guid.NewGuid(). Use autoSave: true on InsertAsync.
       ABP auto-discovers the contributor — no registration needed. Run via DbMigrator.
+    tools:
+      - type: builtin
+        name: read_file
+      - type: builtin
+        name: create_new_file
+      - type: builtin
+        name: edit_existing_file
+      - type: builtin
+        name: fetch_url
+
+  - name: ABP Event Bus
+    description: >
+      Scaffolds ABP domain events and event handlers. Creates the ETO (Event Transfer Object),
+      wires up the event raise point (aggregate root or domain service), and implements
+      ILocalEventHandler<T> or IDistributedEventHandler<T>.
+    systemMessage: |
+      You are an expert ABP Framework developer. Scaffold domain events and event bus wiring.
+      Read abp-dev/references/event-bus.md and fetch https://docs.abp.io/en/abp/latest/Local-Event-Bus first.
+
+      Ask the user:
+      1. Entity name and event name (past tense, e.g. Created, Archived)
+      2. Local or Distributed event?
+
+      For LOCAL events:
+      - ETO in Domain layer (<Entity><EventName>Eto.cs)
+      - Raise via AddLocalEvent() inside the aggregate root (AggregateRoot<TKey> base required)
+      - Handler: ILocalEventHandler<T> + ITransientDependency in the Application layer
+
+      For DISTRIBUTED events:
+      - ETO in Application.Contracts with [EventName("...")] attribute
+      - Raise via IDistributedEventBus.PublishAsync() from app service or domain service
+      - Handler: IDistributedEventHandler<T> + ITransientDependency
+      - Module: add AbpRabbitMqEventBusModule (or other broker) to [DependsOn] and configure
+
+      Rules:
+      - ITransientDependency on handler = auto-discovered, no registration needed
+      - Local events from AddLocalEvent() dispatch AFTER unit of work commits
+      - Keep handlers lightweight; enqueue a background job for heavy work
+      - Distributed ETOs go in Application.Contracts; local ETOs go in Domain
     tools:
       - type: builtin
         name: read_file

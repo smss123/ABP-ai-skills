@@ -104,6 +104,7 @@ The Super Agent will scaffold ~15 files across all 7 phases without any further 
 | **abp-background-worker** | `#abp-background-worker.prompt.md` | `/project:abp-background-worker` | `abp-background-worker` | `AsyncBackgroundJob<TArgs>` (fire-and-forget) or `AsyncPeriodicBackgroundWorkerBase` (periodic) |
 | **abp-razor-page** | `#abp-razor-page.prompt.md` | `/project:abp-razor-page` | `abp-razor-page` | Razor Pages list page · JS DataTable · create/edit modals · menu registration |
 | **abp-data-seed** | `#abp-data-seed.prompt.md` | `/project:abp-data-seed` | `abp-data-seed` | `IDataSeedContributor` — idempotent guard, `IGuidGenerator`, `autoSave: true` |
+| **abp-event-bus** | `#abp-event-bus.prompt.md` | `/project:abp-event-bus` | `abp-event-bus` | ETO class + `ILocalEventHandler<T>` or `IDistributedEventHandler<T>` + event bus wiring |
 
 > **Continue.dev** users: all agents are available via the agent picker (including the Super Agent at the top of the list).
 
@@ -192,7 +193,8 @@ ABP-ai-skills/
 │       ├── cli-structure.md            ← ABP CLI, startup templates, solution structure
 │       ├── background-jobs.md          ← Background jobs and periodic workers
 │       ├── modules.md                  ← Module system, DependsOn, ConfigureServices
-│       └── testing-troubleshooting.md  ← Unit/integration testing, common pitfalls
+│       ├── testing-troubleshooting.md  ← Unit/integration testing, common pitfalls
+│       └── event-bus.md                ← Local domain events & Distributed Event Bus
 │
 ├── .github/
 │   ├── copilot-instructions.md         ← Copilot global instructions (auto-loaded)
@@ -207,7 +209,8 @@ ABP-ai-skills/
 │       ├── abp-specification.prompt.md
 │       ├── abp-background-worker.prompt.md
 │       ├── abp-razor-page.prompt.md
-│       └── abp-data-seed.prompt.md
+│       ├── abp-data-seed.prompt.md
+│       └── abp-event-bus.prompt.md
 │
 ├── .claude/
 │   └── commands/
@@ -221,12 +224,14 @@ ABP-ai-skills/
 │       ├── abp-specification.md
 │       ├── abp-background-worker.md
 │       ├── abp-razor-page.md
-│       └── abp-data-seed.md
+│       ├── abp-data-seed.md
+│       └── abp-event-bus.md
 │
 ├── .windsurf/
 │   └── workflows/
 │       ├── abp-super.md                ⭐ run workflow abp-super
 │       ├── abp-crud.md
+│       ├── abp-entity.md
 │       ├── abp-domain-service.md
 │       ├── abp-repository.md
 │       ├── abp-app-service.md
@@ -234,10 +239,11 @@ ABP-ai-skills/
 │       ├── abp-specification.md
 │       ├── abp-background-worker.md
 │       ├── abp-razor-page.md
-│       └── abp-data-seed.md
+│       ├── abp-data-seed.md
+│       └── abp-event-bus.md
 │
 ├── .continue/
-│   └── config.yaml                     ← System message + docs index + 10 agents
+│   └── config.yaml                     ← System message + docs index + 11 agents
 │
 ├── .windsurfrules                      ← Windsurf global rules (auto-loaded)
 ├── CLAUDE.md                           ← Claude Code global instructions (auto-loaded)
@@ -261,6 +267,7 @@ Every agent reads the relevant reference file(s) before generating any code, and
 | `references/ui-razorpages.md` | Razor Pages, page models, tag helpers, JS API proxy | [Razor Pages UI](https://docs.abp.io/en/abp/latest/UI/AspNetCore/Razor-Pages) |
 | `references/cli-structure.md` | ABP CLI commands, startup templates, solution structure | [ABP CLI](https://docs.abp.io/en/abp/latest/CLI) |
 | `references/background-jobs.md` | Background jobs, periodic background workers | [Background Jobs](https://docs.abp.io/en/abp/latest/Background-Jobs) · [Background Workers](https://docs.abp.io/en/abp/latest/Background-Workers) |
+| `references/event-bus.md` | Local domain events (`AddLocalEvent`, `ILocalEventHandler<T>`), Distributed Event Bus (`IDistributedEventBus`, `IDistributedEventHandler<T>`), ETOs | [Local Event Bus](https://docs.abp.io/en/abp/latest/Local-Event-Bus) · [Distributed Event Bus](https://docs.abp.io/en/abp/latest/Distributed-Event-Bus) |
 | `references/modules.md` | Module system, `DependsOn`, `ConfigureServices`, `OnApplicationInitialization` | [Module Development](https://docs.abp.io/en/abp/latest/Module-Development-Basics) |
 | `references/testing-troubleshooting.md` | Unit tests, integration tests, common AutoMapper/permission/migration pitfalls | [Testing](https://docs.abp.io/en/abp/latest/Testing) |
 

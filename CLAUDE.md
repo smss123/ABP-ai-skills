@@ -26,6 +26,8 @@ This repository contains curated ABP Framework skills. When working on any ABP p
 | Razor Pages UI, tag helpers | `abp-dev/references/ui-razorpages.md` | https://docs.abp.io/en/abp/latest/UI/AspNetCore/Razor-Pages |
 | ABP CLI, solution structure | `abp-dev/references/cli-structure.md` | https://docs.abp.io/en/abp/latest/CLI |
 | Background Jobs & Workers | `abp-dev/references/background-jobs.md` | https://docs.abp.io/en/abp/latest/Background-Jobs |
+| Local Event Bus, Domain Events | `abp-dev/references/event-bus.md` | https://docs.abp.io/en/abp/latest/Local-Event-Bus |
+| Distributed Event Bus | `abp-dev/references/event-bus.md` | https://docs.abp.io/en/abp/latest/Distributed-Event-Bus |
 | Testing & Troubleshooting | `abp-dev/references/testing-troubleshooting.md` | https://docs.abp.io/en/abp/latest/Testing |
 
 For questions covering multiple areas (e.g. "build a full CRUD feature"), read all relevant reference files.

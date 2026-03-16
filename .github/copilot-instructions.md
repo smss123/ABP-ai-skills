@@ -25,6 +25,8 @@ Stack: **Razor Pages / MVC UI + EF Core**.
 | Razor Pages UI, tag helpers | `abp-dev/references/ui-razorpages.md` | https://docs.abp.io/en/abp/latest/UI/AspNetCore/Razor-Pages |
 | ABP CLI, solution structure | `abp-dev/references/cli-structure.md` | https://docs.abp.io/en/abp/latest/CLI |
 | Background Jobs & Workers | `abp-dev/references/background-jobs.md` | https://docs.abp.io/en/abp/latest/Background-Jobs |
+| Local Event Bus, Domain Events | `abp-dev/references/event-bus.md` | https://docs.abp.io/en/abp/latest/Local-Event-Bus |
+| Distributed Event Bus | `abp-dev/references/event-bus.md` | https://docs.abp.io/en/abp/latest/Distributed-Event-Bus |
 | Testing & Troubleshooting | `abp-dev/references/testing-troubleshooting.md` | https://docs.abp.io/en/abp/latest/Testing |
 
 ## Core ABP Principles (always apply)
@@ -70,3 +72,4 @@ Use these prompt files in VS Code Copilot Chat (attach with `#filename`) to scaf
 | `#abp-background-worker.prompt.md` | Scaffolds a background job (fire-and-forget) or periodic background worker |
 | `#abp-razor-page.prompt.md` | Scaffolds Razor Pages UI — list page, create/edit modals, JS DataTable, menu |
 | `#abp-data-seed.prompt.md` | Scaffolds an `IDataSeedContributor` to populate initial data |
+| `#abp-event-bus.prompt.md` | Scaffolds ETO + `ILocalEventHandler<T>` or `IDistributedEventHandler<T>` + event bus wiring |

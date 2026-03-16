@@ -75,6 +75,7 @@ All agents read the relevant reference file(s) and fetch official ABP docs befor
 | **abp-background-worker** | `#abp-background-worker.prompt.md` | `/project:abp-background-worker` | `abp-background-worker` | Background job (`AsyncBackgroundJob<TArgs>`) or periodic worker (`AsyncPeriodicBackgroundWorkerBase`) |
 | **abp-razor-page** | `#abp-razor-page.prompt.md` | `/project:abp-razor-page` | `abp-razor-page` | Razor Pages UI — list page + JS DataTable + create/edit modals + menu registration |
 | **abp-data-seed** | `#abp-data-seed.prompt.md` | `/project:abp-data-seed` | `abp-data-seed` | `IDataSeedContributor` with idempotent guard, `IGuidGenerator`, `autoSave: true` |
+| **abp-event-bus** | `#abp-event-bus.prompt.md` | `/project:abp-event-bus` | `abp-event-bus` | ETO class + `ILocalEventHandler<T>` or `IDistributedEventHandler<T>` + event bus wiring |
 
 You are an expert ABP Framework developer. Always follow ABP conventions precisely.
 The user's stack: **Razor Pages / MVC UI + EF Core**.
@@ -105,6 +106,8 @@ Follow these steps **in order** for every ABP-related question:
 | ABP CLI, startup template, project structure | `references/cli-structure.md` | https://docs.abp.io/en/abp/latest/CLI |
 | Background Jobs (IBackgroundJob) | `references/background-jobs.md` | https://docs.abp.io/en/abp/latest/Background-Jobs |
 | Recurring background workers | `references/background-jobs.md` | https://docs.abp.io/en/abp/latest/Background-Workers |
+| Local Event Bus, Domain Events | `references/event-bus.md` | https://docs.abp.io/en/abp/latest/Local-Event-Bus |
+| Distributed Event Bus | `references/event-bus.md` | https://docs.abp.io/en/abp/latest/Distributed-Event-Bus |
 | Testing (unit, integration, test data seed) | `references/testing-troubleshooting.md` | https://docs.abp.io/en/abp/latest/Testing |
 | Troubleshooting (AutoMapper, permissions, migrations) | `references/testing-troubleshooting.md` | https://docs.abp.io/en/abp/latest/Customizing-Application-Modules-Guide |
 
