@@ -22,10 +22,10 @@ This skill works across all major AI coding assistants. Use the configuration fi
 
 | Platform | Instructions file | Agent / workflow files |
 |---|---|---|
-| **GitHub Copilot** | `abp-dev/SKILL.md` (this file) + `.github/copilot-instructions.md` | `.github/prompts/` — 11 reusable agent prompts (see table below) |
-| **Claude Code** | `CLAUDE.md` | `.claude/commands/` — 11 slash commands (see table below) |
-| **Windsurf** | `.windsurfrules` | `.windsurf/workflows/` — 11 Cascade workflows (see table below) |
-| **Continue.dev** | `.continue/config.yaml` (`systemMessage`) | `.continue/config.yaml` (`agents:` block) — 10 specialized agents |
+| **GitHub Copilot** | `abp-dev/SKILL.md` (this file) + `.github/copilot-instructions.md` | `.github/prompts/` — 15 reusable agent prompts (see table below) |
+| **Claude Code** | `CLAUDE.md` | `.claude/commands/` — 15 slash commands (see table below) |
+| **Windsurf** | `.windsurfrules` | `.windsurf/workflows/` — 15 Cascade workflows (see table below) |
+| **Continue.dev** | `.continue/config.yaml` (`systemMessage`) | `.continue/config.yaml` (`agents:` block) — 13 specialized agents |
 
 ## 🚀 Super Agent — Start here for full-feature scaffolding
 
@@ -39,12 +39,14 @@ The **`abp-super`** agent is the top-level orchestrator. Give it a plain-languag
 ```
 Phase 1 → Domain layer     (entity, domain service, repository interface)
 Phase 2 → App.Contracts    (permissions, DTOs, app service interface)
-Phase 3 → Application      (app service impl, AutoMapper, specification, background worker)
+Phase 3 → Application      (app service impl, AutoMapper, specification, background worker, domain events)
 Phase 4 → EF Core          (EfCore repository, DbSet, model config, module registration)
 Phase 5 → Database         (migration commands)
 Phase 6 → UI               (Razor Pages — optional)
 Phase 7 → Seed data        (IDataSeedContributor — optional)
 ```
+
+> For cross-cutting concerns, use the dedicated agents: **`abp-multi-tenancy`** (tenant isolation), **`abp-settings`** (setting definitions + read/write), **`abp-caching`** (distributed cache + Redis).
 
 **How to invoke:**
 
@@ -66,7 +68,7 @@ All agents read the relevant reference file(s) and fetch official ABP docs befor
 |---|---|---|---|---|
 | **⭐ abp-super** | `#abp-super.prompt.md` | `/project:abp-super` | `abp-super` | **Orchestrator** — parses scenario, runs all sub-agents in phase order, produces complete feature |
 | **abp-crud** | `#abp-crud.prompt.md` | `/project:abp-crud` | `abp-crud` | Full CRUD — entity + domain service + repository + DTOs + app service + EF Core + optional Razor Pages (12 files) |
-| **abp-entity** | `#abp-entity.prompt.md` | `/project:abp-entity` | *(use abp-crud)* | Domain entity class + repository interface + domain service (domain layer only) |
+| **abp-entity** | `#abp-entity.prompt.md` | `/project:abp-entity` | `abp-entity` | Domain entity class + repository interface + domain service (domain layer only) |
 | **abp-domain-service** | `#abp-domain-service.prompt.md` | `/project:abp-domain-service` | `abp-domain-service` | Manager class only — uniqueness enforcement, `GuidGenerator.Create()` |
 | **abp-repository** | `#abp-repository.prompt.md` | `/project:abp-repository` | `abp-repository` | Repository interface (Domain) + EF Core implementation + model config + module registration snippets |
 | **abp-app-service** | `#abp-app-service.prompt.md` | `/project:abp-app-service` | `abp-app-service` | DTOs + app service interface + implementation + AutoMapper entries |
@@ -76,6 +78,9 @@ All agents read the relevant reference file(s) and fetch official ABP docs befor
 | **abp-razor-page** | `#abp-razor-page.prompt.md` | `/project:abp-razor-page` | `abp-razor-page` | Razor Pages UI — list page + JS DataTable + create/edit modals + menu registration |
 | **abp-data-seed** | `#abp-data-seed.prompt.md` | `/project:abp-data-seed` | `abp-data-seed` | `IDataSeedContributor` with idempotent guard, `IGuidGenerator`, `autoSave: true` |
 | **abp-event-bus** | `#abp-event-bus.prompt.md` | `/project:abp-event-bus` | `abp-event-bus` | ETO class + `ILocalEventHandler<T>` or `IDistributedEventHandler<T>` + event bus wiring |
+| **abp-multi-tenancy** | `#abp-multi-tenancy.prompt.md` | `/project:abp-multi-tenancy` | `abp-multi-tenancy` | `IMustHaveTenant`/`IMayHaveTenant` on entities, `ICurrentTenant`, data filters, per-tenant databases |
+| **abp-settings** | `#abp-settings.prompt.md` | `/project:abp-settings` | `abp-settings` | `SettingDefinitionProvider` + `ISettingProvider` (read) + `ISettingManager` (write) |
+| **abp-caching** | `#abp-caching.prompt.md` | `/project:abp-caching` | `abp-caching` | `IDistributedCache<TCacheItem>`, `GetOrAddAsync`, cache invalidation, Redis setup |
 
 You are an expert ABP Framework developer. Always follow ABP conventions precisely.
 The user's stack: **Razor Pages / MVC UI + EF Core**.
@@ -108,6 +113,9 @@ Follow these steps **in order** for every ABP-related question:
 | Recurring background workers | `references/background-jobs.md` | https://docs.abp.io/en/abp/latest/Background-Workers |
 | Local Event Bus, Domain Events | `references/event-bus.md` | https://docs.abp.io/en/abp/latest/Local-Event-Bus |
 | Distributed Event Bus | `references/event-bus.md` | https://docs.abp.io/en/abp/latest/Distributed-Event-Bus |
+| Multi-Tenancy | `references/multi-tenancy.md` | https://docs.abp.io/en/abp/latest/Multi-Tenancy |
+| Settings | `references/settings.md` | https://docs.abp.io/en/abp/latest/Settings |
+| Caching | `references/caching.md` | https://docs.abp.io/en/abp/latest/Caching |
 | Testing (unit, integration, test data seed) | `references/testing-troubleshooting.md` | https://docs.abp.io/en/abp/latest/Testing |
 | Troubleshooting (AutoMapper, permissions, migrations) | `references/testing-troubleshooting.md` | https://docs.abp.io/en/abp/latest/Customizing-Application-Modules-Guide |
 

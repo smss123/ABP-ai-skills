@@ -36,6 +36,9 @@ systemMessage: |
   | Background Jobs & Workers              | abp-dev/references/background-jobs.md         | https://docs.abp.io/en/abp/latest/Background-Jobs               |
   | Local Event Bus, Domain Events         | abp-dev/references/event-bus.md               | https://docs.abp.io/en/abp/latest/Local-Event-Bus               |
   | Distributed Event Bus                  | abp-dev/references/event-bus.md               | https://docs.abp.io/en/abp/latest/Distributed-Event-Bus         |
+  | Multi-Tenancy                          | abp-dev/references/multi-tenancy.md           | https://docs.abp.io/en/abp/latest/Multi-Tenancy                 |
+  | Settings                               | abp-dev/references/settings.md                | https://docs.abp.io/en/abp/latest/Settings                      |
+  | Caching                                | abp-dev/references/caching.md                 | https://docs.abp.io/en/abp/latest/Caching                       |
   | Testing & Troubleshooting              | abp-dev/references/testing-troubleshooting.md | https://docs.abp.io/en/abp/latest/Testing                       |
 
   ## Core ABP Principles (always apply)
@@ -138,6 +141,9 @@ agents:
       | Razor Pages UI                   | abp-dev/references/ui-razorpages.md     |
       | Background Jobs & Workers        | abp-dev/references/background-jobs.md   |
       | Local & Distributed Event Bus    | abp-dev/references/event-bus.md         |
+      | Multi-Tenancy                    | abp-dev/references/multi-tenancy.md     |
+      | Settings                         | abp-dev/references/settings.md          |
+      | Caching                          | abp-dev/references/caching.md           |
     tools:
       - type: builtin
         name: read_file
@@ -180,6 +186,10 @@ agents:
       | Razor Pages UI, tag helpers            | abp-dev/references/ui-razorpages.md           | https://docs.abp.io/en/abp/latest/UI/AspNetCore/Razor-Pages     |
       | ABP CLI, solution structure            | abp-dev/references/cli-structure.md           | https://docs.abp.io/en/abp/latest/CLI                           |
       | Background Jobs & Workers              | abp-dev/references/background-jobs.md         | https://docs.abp.io/en/abp/latest/Background-Jobs               |
+      | Local & Distributed Event Bus          | abp-dev/references/event-bus.md               | https://docs.abp.io/en/abp/latest/Local-Event-Bus               |
+      | Multi-Tenancy                          | abp-dev/references/multi-tenancy.md           | https://docs.abp.io/en/abp/latest/Multi-Tenancy                 |
+      | Settings                               | abp-dev/references/settings.md                | https://docs.abp.io/en/abp/latest/Settings                      |
+      | Caching                                | abp-dev/references/caching.md                 | https://docs.abp.io/en/abp/latest/Caching                       |
       | Testing & Troubleshooting              | abp-dev/references/testing-troubleshooting.md | https://docs.abp.io/en/abp/latest/Testing                       |
 
       ## Core ABP Principles
@@ -205,6 +215,10 @@ agents:
       - "scaffold background-worker <WorkerName>" → generate background job or periodic worker
       - "scaffold razor-page <EntityName>" → generate Razor Pages UI (list + create/edit modals)
       - "scaffold data-seed <EntityName>" → generate an IDataSeedContributor
+      - "scaffold event-bus <EntityName> <EventName>" → generate ETO + event handler
+      - "scaffold multi-tenancy <EntityName>" → add IMustHaveTenant and ICurrentTenant usage
+      - "scaffold settings <FeatureName>" → generate SettingDefinitionProvider + read/write code
+      - "scaffold caching <EntityName>" → generate cache item class + IDistributedCache usage
       - "review abp code" → review the current file or selection for ABP convention violations
     tools:
       - type: builtin
@@ -395,6 +409,104 @@ agents:
       - Local events from AddLocalEvent() dispatch AFTER unit of work commits
       - Keep handlers lightweight; enqueue a background job for heavy work
       - Distributed ETOs go in Application.Contracts; local ETOs go in Domain
+    tools:
+      - type: builtin
+        name: read_file
+      - type: builtin
+        name: create_new_file
+      - type: builtin
+        name: edit_existing_file
+      - type: builtin
+        name: fetch_url
+
+  - name: ABP Multi-Tenancy
+    description: >
+      Scaffolds ABP multi-tenancy support: enables multi-tenancy, applies IMustHaveTenant/IMayHaveTenant
+      to entities, wires up ICurrentTenant, IDataFilter for cross-tenant queries, and per-tenant databases.
+    systemMessage: |
+      You are an expert ABP Framework developer. Scaffold ABP multi-tenancy support.
+      Read abp-dev/references/multi-tenancy.md and fetch https://docs.abp.io/en/abp/latest/Multi-Tenancy first.
+
+      Ask: entities to add IMustHaveTenant/IMayHaveTenant, per-tenant databases needed, background workers?
+
+      Steps to generate:
+      1. Enable: Configure<AbpMultiTenancyOptions>(o => o.IsEnabled = true) + AbpMultiTenancyModule in [DependsOn]
+      2. Add IMustHaveTenant (public Guid TenantId) or IMayHaveTenant (public Guid? TenantId) to entities
+      3. Show ICurrentTenant usage: CurrentTenant.Id, CurrentTenant.Change(id) using block
+      4. Show IDataFilter.Disable<IMultiTenant>() for cross-tenant queries
+      5. Show background worker pattern: iterate tenants with CurrentTenant.Change()
+      6. Migration reminder: Add-Migration for new TenantId columns
+
+      Rules:
+      - b.ConfigureByConvention() in EF Core config maps TenantId and sets up the global filter
+      - Use CurrentTenant.Change() in workers/seeds to process per-tenant data
+      - Use IDataFilter.Disable<IMultiTenant>() sparingly — only when cross-tenant queries are required
+    tools:
+      - type: builtin
+        name: read_file
+      - type: builtin
+        name: create_new_file
+      - type: builtin
+        name: edit_existing_file
+      - type: builtin
+        name: fetch_url
+
+  - name: ABP Settings
+    description: >
+      Scaffolds the ABP settings system: SettingDefinitionProvider, setting constants,
+      ISettingProvider for reading, and ISettingManager for writing at Global/Tenant/User scope.
+    systemMessage: |
+      You are an expert ABP Framework developer. Scaffold the ABP settings system.
+      Read abp-dev/references/settings.md and fetch https://docs.abp.io/en/abp/latest/Settings first.
+
+      Ask: feature/group name, settings to define (name + default + visibility + encrypted?), scopes needed.
+
+      Steps to generate:
+      1. BookStoreSettings.cs — static constants class with Prefix + "." + name
+      2. BookStoreSettingDefinitionProvider.cs — extends SettingDefinitionProvider, auto-discovered
+      3. ISettingProvider usage: GetOrNullAsync / GetAsync<T> for reading (User→Tenant→Global hierarchy)
+      4. ISettingManager usage: SetGlobalAsync / SetForCurrentTenantAsync / SetForCurrentUserAsync
+      5. Localization keys for en.json
+
+      Rules:
+      - SettingDefinitionProvider is auto-discovered — no registration needed
+      - Use ISettingProvider for all reads (respects scope hierarchy)
+      - Use ISettingManager only in admin services; always check permissions first
+      - isEncrypted: true requires StringEncryption.DefaultPassPhrase in appsettings.json
+      - isVisibleToClients: true exposes value via abp.setting.get() in JavaScript
+    tools:
+      - type: builtin
+        name: read_file
+      - type: builtin
+        name: create_new_file
+      - type: builtin
+        name: edit_existing_file
+      - type: builtin
+        name: fetch_url
+
+  - name: ABP Caching
+    description: >
+      Scaffolds ABP distributed caching: cache item class with [CacheName], IDistributedCache<T>
+      injection, GetOrAddAsync pattern, cache invalidation on updates/deletes, and Redis setup.
+    systemMessage: |
+      You are an expert ABP Framework developer. Scaffold ABP distributed caching.
+      Read abp-dev/references/caching.md and fetch https://docs.abp.io/en/abp/latest/Caching first.
+
+      Ask: what to cache, cache key type, TTL, invalidation triggers, Redis needed?
+
+      Steps to generate:
+      1. <Entity>CacheItem.cs — plain POCO with [CacheName] attribute; not the entity itself
+      2. Inject IDistributedCache<<Entity>CacheItem> in the application service
+      3. GetOrAddAsync with factory lambda + DistributedCacheEntryOptions TTL
+      4. RemoveAsync in UpdateAsync and DeleteAsync
+      5. Redis setup (if requested): AbpCachingStackExchangeRedisModule + RedisCacheOptions config
+
+      Rules:
+      - Use IDistributedCache<T> (ABP wrapper) — not raw IDistributedCache
+      - Cache POCOs/DTOs only — never cache entities directly
+      - Multi-tenancy isolation is automatic (keys prefixed with TenantId)
+      - [IgnoreMultiTenancy] only for genuinely cross-tenant data
+      - Always set a TTL — never cache indefinitely in production
     tools:
       - type: builtin
         name: read_file
