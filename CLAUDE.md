@@ -22,7 +22,7 @@ This repository contains curated ABP Framework skills. When working on any ABP p
 | EF Core DbContext, migrations | `abp-dev/references/efcore.md` | https://docs.abp.io/en/abp/latest/Entity-Framework-Core |
 | Data seeding | `abp-dev/references/efcore.md` | https://docs.abp.io/en/abp/latest/Data-Seeding |
 | Permissions, Authorization | `abp-dev/references/authorization.md` | https://docs.abp.io/en/abp/latest/Authorization |
-| Auto API Controllers | `abp-dev/references/api.md` | https://docs.abp.io/en/abp/latest/API/Auto-API-Controllers |
+| Auto API Controllers, API Versioning, Integration Services, Dynamic C# Proxies | `abp-dev/references/api.md` | https://docs.abp.io/en/abp/latest/API/Auto-API-Controllers |
 | Razor Pages UI, tag helpers | `abp-dev/references/ui-razorpages.md` | https://docs.abp.io/en/abp/latest/UI/AspNetCore/Razor-Pages |
 | ABP CLI, solution structure | `abp-dev/references/cli-structure.md` | https://docs.abp.io/en/abp/latest/CLI |
 | Background Jobs & Workers | `abp-dev/references/background-jobs.md` | https://docs.abp.io/en/abp/latest/Background-Jobs |
@@ -45,9 +45,17 @@ This repository contains curated ABP Framework skills. When working on any ABP p
 | String Encryption, IStringEncryptionService, AbpStringEncryptionOptions | `abp-dev/references/string-encryption.md` | https://abp.io/docs/latest/framework/infrastructure/string-encryption |
 | Text Templating, Scriban, Razor, ITemplateRenderer, email templates | `abp-dev/references/text-templating.md` | https://abp.io/docs/latest/framework/infrastructure/text-templating/scriban |
 | Timing, IClock, DateTimeKind, timezone, AbpClockOptions | `abp-dev/references/timing.md` | https://abp.io/docs/latest/framework/infrastructure/timing |
+| Correlation ID, ICorrelationIdProvider, AbpCorrelationIdOptions | `abp-dev/references/correlation-id.md` | https://abp.io/docs/latest/framework/infrastructure/correlation-id |
+| React Native Mobile UI, Expo, Environment.ts, OpenIddict mobile | `abp-dev/references/react-native.md` | https://abp.io/docs/latest/framework/ui/react-native |
+| .NET MAUI Mobile UI, OIDC, adb reverse, C# proxies | `abp-dev/references/maui.md` | https://abp.io/docs/latest/framework/ui/maui |
 | SignalR Real-Time Communication | `abp-dev/references/signalr.md` | https://abp.io/docs/latest/framework/real-time/signalr |
 | UI Theming, Layout System, Theme Customization | `abp-dev/references/theming.md` | https://abp.io/docs/latest/ui-themes |
 | Deployment, SSL, OpenIddict, Production Config | `abp-dev/references/deployment.md` | https://abp.io/docs/latest/deployment |
+| Migrating IdentityServer4 → OpenIddict (ABP v6+) | `abp-dev/references/migration-identityserver-openiddict.md` | https://abp.io/docs/latest/release-info/migration-guides/openiddict-step-by-step |
+| CMS Kit Module, blogs, pages, comments, reactions, tags | `abp-dev/references/cms-kit.md` | https://abp.io/docs/latest/modules/cms-kit |
+| Features System, IFeatureChecker, Feature Management, IFeatureManager | `abp-dev/references/features.md` | https://abp.io/docs/latest/modules/feature-management |
+| OpenIddict Module, OAuth endpoints, token lifetimes, claims | `abp-dev/references/openiddict.md` | https://abp.io/docs/latest/modules/openiddict |
+| Module Database Tables, prefixes, connection string names | `abp-dev/references/database-tables.md` | https://abp.io/docs/latest/modules/database-tables |
 
 For questions covering multiple areas (e.g. "build a full CRUD feature"), read all relevant reference files.
 

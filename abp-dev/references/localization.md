@@ -176,6 +176,34 @@ ABP falls back to the base resource's strings when a key is missing from the chi
 
 ---
 
+## Client-Side API Endpoint
+
+ABP exposes a standard HTTP endpoint so JavaScript / SPA / mobile clients can fetch localization data at runtime.
+
+### JSON endpoint (all platforms)
+
+```
+GET /api/abp/application-localization?cultureName=en
+GET /api/abp/application-localization?cultureName=ar&onlyDynamics=false
+```
+
+| Query param | Required | Default | Purpose |
+|---|---|---|---|
+| `cultureName` | Yes | — | Culture code, e.g. `en`, `en-US`, `ar` |
+| `onlyDynamics` | No | `false` | Return only dynamically defined resources (reduces payload when client bundles static ones) |
+
+### Script endpoint (MVC / Razor Pages only)
+
+```
+GET /Abp/ApplicationLocalizationScript?cultureName=en
+```
+
+Returns a JavaScript file that populates `abp.localization.*` automatically. ABP templates wire this up in the layout — no manual call needed.
+
+> **Angular / React / Blazor**: use the framework's native ABP localization service instead of calling these endpoints directly — the ABP startup templates configure them automatically.
+
+---
+
 ## Key Rules
 
 - **DO** define one localization resource per module in `Domain.Shared`

@@ -472,3 +472,45 @@ Configure<AbpAuditingOptions>(options =>
     options.EntityHistorySelectors.AddAllEntities();  // enable entity change history
 });
 ```
+
+### Audit Log Module — Storage & Query Layer
+
+The **Audit Logging Module** (`Volo.Abp.AuditLogging.*`) implements `IAuditingStore` to persist audit data to a database.
+
+**Database tables (EF Core):**
+
+| Table | Contents |
+|---|---|
+| `AbpAuditLogs` | Root record per HTTP request / app service call |
+| `AbpAuditLogActions` | One row per method invoked within the request |
+| `AbpEntityChanges` | Entity-level create/update/delete events |
+| `AbpEntityPropertyChanges` | Old/new values per changed property |
+
+MongoDB stores everything in a single `AbpAuditLogs` collection.
+
+**Connection string:** `AbpAuditLogging` — falls back to `Default`.
+
+**Table prefix/schema:** configure via static properties on `AbpAuditLoggingDbProperties`.
+
+**Programmatic query (`IAuditLogRepository`):**
+
+```csharp
+public class MyReportService : ITransientDependency
+{
+    private readonly IAuditLogRepository _auditLogRepository;
+
+    public MyReportService(IAuditLogRepository auditLogRepository)
+    {
+        _auditLogRepository = auditLogRepository;
+    }
+
+    public async Task<List<AuditLog>> GetRecentLogsAsync()
+    {
+        return await _auditLogRepository.GetListAsync(
+            startTime: DateTime.UtcNow.AddDays(-7),
+            httpStatusCode: 200,
+            maxResultCount: 100
+        );
+    }
+}
+```

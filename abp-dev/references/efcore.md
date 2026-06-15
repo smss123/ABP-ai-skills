@@ -107,6 +107,170 @@ public class BookStoreEntityFrameworkCoreModule : AbpModule
 
 ---
 
+## Switching DBMS
+
+ABP supports multiple EF Core providers. Use `-dbms` when creating a project, or switch manually.
+
+### Supported providers
+
+| DBMS | `-dbms` flag | ABP module | `Use*()` method |
+|---|---|---|---|
+| SQL Server (default) | `SqlServer` | `AbpEntityFrameworkCoreSqlServerModule` | `UseSqlServer()` |
+| PostgreSQL | `PostgreSQL` | `AbpEntityFrameworkCorePostgreSqlModule` | `UseNpgsql()` |
+| MySQL | `MySQL` | `AbpEntityFrameworkCoreMySQLModule` | `UseMySql(…)` |
+| SQLite | `SQLite` | `AbpEntityFrameworkCoreSqliteModule` | `UseSqlite()` |
+| Oracle | `Oracle` | `AbpEntityFrameworkCoreOracleModule` | `UseOracle()` |
+| Oracle (Devart) | `Oracle-Devart` | `AbpEntityFrameworkCoreOracleDevartModule` | — |
+
+### Steps to switch provider
+
+1. Remove the old provider package and `[DependsOn]` entry (e.g. `AbpEntityFrameworkCoreSqlServerModule`).
+2. Add the new provider package via `abp add-package` (or NuGet).
+3. Add the new module to `[DependsOn]`.
+4. Update `Configure<AbpDbContextOptions>` to use the new provider method (see below).
+5. **Delete the `Migrations/` folder** — EF Core migrations are provider-specific.
+6. Run `Add-Migration "Initial"` to regenerate migrations for the new DBMS.
+
+### DbContext options — conditional connection pattern
+
+Use this pattern so ABP can share an existing connection (for transaction propagation) and fall back to a new one when none exists:
+
+```csharp
+Configure<AbpDbContextOptions>(options =>
+{
+    options.Configure(ctx =>
+    {
+        if (ctx.ExistingConnection != null)
+        {
+            // reuse an open connection (e.g. within a UoW transaction)
+            ctx.DbContextOptions.UseMySql(ctx.ExistingConnection,
+                ServerVersion.AutoDetect(ctx.ExistingConnection));
+        }
+        else
+        {
+            ctx.DbContextOptions.UseMySql(ctx.ConnectionString,
+                ServerVersion.AutoDetect(ctx.ConnectionString));
+        }
+    });
+});
+```
+
+Replace `UseMySql` with `UseNpgsql`, `UseSqlite`, etc. as appropriate.
+
+### Provider-specific details
+
+#### MySQL
+
+**Packages (choose one):**
+
+| Option | Package | Module | Method |
+|---|---|---|---|
+| ABP MySQL | `Volo.Abp.EntityFrameworkCore.MySQL` | `AbpEntityFrameworkCoreMySQLModule` | `UseMySQL()` |
+| Pomelo (recommended) | `Volo.Abp.EntityFrameworkCore.MySQL.Pomelo` | `AbpEntityFrameworkCoreMySQLPomeloModule` | `UseMySql(…, ServerVersion)` |
+
+**Pomelo configuration** (requires explicit `ServerVersion`):
+
+```csharp
+options.UseMySql(
+    connectionString,
+    ServerVersion.AutoDetect(connectionString)
+    // or pin: ServerVersion.Parse("8.4.6")
+);
+```
+
+**Connection string:**
+```json
+"Default": "Server=localhost;Port=3306;Database=MyDb;Uid=root;Pwd=password;"
+```
+
+**Field length adjustment** — some ABP module columns exceed MySQL defaults. Configure each affected module:
+
+```csharp
+builder.ConfigureIdentityServer(options =>
+{
+    options.DatabaseProvider = EfCoreDatabaseProvider.MySql;
+});
+```
+
+---
+
+#### PostgreSQL
+
+**Package:** `Volo.Abp.EntityFrameworkCore.PostgreSql`
+**Module:** `AbpEntityFrameworkCorePostgreSqlModule`
+**Method:** `UseNpgsql()`
+
+**Critical — legacy timestamp behavior** (Npgsql 6.0+ breaking change): add this in both `PreConfigureServices` and `DbContextFactory`:
+
+```csharp
+AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
+```
+
+Without this switch, `DateTime` values are rejected unless explicitly typed as UTC.
+
+**Connection string:**
+```
+Server=localhost;Port=5432;Database=MyDb;User Id=postgres;Password=xxx
+```
+
+---
+
+#### Oracle (Official)
+
+**Package:** `Volo.Abp.EntityFrameworkCore.Oracle`
+**Module:** `AbpEntityFrameworkCoreOracleModule`
+**Method:** `UseOracle()`
+
+**Oracle 23ai / pre-23ai compatibility:**
+
+```csharp
+Configure<AbpDbContextOptions>(options =>
+{
+    options.UseOracle(x =>
+        x.UseOracleSQLCompatibility(OracleSQLCompatibility.DatabaseVersion19));
+});
+```
+
+**Prerequisite:** Oracle v12.2+ (128-byte identifier support). Earlier versions limited identifiers to 30 bytes.
+
+**Known issues:**
+
+| Error | Cause | Fix |
+|---|---|---|
+| `ORA-12899` (string too large) | Oracle limits `NVARCHAR2(2000)` | Add migration to convert column → `long` → `clob` with `HasMaxLength(4000)` |
+| `ORA-00904` ("FALSE" invalid identifier) | Pre-23ai boolean handling | Set `OracleSQLCompatibility.DatabaseVersion19` |
+
+---
+
+#### Oracle (Devart)
+
+**Package:** `Volo.Abp.EntityFrameworkCore.Oracle.Devart`
+**Module:** `AbpEntityFrameworkCoreOracleDevartModule`
+**Method:** `UseOracle()`
+
+Same connection string and migration workflow as the official Oracle provider. Devart is a paid third-party library — use the official Oracle provider unless you have a specific Devart requirement.
+
+**ORA-12899 fix** requires a two-step migration:
+1. Run `Add-Migration Oracle_Long_Conversion` — converts affected columns to `long`
+2. Run `Add-Migration Oracle_Clob_Conversion` — converts to `clob` with `HasMaxLength(4000)`
+
+---
+
+#### SQLite
+
+**Package:** `Volo.Abp.EntityFrameworkCore.Sqlite`
+**Module:** `AbpEntityFrameworkCoreSqliteModule`
+**Method:** `UseSqlite()`
+
+**Connection string (file-based):**
+```json
+"Default": "Filename=./MyApp.sqlite"
+```
+
+SQLite is suitable for development and testing only — it does not support all EF Core migration operations (e.g. column type changes require table recreate).
+
+---
+
 ## Custom Repository Implementation
 
 ```csharp

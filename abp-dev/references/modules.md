@@ -291,3 +291,40 @@ var app = builder.Build();
 await app.InitializeApplicationAsync();
 await app.RunAsync();
 ```
+
+---
+
+## Virtual File Explorer (Dev Tool)
+
+The Virtual File Explorer module provides a browser UI to inspect all files registered in ABP's Virtual File System — useful for verifying embedded resources during development.
+
+### Install
+
+```bash
+abp add-module Volo.VirtualFileExplorer
+# or manually:
+dotnet add package Volo.Abp.VirtualFileExplorer.Web
+```
+
+Add to Web module `[DependsOn]`:
+
+```csharp
+[DependsOn(typeof(AbpVirtualFileExplorerWebModule))]
+```
+
+Install NPM assets: `abp install-libs`.
+
+### Access
+
+Navigate to `/VirtualFileExplorer` — shows a tree of all virtual files currently registered.
+
+### Disable in production
+
+```csharp
+PreConfigure<AbpVirtualFileExplorerOptions>(options =>
+{
+    options.IsEnabled = false;
+});
+```
+
+> **Not included in default startup templates** — must be installed manually. Disable in production environments.
