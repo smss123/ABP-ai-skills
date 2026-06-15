@@ -13,6 +13,7 @@ A collection of curated AI agent prompts, slash commands, and workflow definitio
 - [What's included](#whats-included)
 - [Quick start](#quick-start)
 - [⭐ Super Agent — scaffold a full feature in one prompt](#-super-agent--scaffold-a-full-feature-in-one-prompt)
+- [🔧 Feature Scaffold — wire up an existing entity in one pass](#-feature-scaffold--wire-up-an-existing-entity-in-one-pass)
 - [All agents at a glance](#all-agents-at-a-glance)
 - [Platform setup](#platform-setup)
   - [GitHub Copilot](#github-copilot)
@@ -32,8 +33,8 @@ A collection of curated AI agent prompts, slash commands, and workflow definitio
 | What | Where | Purpose |
 |---|---|---|
 | **Super agent** | platform-specific (see below) | Orchestrates all sub-agents from a plain-language scenario |
-| **14 scaffold agents** | `.github/prompts/`, `.claude/commands/`, `.windsurf/workflows/`, `.continue/config.yaml` | One agent per ABP layer / concern (plus super agent = 15 total per platform) |
-| **14 reference files** | `abp-dev/references/` | Curated, correct ABP patterns for every topic |
+| **15 scaffold agents** | `.github/prompts/`, `.claude/commands/`, `.windsurf/workflows/`, `.continue/config.yaml` | One agent per ABP layer / concern (plus super agent = 16 total per platform) |
+| **17 reference files** | `abp-dev/references/` | Curated, correct ABP patterns for every topic |
 | **Platform instructions** | `.github/copilot-instructions.md`, `CLAUDE.md`, `.windsurfrules`, `.continue/config.yaml` | Injects ABP expertise into the AI assistant |
 
 ---
@@ -89,11 +90,39 @@ The Super Agent will scaffold ~15 files across all 7 phases without any further 
 
 ---
 
+## 🔧 Feature Scaffold — wire up an existing entity in one pass
+
+The `abp-feature-scaffold` agent is the fastest way to add all application-layer best practices to an entity that already exists in the domain layer. It reads the entity file first, extracts real properties and constants, then generates every artifact in the correct order:
+
+| Step | Artifact | Layer |
+|---|---|---|
+| 1 | Read entity → extract properties, base class, Consts, business methods | — |
+| 2 | `BookStoreDomainErrorCodes` typed error codes (`<Module>:000N`) | Domain.Shared |
+| 3 | `en.json` localization keys — menu, permissions, error messages | Domain.Shared |
+| 4 | `BookStorePermissions` + `PermissionDefinitionProvider` | Application.Contracts |
+| 5 | `<Entity>Dto`, `CreateUpdate<Entity>Dto`, `Get<Entity>sInput` | Application.Contracts |
+| 6 | `CreateUpdate<Entity>DtoValidator` (FluentValidation with async uniqueness) | Application |
+| 7 | `I<Entity>AppService` interface | Application.Contracts |
+| 8 | `<Entity>AppService` — `[Authorize]`, `EntityNotFoundException` auto-throw, `BusinessException` from Manager | Application |
+| 9 | AutoMapper profile entries + optional Razor Pages UI prompt | Application / Web |
+
+**Key enforcement rules baked in:**
+
+- `IRepository.GetAsync` auto-throws `EntityNotFoundException` → HTTP 404 — no manual null-check
+- `<Entity>Manager.CreateAsync` throws `BusinessException` with error code on duplicate — no re-check in app service
+- `[StringLength]` always references `<Entity>Consts.MaxXxxLength` — never magic numbers
+- Business methods only (`SetName()`) — never direct property assignment
+
+Use this when you've already run `abp-entity` and now need to wire up everything above the domain layer.
+
+---
+
 ## All agents at a glance
 
 | Agent | Copilot | Claude Code | Windsurf | What it generates |
 |---|---|---|---|---|
 | ⭐ **abp-super** | `#abp-super.prompt.md` | `/project:abp-super` | `abp-super` | **Full feature end-to-end** — orchestrates all sub-agents in phase order |
+| 🔧 **abp-feature-scaffold** | `#abp-feature-scaffold.prompt.md` | `/project:abp-feature-scaffold` | `abp-feature-scaffold` | **Application layer for an existing entity** — error codes · localization · FluentValidation · permissions · app service · AutoMapper · optional Razor Pages UI (domain layer untouched) |
 | **abp-crud** | `#abp-crud.prompt.md` | `/project:abp-crud` | `abp-crud` | All 12 CRUD files: entity · domain service · repo · DTOs · app service · EF Core · optional Razor Pages |
 | **abp-entity** | `#abp-entity.prompt.md` | `/project:abp-entity` | `abp-entity` | Domain entity class + repository interface + domain service (domain layer only) |
 | **abp-domain-service** | `#abp-domain-service.prompt.md` | `/project:abp-domain-service` | `abp-domain-service` | `<Entity>Manager` — uniqueness enforcement, `GuidGenerator.Create()` |
@@ -200,7 +229,10 @@ ABP-ai-skills/
 │       ├── settings.md                 ← SettingDefinitionProvider, ISettingProvider, ISettingManager
 │       ├── caching.md                  ← IDistributedCache<T>, GetOrAddAsync, Redis setup
 │       ├── modules.md                  ← Module system, DependsOn, ConfigureServices
-│       └── testing-troubleshooting.md  ← Unit/integration testing, common pitfalls
+│       ├── testing-troubleshooting.md  ← Unit/integration testing, common pitfalls
+│       ├── validation.md               ← Data annotations, FluentValidation, IValidatableObject
+│       ├── localization.md             ← en.json structure, L[] helper, IStringLocalizer
+│       └── exception-handling.md       ← BusinessException, error codes, EntityNotFoundException
 │
 ├── .github/
 │   ├── copilot-instructions.md         ← Copilot global instructions (auto-loaded)
@@ -219,7 +251,8 @@ ABP-ai-skills/
 │       ├── abp-event-bus.prompt.md
 │       ├── abp-multi-tenancy.prompt.md
 │       ├── abp-settings.prompt.md
-│       └── abp-caching.prompt.md
+│       ├── abp-caching.prompt.md
+│       └── abp-feature-scaffold.prompt.md
 │
 ├── .claude/
 │   └── commands/
@@ -237,7 +270,8 @@ ABP-ai-skills/
 │       ├── abp-event-bus.md
 │       ├── abp-multi-tenancy.md
 │       ├── abp-settings.md
-│       └── abp-caching.md
+│       ├── abp-caching.md
+│       └── abp-feature-scaffold.md
 │
 ├── .windsurf/
 │   └── workflows/
@@ -255,10 +289,11 @@ ABP-ai-skills/
 │       ├── abp-event-bus.md
 │       ├── abp-multi-tenancy.md
 │       ├── abp-settings.md
-│       └── abp-caching.md
+│       ├── abp-caching.md
+│       └── abp-feature-scaffold.md
 │
 ├── .continue/
-│   └── config.yaml                     ← System message + docs index + 13 agents
+│   └── config.yaml                     ← System message + docs index + all agents
 │
 ├── .windsurfrules                      ← Windsurf global rules (auto-loaded)
 ├── CLAUDE.md                           ← Claude Code global instructions (auto-loaded)
@@ -288,6 +323,9 @@ Every agent reads the relevant reference file(s) before generating any code, and
 | `references/caching.md` | `IDistributedCache<T>`, `[CacheName]`, `GetOrAddAsync`, cache invalidation, multi-tenancy isolation, Redis setup | [Caching](https://docs.abp.io/en/abp/latest/Caching) |
 | `references/modules.md` | Module system, `DependsOn`, `ConfigureServices`, `OnApplicationInitialization` | [Module Development](https://docs.abp.io/en/abp/latest/Module-Development-Basics) |
 | `references/testing-troubleshooting.md` | Unit tests, integration tests, common AutoMapper/permission/migration pitfalls | [Testing](https://docs.abp.io/en/abp/latest/Testing) |
+| `references/validation.md` | Data annotations, `FluentValidation`, `AbstractValidator<T>`, `IValidatableObject`, async uniqueness checks | [Validation](https://docs.abp.io/en/abp/latest/Validation) |
+| `references/localization.md` | `en.json` structure, `L[]` helper, `IStringLocalizer`, culture files, localization resource setup | [Localization](https://docs.abp.io/en/abp/latest/Localization) |
+| `references/exception-handling.md` | `BusinessException`, typed error codes (`<Module>:000N`), `EntityNotFoundException`, HTTP status mapping | [Exception Handling](https://docs.abp.io/en/abp/latest/Exception-Handling) |
 
 ---
 
