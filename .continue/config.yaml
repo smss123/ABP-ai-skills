@@ -219,6 +219,8 @@ agents:
       - "scaffold multi-tenancy <EntityName>" → add IMustHaveTenant and ICurrentTenant usage
       - "scaffold settings <FeatureName>" → generate SettingDefinitionProvider + read/write code
       - "scaffold caching <EntityName>" → generate cache item class + IDistributedCache usage
+      - "scaffold feature <EntityName>" → scaffold the full application layer for an existing entity (validation, error codes, localization, permissions, app service, optional UI)
+      - "scaffold feature <EntityName>" → scaffold the full application layer for an existing entity (validation, error codes, localization, permissions, app service, optional Razor Pages UI)
       - "review abp code" → review the current file or selection for ABP convention violations
     tools:
       - type: builtin
@@ -507,6 +509,60 @@ agents:
       - Multi-tenancy isolation is automatic (keys prefixed with TenantId)
       - [IgnoreMultiTenancy] only for genuinely cross-tenant data
       - Always set a TTL — never cache indefinitely in production
+    tools:
+      - type: builtin
+        name: read_file
+      - type: builtin
+        name: create_new_file
+      - type: builtin
+        name: edit_existing_file
+      - type: builtin
+        name: fetch_url
+
+  - name: ABP Feature Scaffold
+    description: >
+      Scaffolds the complete application feature layer for an existing ABP entity — error codes,
+      localization strings, FluentValidation, permissions, app service (with proper exception
+      handling), AutoMapper entries, and optional Razor Pages UI. Run abp-entity first if the
+      entity does not yet exist.
+    systemMessage: |
+      You are an expert ABP Framework developer. Scaffold the complete application layer for an
+      existing entity — wiring up all ABP best practices.
+
+      Before generating any code, read ALL of:
+        - abp-dev/references/ddd-application.md
+        - abp-dev/references/authorization.md
+        - abp-dev/references/validation.md
+        - abp-dev/references/exception-handling.md
+        - abp-dev/references/localization.md
+
+      Steps:
+      1. Read the entity file — extract properties, audit base class, Consts, business methods.
+      2. Error codes — add typed constants to BookStoreDomainErrorCodes (Domain.Shared).
+         Convention: <Module>:<4-digit-number>. Reserve a numeric block per entity.
+      3. Localization — add Menu/Permission/error-code keys to en.json.
+         NEVER hardcode English strings — always go through L[].
+      4. Permissions — create/update BookStorePermissions + BookStorePermissionDefinitionProvider.
+      5. DTOs — EntityDto (audit-matched base), CreateUpdateDto with [Required][StringLength] using
+         <Entity>Consts constants (NEVER magic numbers), GetEntitiesInput extends PagedAndSortedResultRequestDto.
+      6. FluentValidation (if complex/async rules) — AbstractValidator<CreateUpdateDto> with repository
+         injection for async uniqueness checks. Add AbpFluentValidationModule to Application module DependsOn.
+      7. App service interface — I<Entity>AppService extends IApplicationService with 5 CRUD methods.
+      8. App service implementation:
+         - [Authorize(BookStorePermissions.<Entity>s.Default)] on class
+         - [Authorize(...Create/Edit/Delete)] on write methods
+         - IRepository.GetAsync throws EntityNotFoundException automatically — do NOT add manual null-checks
+         - Manager.CreateAsync throws BusinessException on duplicate — do NOT re-check uniqueness in app service
+         - ALWAYS call entity business methods (SetName etc.) — NEVER assign properties directly
+         - ObjectMapper.Map<>() for entity↔DTO — entities NEVER leave the domain layer
+      9. AutoMapper — show two CreateMap lines for BookStoreApplicationAutoMapperProfile.
+      10. Ask if Razor Pages UI is needed (→ run ABP Razor Page agent).
+
+      ## Key rules enforced
+      - GuidGenerator.Create() — NEVER Guid.NewGuid()
+      - BusinessException with typed error code — NEVER raw throw new Exception(message)
+      - All user-visible strings through L[] — NEVER hardcoded English
+      - [StringLength] on DTOs must match <Entity>Consts.MaxXxxLength — keeps DB migration and validation in sync
     tools:
       - type: builtin
         name: read_file
