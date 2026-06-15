@@ -34,7 +34,7 @@ A collection of curated AI agent prompts, slash commands, and workflow definitio
 |---|---|---|
 | **Super agent** | platform-specific (see below) | Orchestrates all sub-agents from a plain-language scenario |
 | **15 scaffold agents** | `.github/prompts/`, `.claude/commands/`, `.windsurf/workflows/`, `.continue/config.yaml` | One agent per ABP layer / concern (plus super agent = 16 total per platform) |
-| **17 reference files** | `abp-dev/references/` | Curated, correct ABP patterns for every topic |
+| **38 reference files** | `abp-dev/references/` | Curated, correct ABP patterns for every topic |
 | **Platform instructions** | `.github/copilot-instructions.md`, `CLAUDE.md`, `.windsurfrules`, `.continue/config.yaml` | Injects ABP expertise into the AI assistant |
 
 ---
@@ -216,23 +216,44 @@ ABP-ai-skills/
 ├── abp-dev/
 │   ├── SKILL.md                        ← Master skill definition (all platforms)
 │   └── references/
-│       ├── ddd-domain.md               ← Entities, AggregateRoot, Domain Services, Repositories
-│       ├── ddd-application.md          ← Application Services, DTOs, CRUD patterns
-│       ├── efcore.md                   ← EF Core DbContext, migrations, data seeding
-│       ├── authorization.md            ← Permissions, [Authorize], PermissionDefinitionProvider
-│       ├── api.md                      ← Auto API Controllers
-│       ├── ui-razorpages.md            ← Razor Pages, page models, tag helpers, JS API
-│       ├── cli-structure.md            ← ABP CLI, startup templates, solution structure
-│       ├── background-jobs.md          ← Background jobs and periodic workers
-│       ├── event-bus.md                ← Local domain events & Distributed Event Bus
-│       ├── multi-tenancy.md            ← IMustHaveTenant, ICurrentTenant, data isolation
-│       ├── settings.md                 ← SettingDefinitionProvider, ISettingProvider, ISettingManager
-│       ├── caching.md                  ← IDistributedCache<T>, GetOrAddAsync, Redis setup
-│       ├── modules.md                  ← Module system, DependsOn, ConfigureServices
-│       ├── testing-troubleshooting.md  ← Unit/integration testing, common pitfalls
-│       ├── validation.md               ← Data annotations, FluentValidation, IValidatableObject
-│       ├── localization.md             ← en.json structure, L[] helper, IStringLocalizer
-│       └── exception-handling.md       ← BusinessException, error codes, EntityNotFoundException
+│       ├── ddd-domain.md                          ← Entities, AggregateRoot, Domain Services, Repositories
+│       ├── ddd-application.md                     ← Application Services, DTOs, CRUD patterns
+│       ├── efcore.md                              ← EF Core DbContext, migrations, multi-DBMS switching
+│       ├── authorization.md                       ← Permissions, [Authorize], PermissionDefinitionProvider, Audit Logging
+│       ├── api.md                                 ← Auto API Controllers, Versioning, Integration Services, Static/Dynamic Proxies
+│       ├── ui-razorpages.md                       ← Razor Pages, page models, tag helpers, JS API
+│       ├── cli-structure.md                       ← ABP CLI, startup templates, solution structure
+│       ├── background-jobs.md                     ← Background jobs and periodic workers
+│       ├── event-bus.md                           ← Local domain events & Distributed Event Bus
+│       ├── multi-tenancy.md                       ← IMustHaveTenant, ICurrentTenant, data isolation
+│       ├── settings.md                            ← SettingDefinitionProvider, ISettingProvider, ISettingManager
+│       ├── caching.md                             ← IDistributedCache<T>, GetOrAddAsync, Entity Cache, Redis setup
+│       ├── modules.md                             ← Module system, DependsOn, ConfigureServices, Virtual File Explorer
+│       ├── testing-troubleshooting.md             ← Unit/integration testing, common pitfalls
+│       ├── localization.md                        ← en.json structure, L[] helper, IStringLocalizer, localization API
+│       ├── features.md                            ← IFeatureChecker, FeatureDefinitionProvider, IFeatureManager
+│       ├── concurrency-check.md                   ← IHasEntityVersion, optimistic concurrency
+│       ├── connection-strings.md                  ← Connection string config, multi-DB, per-tenant DBs
+│       ├── data-filtering.md                      ← IDataFilter, ISoftDelete, IMultiTenant, custom filters
+│       ├── deployment.md                          ← Production config, SSL, OpenIddict certificates
+│       ├── global-features.md                     ← GlobalFeatureManager, [RequiresGlobalFeature]
+│       ├── image-manipulation.md                  ← IImageCompressor, IImageResizer, ImageSharp/Magick/SkiaSharp
+│       ├── interceptors.md                        ← AbpInterceptor, OnRegistered, DynamicProxy
+│       ├── json.md                                ← IJsonSerializer, System.Text.Json vs Newtonsoft
+│       ├── object-extensions.md                   ← ObjectExtensionManager, Module Entity Extensions
+│       ├── options.md                             ← Options pattern, Configure<T>, PreConfigure
+│       ├── signalr.md                             ← SignalR real-time communication
+│       ├── string-encryption.md                   ← IStringEncryptionService, AbpStringEncryptionOptions
+│       ├── text-templating.md                     ← Scriban & Razor engines, ITemplateRenderer, email templates
+│       ├── theming.md                             ← UI Theming, layout system, theme customization
+│       ├── timing.md                              ← IClock, DateTimeKind, timezone, AbpClockOptions
+│       ├── correlation-id.md                      ← ICorrelationIdProvider, AbpCorrelationIdOptions, propagation
+│       ├── cms-kit.md                             ← CMS Kit module: blogs, pages, comments, reactions, tags
+│       ├── openiddict.md                          ← OpenIddict module: OAuth endpoints, token lifetimes, claims
+│       ├── database-tables.md                     ← Module DB table prefixes, connection string names
+│       ├── maui.md                                ← .NET MAUI mobile UI, OIDC, adb reverse
+│       ├── react-native.md                        ← React Native / Expo mobile UI
+│       └── migration-identityserver-openiddict.md ← IdentityServer4 → OpenIddict migration guide
 │
 ├── .github/
 │   ├── copilot-instructions.md         ← Copilot global instructions (auto-loaded)
@@ -307,25 +328,46 @@ ABP-ai-skills/
 
 Every agent reads the relevant reference file(s) before generating any code, and fetches the official ABP docs URL when the network is available.
 
-| Reference file | Topics covered | Official docs |
-|---|---|---|
-| `references/ddd-domain.md` | Entities, AggregateRoot, Value Objects, Domain Services, Repositories | [Entities](https://docs.abp.io/en/abp/latest/Entities) · [Domain Services](https://docs.abp.io/en/abp/latest/Domain-Services) · [Repositories](https://docs.abp.io/en/abp/latest/Repositories) |
-| `references/ddd-application.md` | Application Services, DTOs, CRUD patterns, ObjectMapper | [Application Services](https://docs.abp.io/en/abp/latest/Application-Services) |
-| `references/efcore.md` | DbContext, EF Core repositories, migrations, data seeding | [EF Core](https://docs.abp.io/en/abp/latest/Entity-Framework-Core) · [Data Seeding](https://docs.abp.io/en/abp/latest/Data-Seeding) |
-| `references/authorization.md` | Permission constants, PermissionDefinitionProvider, `[Authorize]` | [Authorization](https://docs.abp.io/en/abp/latest/Authorization) |
-| `references/api.md` | Auto API Controllers, HTTP API conventions | [Auto API Controllers](https://docs.abp.io/en/abp/latest/API/Auto-API-Controllers) |
-| `references/ui-razorpages.md` | Razor Pages, page models, tag helpers, JS API proxy | [Razor Pages UI](https://docs.abp.io/en/abp/latest/UI/AspNetCore/Razor-Pages) |
-| `references/cli-structure.md` | ABP CLI commands, startup templates, solution structure | [ABP CLI](https://docs.abp.io/en/abp/latest/CLI) |
-| `references/background-jobs.md` | Background jobs, periodic background workers | [Background Jobs](https://docs.abp.io/en/abp/latest/Background-Jobs) · [Background Workers](https://docs.abp.io/en/abp/latest/Background-Workers) |
-| `references/event-bus.md` | Local domain events (`AddLocalEvent`, `ILocalEventHandler<T>`), Distributed Event Bus (`IDistributedEventBus`, `IDistributedEventHandler<T>`), ETOs | [Local Event Bus](https://docs.abp.io/en/abp/latest/Local-Event-Bus) · [Distributed Event Bus](https://docs.abp.io/en/abp/latest/Distributed-Event-Bus) |
-| `references/multi-tenancy.md` | `IMustHaveTenant`, `IMayHaveTenant`, `ICurrentTenant`, tenant data isolation, `IDataFilter`, per-tenant databases | [Multi-Tenancy](https://docs.abp.io/en/abp/latest/Multi-Tenancy) |
-| `references/settings.md` | `SettingDefinitionProvider`, `ISettingProvider`, `ISettingManager`, setting scopes (Global/Tenant/User), encrypted settings | [Settings](https://docs.abp.io/en/abp/latest/Settings) |
-| `references/caching.md` | `IDistributedCache<T>`, `[CacheName]`, `GetOrAddAsync`, cache invalidation, multi-tenancy isolation, Redis setup | [Caching](https://docs.abp.io/en/abp/latest/Caching) |
-| `references/modules.md` | Module system, `DependsOn`, `ConfigureServices`, `OnApplicationInitialization` | [Module Development](https://docs.abp.io/en/abp/latest/Module-Development-Basics) |
-| `references/testing-troubleshooting.md` | Unit tests, integration tests, common AutoMapper/permission/migration pitfalls | [Testing](https://docs.abp.io/en/abp/latest/Testing) |
-| `references/validation.md` | Data annotations, `FluentValidation`, `AbstractValidator<T>`, `IValidatableObject`, async uniqueness checks | [Validation](https://docs.abp.io/en/abp/latest/Validation) |
-| `references/localization.md` | `en.json` structure, `L[]` helper, `IStringLocalizer`, culture files, localization resource setup | [Localization](https://docs.abp.io/en/abp/latest/Localization) |
-| `references/exception-handling.md` | `BusinessException`, typed error codes (`<Module>:000N`), `EntityNotFoundException`, HTTP status mapping | [Exception Handling](https://docs.abp.io/en/abp/latest/Exception-Handling) |
+| Reference file | Topics covered |
+|---|---|
+| `references/ddd-domain.md` | Entities, AggregateRoot, Value Objects, Domain Services, Repositories |
+| `references/ddd-application.md` | Application Services, DTOs, CRUD patterns, ObjectMapper |
+| `references/efcore.md` | DbContext, EF Core repositories, migrations, data seeding, multi-DBMS switching (MySQL/PostgreSQL/Oracle/SQLite) |
+| `references/authorization.md` | Permission constants, `PermissionDefinitionProvider`, `[Authorize]`, resource permissions, dynamic claims, audit log module |
+| `references/api.md` | Auto API Controllers, API versioning, integration services, static & dynamic C# client proxies, Swagger |
+| `references/ui-razorpages.md` | Razor Pages, page models, tag helpers, JS API proxy |
+| `references/cli-structure.md` | ABP CLI commands, startup templates, solution structure |
+| `references/background-jobs.md` | Background jobs, periodic background workers |
+| `references/event-bus.md` | Local domain events, pre-built entity events, Distributed Event Bus, ETOs |
+| `references/multi-tenancy.md` | `IMustHaveTenant`, `IMayHaveTenant`, `ICurrentTenant`, tenant data isolation, per-tenant databases |
+| `references/settings.md` | `SettingDefinitionProvider`, `ISettingProvider`, `ISettingManager`, setting scopes, encrypted settings |
+| `references/caching.md` | `IDistributedCache<T>`, `GetOrAddAsync`, Entity Cache, cache invalidation, Redis setup |
+| `references/modules.md` | Module system, `DependsOn`, `ConfigureServices`, `OnApplicationInitialization`, Virtual File Explorer |
+| `references/testing-troubleshooting.md` | Unit tests, integration tests, common pitfalls |
+| `references/localization.md` | `en.json` structure, `L[]` helper, `IStringLocalizer`, culture files, client-side localization API |
+| `references/features.md` | `FeatureDefinitionProvider`, `IFeatureChecker`, `[RequiresFeature]`, `IFeatureManager`, feature value providers |
+| `references/concurrency-check.md` | `IHasEntityVersion`, optimistic concurrency, `AbpDbConcurrencyException` |
+| `references/connection-strings.md` | Connection string config, multi-DB setup, per-module and per-tenant databases |
+| `references/data-filtering.md` | `IDataFilter<T>`, `ISoftDelete`, `IMultiTenant`, custom EF Core / MongoDB filters |
+| `references/deployment.md` | Production config, SSL, OpenIddict signing certificates, IIS/Azure/Docker deployment |
+| `references/global-features.md` | `GlobalFeatureManager`, `[RequiresGlobalFeature]`, `GlobalModuleFeatures`, `OneTimeRunner` |
+| `references/image-manipulation.md` | `IImageCompressor`, `IImageResizer`, ImageSharp / Magick.NET / SkiaSharp providers |
+| `references/interceptors.md` | `AbpInterceptor`, `OnRegistered`, `AbpDynamicProxyOptions`, DI-resolved proxy constraints |
+| `references/json.md` | `IJsonSerializer`, System.Text.Json vs Newtonsoft, `AbpJsonOptions` date formats |
+| `references/object-extensions.md` | `ObjectExtensionManager`, Module Entity Extensions, overriding services |
+| `references/options.md` | Options pattern, `Configure<T>`, `PreConfigure<T>`, `IOptions<T>` injection |
+| `references/signalr.md` | SignalR real-time communication, ABP hub wiring |
+| `references/string-encryption.md` | `IStringEncryptionService`, `AbpStringEncryptionOptions`, AES encrypt/decrypt |
+| `references/text-templating.md` | Scriban & Razor engines, `ITemplateRenderer`, layout templates, email templates |
+| `references/theming.md` | UI Theming, layout system, theme customization, branding |
+| `references/timing.md` | `IClock`, `AbpClockOptions`, `DateTimeKind.Utc`, timezone middleware, `[DisableDateTimeNormalization]` |
+| `references/correlation-id.md` | `ICorrelationIdProvider`, `AbpCorrelationIdOptions`, automatic propagation across HTTP/events/logs |
+| `references/cms-kit.md` | CMS Kit module: blogs, pages, comments, reactions, ratings, tags, menus, global resources |
+| `references/openiddict.md` | OpenIddict module: OAuth/OIDC endpoints, token lifetimes, custom claims, seed data format |
+| `references/database-tables.md` | Module DB table prefixes, connection string names, schema customisation |
+| `references/maui.md` | .NET MAUI mobile UI, OIDC with Secure Storage, `adb reverse`, C# proxy injection |
+| `references/react-native.md` | React Native / Expo mobile UI, `Environment.ts`, OpenIddict mobile client setup |
+| `references/migration-identityserver-openiddict.md` | Step-by-step IdentityServer4 → OpenIddict migration for ABP v6+ |
 
 ---
 
