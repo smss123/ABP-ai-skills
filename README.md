@@ -41,11 +41,42 @@ A collection of curated AI agent prompts, slash commands, and workflow definitio
 
 ## Quick start
 
-**1. Copy the config files into your ABP project root:**
+### Option A — one-liner (no clone needed)
 
+**macOS / Linux / WSL:**
+```bash
+curl -sSL https://raw.githubusercontent.com/smss123/ABP-ai-skills/main/install.sh \
+  | bash -s -- /path/to/your-abp-project
 ```
-cp -r .github/ .claude/ .windsurf/ .continue/ abp-dev/  /path/to/your/abp-project/
-# (also copy CLAUDE.md and .windsurfrules for Claude Code / Windsurf)
+
+**Windows PowerShell:**
+```powershell
+irm https://raw.githubusercontent.com/smss123/ABP-ai-skills/main/install.ps1 | iex
+# You will be prompted for the target directory
+```
+
+### Option B — from a cloned repo
+
+```bash
+git clone https://github.com/smss123/ABP-ai-skills.git
+cd ABP-ai-skills
+./install.sh /path/to/your-abp-project          # macOS/Linux
+.\install.ps1 C:\path\to\your-abp-project       # Windows
+```
+
+### Install flags
+
+| Flag | Values | Default | Effect |
+|---|---|---|---|
+| `--platform` / `-Platform` | `all` `copilot` `claude` `windsurf` `continue` | `all` | Install only for one AI tool |
+| `--overwrite` / `-Overwrite` | — | false | Replace existing files without prompting |
+
+```bash
+# Claude Code only
+./install.sh /path/to/project --platform claude
+
+# Copilot only, overwrite existing
+./install.sh /path/to/project --platform copilot --overwrite
 ```
 
 **2. Open your project in your AI coding assistant.**
