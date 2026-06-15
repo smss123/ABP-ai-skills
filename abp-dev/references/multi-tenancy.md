@@ -32,22 +32,18 @@ Add `typeof(AbpMultiTenancyModule)` to `[DependsOn]` in the module where you con
 
 ---
 
-## IMustHaveTenant / IMayHaveTenant
+## `IMultiTenant` — Tenant-Scoped Entities
 
-Apply these interfaces to entities that belong to a tenant:
+The current ABP API uses `IMultiTenant` (nullable `TenantId`) for all tenant-scoped entities:
 
 ```csharp
-// Mandatory — entity MUST belong to a tenant
-public class Order : AggregateRoot<Guid>, IMustHaveTenant
-{
-    public Guid TenantId { get; set; }   // required by interface
-    // ...
-}
+using Volo.Abp.MultiTenancy;
 
-// Optional — entity may or may not belong to a tenant (host-level data shared with tenants)
-public class GlobalSetting : AggregateRoot<Guid>, IMayHaveTenant
+// Tenant-scoped entity — TenantId is set automatically from ICurrentTenant
+public class Order : AggregateRoot<Guid>, IMultiTenant
 {
-    public Guid? TenantId { get; set; }   // nullable; null = host-level record
+    public Guid? TenantId { get; set; }   // null = host record, non-null = tenant record
+    public string ReferenceNo { get; private set; }
     // ...
 }
 ```
@@ -149,9 +145,46 @@ Configure<AbpTenantResolveOptions>(options =>
     // 5. CookieTenantResolveContributor      — Abp.TenantId cookie
 
     // Add subdomain resolver (e.g. acme.myapp.com → tenant "acme")
-    options.TenantResolvers.Insert(0, new DomainTenantResolveContributor("{0}.myapp.com"));
+    options.AddDomainTenantResolver("{0}.myapp.com");
+
+    // Fallback tenant when none resolved (e.g. during dev/testing)
+    options.FallbackTenant = "acme";
 });
 ```
+
+### Custom Tenant Resolver
+
+```csharp
+public class HeaderApiKeyTenantResolver : TenantResolveContributorBase
+{
+    public override string Name => "ApiKey";
+
+    public override async Task ResolveAsync(ITenantResolveContext context)
+    {
+        var apiKey = context.GetHttpContext()?.Request.Headers["X-Api-Key"].FirstOrDefault();
+        if (!string.IsNullOrEmpty(apiKey))
+        {
+            // look up tenant by API key and set:
+            context.Handled = true;
+            context.TenantIdOrName = await LookupTenantByApiKeyAsync(apiKey);
+        }
+    }
+}
+
+// Register:
+Configure<AbpTenantResolveOptions>(options =>
+{
+    options.TenantResolvers.Insert(0, new HeaderApiKeyTenantResolver());
+});
+```
+
+### `ITenantStore` Implementations
+
+| Store | When to use |
+|---|---|
+| `DefaultTenantStore` | Config-file-based (appsettings.json), dev/testing |
+| Tenant Management Module | Database-backed, production — recommended |
+| SaaS Module (PRO) | Advanced: connection string per-module, per-tenant |
 
 ---
 

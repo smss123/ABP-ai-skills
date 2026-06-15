@@ -32,6 +32,22 @@ This repository contains curated ABP Framework skills. When working on any ABP p
 | Settings | `abp-dev/references/settings.md` | https://docs.abp.io/en/abp/latest/Settings |
 | Caching | `abp-dev/references/caching.md` | https://docs.abp.io/en/abp/latest/Caching |
 | Testing & Troubleshooting | `abp-dev/references/testing-troubleshooting.md` | https://docs.abp.io/en/abp/latest/Testing |
+| Connection Strings, multi-DB | `abp-dev/references/connection-strings.md` | https://abp.io/docs/latest/framework/fundamentals/connection-strings |
+| Localization, L[] shorthand | `abp-dev/references/localization.md` | https://abp.io/docs/latest/framework/fundamentals/localization |
+| Object Extensions, Module Entity Extensions, Override Services | `abp-dev/references/object-extensions.md` | https://abp.io/docs/latest/framework/fundamentals/object-extensions |
+| Options Pattern, Configure\<T\>, PreConfigure | `abp-dev/references/options.md` | https://abp.io/docs/latest/framework/fundamentals/options |
+| Concurrency Check, IHasEntityVersion | `abp-dev/references/concurrency-check.md` | https://abp.io/docs/latest/framework/infrastructure/concurrency-check |
+| Data Filtering, ISoftDelete, IMultiTenant, Custom Filters | `abp-dev/references/data-filtering.md` | https://abp.io/docs/latest/framework/infrastructure/data-filtering |
+| Global Features, GlobalFeatureManager, RequiresGlobalFeature | `abp-dev/references/global-features.md` | https://abp.io/docs/latest/framework/infrastructure/global-features |
+| Image Compression & Resizing, IImageCompressor, IImageResizer | `abp-dev/references/image-manipulation.md` | https://abp.io/docs/latest/framework/infrastructure/image-manipulation |
+| Interceptors, AbpInterceptor, OnRegistered, DynamicProxy | `abp-dev/references/interceptors.md` | https://abp.io/docs/latest/framework/infrastructure/interceptors |
+| JSON Serialization, IJsonSerializer, System.Text.Json vs Newtonsoft | `abp-dev/references/json.md` | https://abp.io/docs/latest/framework/infrastructure/json |
+| String Encryption, IStringEncryptionService, AbpStringEncryptionOptions | `abp-dev/references/string-encryption.md` | https://abp.io/docs/latest/framework/infrastructure/string-encryption |
+| Text Templating, Scriban, Razor, ITemplateRenderer, email templates | `abp-dev/references/text-templating.md` | https://abp.io/docs/latest/framework/infrastructure/text-templating/scriban |
+| Timing, IClock, DateTimeKind, timezone, AbpClockOptions | `abp-dev/references/timing.md` | https://abp.io/docs/latest/framework/infrastructure/timing |
+| SignalR Real-Time Communication | `abp-dev/references/signalr.md` | https://abp.io/docs/latest/framework/real-time/signalr |
+| UI Theming, Layout System, Theme Customization | `abp-dev/references/theming.md` | https://abp.io/docs/latest/ui-themes |
+| Deployment, SSL, OpenIddict, Production Config | `abp-dev/references/deployment.md` | https://abp.io/docs/latest/deployment |
 
 For questions covering multiple areas (e.g. "build a full CRUD feature"), read all relevant reference files.
 

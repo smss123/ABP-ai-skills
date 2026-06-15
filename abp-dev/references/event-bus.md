@@ -1,6 +1,7 @@
 # ABP: Local & Distributed Event Bus
 
 > 📖 Official docs:
+> - Event Bus overview: https://abp.io/docs/latest/framework/infrastructure/event-bus
 > - Local Event Bus: https://docs.abp.io/en/abp/latest/Local-Event-Bus
 > - Distributed Event Bus: https://docs.abp.io/en/abp/latest/Distributed-Event-Bus
 > - Domain Events: https://docs.abp.io/en/abp/latest/Domain-Events
@@ -118,6 +119,46 @@ public class BookManager : DomainService
         await _localEventBus.PublishAsync(new BookArchivedEto { BookId = book.Id });
     }
 }
+```
+
+### Pre-built entity events
+
+ABP automatically publishes these events on every repository operation — no code needed:
+
+```csharp
+EntityCreatedEventData<Book>    // after InsertAsync
+EntityUpdatedEventData<Book>    // after UpdateAsync
+EntityDeletedEventData<Book>    // after DeleteAsync
+EntityChangedEventData<Book>    // on any of the above
+```
+
+Subscribe with `ILocalEventHandler<EntityCreatedEventData<Book>>` to react to any entity lifecycle.
+
+### Handler ordering
+
+Control execution order when multiple handlers subscribe to the same event:
+
+```csharp
+[LocalEventHandlerOrder(-1)]  // lower value = earlier execution
+public class PriorityHandler : ILocalEventHandler<BookCreatedEto>, ITransientDependency
+{
+    public Task HandleEventAsync(BookCreatedEto eventData) { /* ... */ }
+}
+```
+
+### Transaction integration
+
+Local event handlers execute **inside the same unit of work / database transaction** as the publisher. An unhandled exception in a handler rolls back the transaction. Wrap in `try-catch` to suppress non-critical failures.
+
+### Dynamic (string-based) events
+
+Publish and subscribe using string names when types are unknown at compile time:
+
+```csharp
+await _localEventBus.PublishAsync("MyDynamicEvent", new { Key = "Value" });
+
+// Subscribe
+_localEventBus.Subscribe("MyDynamicEvent", async (data) => { /* ... */ });
 ```
 
 ---

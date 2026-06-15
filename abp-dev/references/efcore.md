@@ -221,4 +221,45 @@ public class BookStoreDataSeedContributor : IDataSeedContributor, ITransientDepe
 - Always check existing data first (idempotent)
 - Use `ITransientDependency` for auto-registration
 - Run via `DbMigrator` app which calls `IDataSeeder` internally
-- Can receive parameters: `context["AdminEmail"]`, `context["AdminPassword"]`
+
+### Passing custom properties to seed contributors
+
+```csharp
+// DbMigrator or test initialization
+await _dataSeeder.SeedAsync(
+    new DataSeedContext()
+        .WithProperty("AdminEmail", "admin@example.com")
+        .WithProperty("AdminPassword", "Str0ng!Pass")
+);
+
+// Inside the contributor
+public async Task SeedAsync(DataSeedContext context)
+{
+    var adminEmail = context.GetProperty<string>("AdminEmail");
+}
+```
+
+### Multi-tenant seeding
+
+Always scope data operations to the correct tenant:
+
+```csharp
+public async Task SeedAsync(DataSeedContext context)
+{
+    using (_currentTenant.Change(context?.TenantId))
+    {
+        if (await _bookRepository.GetCountAsync() > 0)
+            return;
+
+        await _bookRepository.InsertAsync(/* ... */, autoSave: true);
+    }
+}
+```
+
+### Avoiding timeouts with many contributors
+
+For large seed runs, use `IDataSeeder.SeedInSeparateUowAsync()` — each contributor runs in its own unit of work:
+
+```csharp
+await _dataSeeder.SeedInSeparateUowAsync(new DataSeedContext());
+```

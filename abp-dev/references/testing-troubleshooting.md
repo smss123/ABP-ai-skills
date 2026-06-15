@@ -1,11 +1,178 @@
 # ABP: Troubleshooting & Testing
 
 > 📖 Official docs:
-> - Testing: https://docs.abp.io/en/abp/latest/Testing
+> - Integration Tests: https://abp.io/docs/latest/testing/integration-tests
+> - UI Tests: https://abp.io/docs/latest/testing/ui-tests
+> - Testing (general): https://docs.abp.io/en/abp/latest/Testing
 > - AutoMapper / Object Mapping: https://docs.abp.io/en/abp/latest/Object-To-Object-Mapping
 > - EF Core Migrations: https://docs.abp.io/en/abp/latest/Entity-Framework-Core-Migrations
 >
 > Fetch these pages for the latest testing patterns and troubleshooting guidance.
+
+## Integration Testing
+
+### Test Infrastructure
+
+ABP integration tests use **in-memory SQLite** (EF Core) or **EphemeralMongo** — real DBMS behavior without external setup.
+
+```csharp
+// Application.Tests/BookStoreApplicationTestBase.cs
+public abstract class BookStoreApplicationTestBase
+    : AbpIntegratedTest<BookStoreApplicationTestModule>
+{
+}
+
+// Application.Tests.Module/BookStoreApplicationTestModule.cs
+[DependsOn(
+    typeof(BookStoreApplicationModule),
+    typeof(AbpTestBaseModule)
+)]
+public class BookStoreApplicationTestModule : AbpModule
+{
+    public override void ConfigureServices(ServiceConfigurationContext context)
+    {
+        // Use in-memory SQLite for tests
+        context.Services.AddAbpDbContext<BookStoreDbContext>(options =>
+        {
+            options.AddDefaultRepositories();
+        });
+        Configure<AbpDbContextOptions>(options =>
+        {
+            options.Configure(ctx => ctx.DbContextOptions.UseInMemoryDatabase("TestDb"));
+        });
+    }
+}
+```
+
+### Seeding Test Data
+
+```csharp
+// Application.Tests/BookStoreTestDataSeedContributor.cs
+public class BookStoreTestDataSeedContributor
+    : IDataSeedContributor, ITransientDependency
+{
+    private readonly IRepository<Book, Guid> _bookRepository;
+
+    public BookStoreTestDataSeedContributor(IRepository<Book, Guid> bookRepository)
+    {
+        _bookRepository = bookRepository;
+    }
+
+    public async Task SeedAsync(DataSeedContext context)
+    {
+        await _bookRepository.InsertAsync(new Book(
+            BookStoreTestData.Book1Id,
+            "Test Book 1",
+            BookType.Novel,
+            price: 25m,
+            DateTime.Now
+        ));
+    }
+}
+
+// Store known IDs as constants
+public static class BookStoreTestData
+{
+    public static Guid Book1Id { get; } = Guid.Parse("...");
+}
+```
+
+### Writing Application Service Tests
+
+```csharp
+public class BookAppService_Tests : BookStoreApplicationTestBase
+{
+    private readonly IBookAppService _bookAppService;
+
+    public BookAppService_Tests()
+    {
+        _bookAppService = GetRequiredService<IBookAppService>();
+    }
+
+    [Fact]
+    public async Task Should_Get_Book()
+    {
+        var book = await _bookAppService.GetAsync(BookStoreTestData.Book1Id);
+
+        book.ShouldNotBeNull();
+        book.Name.ShouldBe("Test Book 1");
+    }
+
+    [Fact]
+    public async Task Should_Throw_On_Duplicate_Name()
+    {
+        await Assert.ThrowsAsync<UserFriendlyException>(async () =>
+        {
+            await _bookAppService.CreateAsync(new CreateUpdateBookDto
+            {
+                Name = "Test Book 1" // duplicate
+            });
+        });
+    }
+}
+```
+
+### Unit of Work in Tests
+
+```csharp
+[Fact]
+public async Task Should_Query_With_UoW()
+{
+    await WithUnitOfWorkAsync(async () =>
+    {
+        var books = await _bookRepository.GetListAsync();
+        books.Count.ShouldBeGreaterThan(0);
+    });
+}
+```
+
+### Direct DbContext Access
+
+```csharp
+public class BookRepository_Tests : BookStoreApplicationTestBase
+{
+    private readonly IDbContextProvider<BookStoreDbContext> _dbContextProvider;
+
+    [Fact]
+    public async Task Should_Find_Book_Directly()
+    {
+        await WithUnitOfWorkAsync(async () =>
+        {
+            var dbContext = await _dbContextProvider.GetDbContextAsync();
+            var book = await dbContext.Books
+                .FirstOrDefaultAsync(b => b.Id == BookStoreTestData.Book1Id);
+            book.ShouldNotBeNull();
+        });
+    }
+}
+```
+
+### Bypass Authorization in Tests
+
+```csharp
+// In test module ConfigureServices:
+context.Services.AddAlwaysAllowAuthorization();
+```
+
+### Test Project Structure
+
+```
+Acme.BookStore/
+├── test/
+│   ├── Acme.BookStore.Domain.Tests/           ← domain service tests
+│   ├── Acme.BookStore.Application.Tests/      ← app service tests (abstract)
+│   ├── Acme.BookStore.EntityFrameworkCore.Tests/ ← EF Core concrete tests
+│   └── Acme.BookStore.TestBase/               ← shared test data + base classes
+```
+
+Abstract test classes in Domain/Application; concrete test classes in EntityFrameworkCore to support multiple ORM implementations.
+
+### UI Testing
+
+ABP defers UI testing to framework-native tools:
+- **Razor Pages**: ASP.NET Core `WebApplicationFactory` for server-side HTML testing
+- **End-to-end (all UIs)**: Playwright or Selenium for visual interaction testing
+- ABP does not provide a UI test framework — use standard tooling
 
 ## Common Errors & Fixes
 

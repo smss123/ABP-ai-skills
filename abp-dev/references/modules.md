@@ -176,6 +176,109 @@ public class MyConnectionStringResolver : DefaultConnectionStringResolver { }
 
 ---
 
+## Plugin Modules (Runtime Loading)
+
+Load modules from external assemblies at startup — useful for extensible/plugin architectures.
+
+```csharp
+// Program.cs
+await builder.AddApplicationAsync<BookStoreWebModule>(options =>
+{
+    options.PlugInSources.AddFolder(@"D:\MyPlugins");          // all DLLs in folder
+    // options.PlugInSources.AddFile(@"D:\MyPlugins\MyPlugin.dll");
+    // options.PlugInSources.AddTypes(typeof(MyPlugInModule));
+});
+```
+
+### Minimal plugin module
+
+```csharp
+// In the plugin DLL
+public class MyPlugInModule : AbpModule
+{
+    public override void ConfigureServices(ServiceConfigurationContext context)
+    {
+        context.Services.AddTransient<IMyService, MyService>();
+    }
+}
+```
+
+### Razor Pages plugin module
+
+```csharp
+public class MyMvcUIPlugInModule : AbpModule
+{
+    public override void PreConfigureServices(ServiceConfigurationContext context)
+    {
+        PreConfigure<IMvcBuilder>(mvcBuilder =>
+        {
+            mvcBuilder.PartManager.ApplicationParts.Add(
+                new AssemblyPart(typeof(MyMvcUIPlugInModule).Assembly));
+            mvcBuilder.PartManager.ApplicationParts.Add(
+                new CompiledRazorAssemblyPart(typeof(MyMvcUIPlugInModule).Assembly));
+        });
+    }
+}
+```
+
+---
+
+## `[AdditionalAssembly]` Attribute
+
+Register multiple assemblies under a single module — useful when a module spans more than one project:
+
+```csharp
+[DependsOn(typeof(AbpAspNetCoreMvcModule))]
+[AdditionalAssembly(typeof(BookStoreApplicationModule))] // scan this assembly too
+public class BookStoreWebModule : AbpModule { }
+```
+
+---
+
+## Module Architecture Best Practices
+
+### Layer package rules
+
+| Layer | Package | Key Rules |
+|---|---|---|
+| **Domain.Shared** | Enums, consts, error codes | No entities, no business logic |
+| **Domain** | Entities, domain services, repo interfaces | Depends only on Domain.Shared |
+| **Application.Contracts** | Interfaces, DTOs, permissions | Depends on Domain.Shared only |
+| **Application** | App service implementations | Depends on Domain + Application.Contracts |
+| **EntityFrameworkCore** | DbContext, migrations, EF repos | Depends on Domain; isolated from Application |
+| **HttpApi** | (Optional) manual controllers | Depends on Application.Contracts only |
+| **Web** | Razor Pages, menus, UI | Depends on HttpApi package |
+
+```
+✓ DO  create a separate ORM integration package (EF Core, MongoDB) per module
+✓ DO  create controllers per application service interface
+✗ DO NOT  reference Application layer from EntityFrameworkCore
+✗ DO NOT  reference Domain layer from Web/HttpApi
+```
+
+### Modular Monolith Pattern
+
+Each business domain lives in its own ABP module sub-solution under `modules/`:
+
+```
+MySolution/
+├── main/               ← host application (references all modules)
+│   └── src/
+│       └── MySolution.Web/
+├── modules/
+│   ├── ordering/       ← Ordering module sub-solution
+│   │   └── src/
+│   │       ├── Ordering.Domain/
+│   │       ├── Ordering.Application/
+│   │       └── Ordering.EntityFrameworkCore/
+│   └── inventory/      ← Inventory module sub-solution
+└── etc/                ← shared infra, profiles, deployment
+```
+
+Module communication: prefer **distributed events** (`IDistributedEventBus`) over direct service calls to maintain loose coupling, even within a monolith.
+
+---
+
 ## Program.cs (ABP startup wiring)
 
 ```csharp

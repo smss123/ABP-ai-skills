@@ -237,3 +237,101 @@ public class BookManager : DomainService
 **Domain Service vs Application Service:**
 - Domain Service: gets/returns **entities**, no DTOs, contains core business rules
 - Application Service: gets/returns **DTOs**, orchestrates domain objects, handles use-case flow
+
+---
+
+## Specifications
+
+Use specifications for **named, reusable, composable, testable** entity filters. Install via `abp add-package Volo.Abp.Specifications` (pre-installed in starter templates).
+
+```csharp
+// Domain/Books/BookSpecifications.cs
+using System;
+using System.Linq.Expressions;
+using Volo.Abp.Specifications;
+
+public class ActiveBooksSpecification : Specification<Book>
+{
+    public override Expression<Func<Book, bool>> ToExpression()
+        => book => !book.IsDeleted && book.Price > 0;
+}
+
+public class CheapBooksSpecification : Specification<Book>
+{
+    private readonly decimal _maxPrice;
+
+    public CheapBooksSpecification(decimal maxPrice)
+    {
+        _maxPrice = maxPrice;
+    }
+
+    public override Expression<Func<Book, bool>> ToExpression()
+        => book => book.Price <= _maxPrice;
+}
+```
+
+### Composing specifications
+
+```csharp
+var spec = new ActiveBooksSpecification()
+    .And(new CheapBooksSpecification(50m));   // both must be true
+    // .Or(...)  .Not()  .AndNot(...)
+
+// In-memory check
+bool isSatisfied = spec.IsSatisfiedBy(book);
+
+// As LINQ expression for repository
+var expression = spec.ToExpression();
+var books = await _bookRepository.GetListAsync(expression);
+```
+
+### When to use specifications
+
+- **DO use** for reusable business-rule filters (e.g., "eligible for discount", "overdue orders")
+- **DO NOT use** for reporting queries or ad-hoc filters — use raw LINQ or SQL instead
+
+---
+
+## Entity Best Practices
+
+### General entities
+
+```
+✓ Define entities in the Domain layer
+✓ Primary constructor must ensure validity — always validate inputs
+✓ Initialize sub-collections in the primary constructor
+✓ Define a protected parameterless constructor for ORM compatibility
+✓ Make property setters private or protected when values need controlled changes
+✓ Define all properties and methods as virtual (except private members)
+✓ Reference other aggregate roots by Id only — no navigation properties
+✓ Return `this` from modifier methods for fluent chaining
+✗ Never generate Guid keys inside the constructor — pass as a parameter
+✗ Never put business logic in application services
+```
+
+### Aggregate roots specifically
+
+```
+✓ Use Guid as the primary key type for all aggregate roots
+✓ Inherit from AggregateRoot<Guid> (or audited variants)
+✓ Keep aggregates as small as possible (performance, memory, consistency boundaries)
+✓ Use FullAuditedAggregateRoot when full audit trail is required
+✗ Avoid composite keys — use Id property
+```
+
+---
+
+## `IHasEntityVersion` — Auto-Increment Version
+
+For monotonically increasing counters (ETags, event sourcing, client-side sync):
+
+```csharp
+public class Document : FullAuditedAggregateRoot<Guid>, IHasEntityVersion
+{
+    public int EntityVersion { get; set; }  // ABP increments this on every UpdateAsync
+    public string Title { get; private set; }
+    // ...
+}
+```
+
+ABP increments `EntityVersion` automatically through the repository. Direct SQL updates bypass this — recalculate manually if needed.

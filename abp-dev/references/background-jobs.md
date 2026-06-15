@@ -176,6 +176,124 @@ public override async Task OnApplicationInitializationAsync(
 
 ---
 
+## Dynamic Background Jobs (Runtime Registration)
+
+Register jobs at runtime without pre-defined classes — useful for plugin architectures or when job types aren't known at compile time.
+
+```csharp
+// In OnApplicationInitialization
+public override void OnApplicationInitialization(ApplicationInitializationContext context)
+{
+    var dynamicJobManager = context.ServiceProvider
+        .GetRequiredService<IDynamicBackgroundJobManager>();
+
+    dynamicJobManager.Add("ProcessOrder", async args =>
+    {
+        var orderId = args["OrderId"]?.ToString();
+        // process...
+    });
+}
+
+// Enqueue a dynamic job
+await _dynamicBackgroundJobManager.EnqueueAsync(
+    "ProcessOrder",
+    new { OrderId = "abc-123" }
+);
+```
+
+> Dynamic job handlers are in-memory — they do not survive application restarts.
+
+---
+
+## Dynamic Background Workers (Runtime Registration)
+
+Add, remove, or reschedule workers at runtime:
+
+```csharp
+// Add
+await _dynamicBackgroundWorkerManager.AddAsync(
+    "ReportWorker",
+    async () =>
+    {
+        // do periodic work
+    },
+    period: TimeSpan.FromMinutes(15)
+);
+
+// Remove
+await _dynamicBackgroundWorkerManager.RemoveAsync("ReportWorker");
+
+// Update schedule
+await _dynamicBackgroundWorkerManager.UpdateScheduleAsync(
+    "ReportWorker",
+    period: TimeSpan.FromMinutes(30)
+);
+```
+
+---
+
+## Cron Expressions (Quartz / Hangfire / TickerQ)
+
+When using Quartz or Hangfire as the background job provider, workers support cron expressions:
+
+```csharp
+public class DailyReportWorker : AsyncPeriodicBackgroundWorkerBase
+{
+    public DailyReportWorker(AbpAsyncTimer timer, IServiceScopeFactory scopeFactory)
+        : base(timer, scopeFactory)
+    {
+        // Cron: every day at 02:00 (requires Quartz/Hangfire integration)
+        Timer.Period = 0; // ignored when CronExpression is set
+    }
+
+    // Set via AbpBackgroundWorkerQuartzOptions or AbpHangfireOptions:
+    // CronExpression = "0 0 2 * * ?"
+}
+```
+
+---
+
+## Clustering & Multi-Instance Isolation
+
+When multiple application instances run the same worker/job, use `ApplicationName` to isolate queues:
+
+```csharp
+// Default provider
+Configure<AbpBackgroundJobWorkerOptions>(options =>
+{
+    options.ApplicationName = "BookStore-Worker-1";
+});
+
+// Hangfire
+Configure<AbpHangfireOptions>(options =>
+{
+    options.DefaultQueuePrefix = "bookstore";
+});
+
+// Quartz
+// quartz.scheduler.instanceName = BookStore-Worker in appsettings
+
+// RabbitMQ
+Configure<AbpRabbitMqBackgroundJobOptions>(options =>
+{
+    options.DefaultQueueNamePrefix = "bookstore.";
+});
+```
+
+---
+
+## Job Providers Comparison
+
+| Package | When to use |
+|---|---|
+| `Volo.Abp.BackgroundJobs` | Default in-process, dev/simple apps |
+| `Volo.Abp.BackgroundJobs.HangFire` | Production, persistent storage, UI dashboard |
+| `Volo.Abp.BackgroundJobs.Quartz` | Cron scheduling, complex triggers |
+| `Volo.Abp.BackgroundJobs.RabbitMq` | Distributed, message-queue-backed |
+| `Volo.Abp.BackgroundJobs.TickerQ` | Lightweight periodic jobs, minimal dependencies |
+
+---
+
 ## Disabling Background Jobs (testing)
 
 ```csharp
