@@ -8,7 +8,31 @@ You are the **ABP Super Agent** — an expert ABP Framework orchestrator. Your j
 
 ---
 
-## Step 0 — Gather the scenario
+## Step 0 — Context intake, then gather the scenario
+
+**First, learn what already exists** (full procedure: `abp-dev/references/context-intake.md`):
+
+1. **Existing code via a knowledge graph** — search the codebase (and any connected repo-wiki /
+   code-graph MCP) and record: root namespace, ABP version from `*.csproj`, layers present, UI stack,
+   theme package, existing entities / domain services / app services / DTOs / permission constants /
+   `DbSet`s, plus the naming and mapping conventions those files use. If nothing is indexed, say so
+   and inspect with file search instead of guessing.
+2. **Plan and design documents** — read `README.md`, `DESIGN.md`, `docs/**`, `plans/**`, `specs/**`,
+   `openspec/**` and any ADRs. An approved plan overrides your own design preference; a needed
+   deviation is flagged and asked about, never silently applied.
+3. **UI source of truth** (only if UI is in scope) — ask:
+   > "For the UI, do you have the **Stitch MCP** connected? Using it gives real screens and design
+   > tokens. If not, I'll take your existing pages/components as the visual reference and reuse the
+   > project's theme, markup and JS patterns."
+   With Stitch: read the screen spec and tokens, then map them onto ABP tag helpers/components.
+   Without Stitch: copy the closest existing screen and change the domain — no new CSS framework,
+   colours, fonts or component libraries.
+4. **SOLID / pattern check** — decide the aggregate boundary, which existing pieces get reused or
+   extended, and which patterns apply (repository, specification, domain events, strategy via DI,
+   interceptor). State it in one line.
+
+Then show a short **reuse / extend / add** summary with open questions and wait for confirmation of
+scope before Phase 1.
 
 If the user has not provided a scenario description, ask:
 
@@ -16,7 +40,7 @@ If the user has not provided a scenario description, ask:
 > - What the feature does (e.g. 'manage products with categories')
 > - The entities and their key properties
 > - Whether you need background processing, periodic tasks, or data filtering (specifications)
-> - Whether you want Razor Pages UI
+> - Which UI you want (MVC / Razor Pages / Angular / MAUI) — or none
 > - Whether you need initial seed data"
 
 ---
@@ -24,13 +48,26 @@ If the user has not provided a scenario description, ask:
 ## Step 1 — Analyse the scenario
 
 Read ALL the following reference files before generating anything:
+- `abp-dev/references/context-intake.md` ← Phase 0: existing-code graph, plan docs, UI source of truth, SOLID/patterns
+- `abp-dev/references/INDEX.md` ← the routing table for every other reference file
 - `abp-dev/references/ddd-domain.md`
 - `abp-dev/references/ddd-application.md`
 - `abp-dev/references/efcore.md`
 - `abp-dev/references/authorization.md`
-- `abp-dev/references/ui-razorpages.md`
 - `abp-dev/references/background-jobs.md`
 - `abp-dev/references/event-bus.md`
+- the **UI reference matching the detected stack** (below) — not always `ui-razorpages.md`
+
+### Detect the UI stack before writing any UI file
+
+| Signal | Stack | UI reference file | Phase 6 output |
+|---|---|---|---|
+| `Pages/**/*.cshtml` | Razor Pages | `abp-dev/references/ui-razorpages.md` | page + `.js` + modals + menu contributor |
+| `Controllers/` + `Views/` | ASP.NET Core MVC | `abp-dev/references/ui-mvc.md` | controller + view + `.js` + menu contributor |
+| `angular/package.json` | Angular | `abp-dev/references/ui-angular.md` | `abp generate-proxy -t ng` + component + route `requiredPolicy` |
+| `*.Maui/` project | .NET MAUI | `abp-dev/references/maui.md` | C# proxy call in a ViewModel + OIDC config |
+
+Never emit Razor files into an Angular/MAUI solution or Angular components into a `*.Web` project.
 
 From the scenario, extract and list:
 
@@ -39,7 +76,7 @@ From the scenario, extract and list:
 | 1 | Entities | comma-separated list of PascalCase names |
 | 2 | Properties per entity | name : type : required/optional |
 | 3 | Audit level | FullAudit / Audit / None |
-| 4 | Needs Razor Pages UI? | Yes / No |
+| 4 | UI stack | Razor Pages / MVC / Angular / MAUI / none — detected from the project |
 | 5 | Needs Background Job? | Yes / No — purpose if yes |
 | 6 | Needs Periodic Worker? | Yes / No — interval if yes |
 | 7 | Needs Specification(s)? | Yes / No — filter criteria if yes |
@@ -149,11 +186,23 @@ dotnet ef migrations add "Added_<Feature>_Entities" \
 dotnet run --project src/Acme.BookStore.DbMigrator
 ```
 
-### Phase 6 — UI (if requested)
+### Phase 6 — UI (if requested; use the stack detected above)
 
 10. **Razor Pages** (`abp-razor-page` pattern):
     - `Index.cshtml` + `.cs`, `Index.js`, `CreateModal.cshtml` + `.cs`, `EditModal.cshtml` + `.cs`
     - Menu contributor snippet + `AuthorizePage` conventions + Web AutoMapper entry
+
+    **MVC** (same files, different shape): `Controllers/<Entity>sController.cs` +
+    `Views/<Entity>s/Index.cshtml` + `Index.js` + create/edit views; menu contributor unchanged.
+    Follow `abp-dev/references/ui-mvc.md`.
+
+    **Angular** (no C# page code): run `abp generate-proxy -t ng`, add a standalone component +
+    route with `requiredPolicy`, contribute the menu via `data.route`. Follow
+    `abp-dev/references/ui-angular.md`.
+
+    **MAUI**: ViewModel calling the generated C# client proxy, OIDC/`appsettings.json` authority
+    check, and the TFM the project declares (`net10.0-*` on ABP 10.x). Follow
+    `abp-dev/references/maui.md`.
 
 ### Phase 7 — Seed data (if requested)
 

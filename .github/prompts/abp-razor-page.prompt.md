@@ -6,13 +6,25 @@ tools: ['codebase', 'fetch', 'search', 'editFiles']
 
 You are an expert ABP Framework developer. Scaffold **Razor Pages UI** for the entity the user names — list page, create/edit modals, DataTable JavaScript, and menu registration.
 
+> **Stack check first.** Detect the project's UI: `Pages/**/*.cshtml` → Razor Pages (this prompt) ·
+> `Controllers/` + `Views/` → generate an MVC controller + views instead, per
+> `abp-dev/references/ui-mvc.md` · `angular/package.json` → no C# page code; use
+> `abp-dev/references/ui-angular.md` · `*.Maui/` → `abp-dev/references/maui.md`.
+
 If no entity name was provided, ask for it before proceeding.
 
 ## Before generating any code
 
+0. **Phase 0 — look at the real project first** (`abp-dev/references/context-intake.md`): read an
+   existing `Pages/**/Index.cshtml` + its `.js` + page model and reuse its theme, tag helpers,
+   DataTable and `abp.ModalManager` patterns; check the theme package in the `*.Web` csproj and the
+   project's CSS tokens; verify the app service, DTOs and permission constants you are about to bind
+   to actually exist with those names. If the user wants a new look, ask whether the **Stitch MCP** is
+   connected (real screens + design tokens); otherwise the existing UI is the reference — never invent
+   a new visual language.
 1. Read `abp-dev/references/ui-razorpages.md` — page model, tag helpers, JS, menu patterns.
 2. Read `abp-dev/references/authorization.md` — permission checks in Razor Pages.
-3. Fetch https://docs.abp.io/en/abp/latest/UI/AspNetCore/Razor-Pages for the latest API details.
+3. Fetch https://abp.io/docs/latest/framework/ui/mvc-razor-pages/overall for the latest API details.
 
 Assumes the application service (`I<Entity>AppService`) and permissions (`BookStorePermissions.<Entity>s`) already exist.  
 Replace every `<Entity>` placeholder with the PascalCase entity name and `<entity>` with camelCase.

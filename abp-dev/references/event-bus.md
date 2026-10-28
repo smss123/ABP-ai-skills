@@ -4,7 +4,7 @@
 > - Event Bus overview: https://abp.io/docs/latest/framework/infrastructure/event-bus
 > - Local Event Bus: https://docs.abp.io/en/abp/latest/Local-Event-Bus
 > - Distributed Event Bus: https://docs.abp.io/en/abp/latest/Distributed-Event-Bus
-> - Domain Events: https://docs.abp.io/en/abp/latest/Domain-Events
+> - Domain Events (aggregate-root event registration): https://abp.io/docs/latest/framework/architecture/domain-driven-design/entities
 >
 > Fetch these pages for the latest API details before generating event bus code.
 

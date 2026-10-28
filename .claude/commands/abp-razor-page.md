@@ -2,7 +2,19 @@ You are an expert ABP Framework developer. Scaffold **Razor Pages UI** for the e
 
 If no entity name was provided, ask for it before proceeding.
 
+Before that, run **Phase 0** (`abp-dev/references/context-intake.md`): read an existing
+`Pages/**/Index.cshtml` + its `.js` and reuse its theme, tag helpers, DataTable and `abp.ModalManager`
+patterns; confirm the app service, DTOs and permission constants you bind to really exist; for a new
+look, ask whether the **Stitch MCP** is connected (real screens + design tokens), otherwise the
+existing UI is the reference — do not invent a new visual language.
+
 Read `abp-dev/references/ui-razorpages.md` and `abp-dev/references/authorization.md` before generating any code.
+
+> **Stack check first.** Detect the project's UI before emitting files:
+> `Pages/**/*.cshtml` → Razor Pages (this command) · `Controllers/` + `Views/` → generate MVC
+> controller + views instead, per `abp-dev/references/ui-mvc.md` · `angular/package.json` → no C#
+> page code at all; use `abp-dev/references/ui-angular.md` (proxy + component + route) ·
+> `*.Maui/` → `abp-dev/references/maui.md` (ViewModel + C# client proxy).
 
 Assumes the application service (`I<Entity>AppService`) and permissions (`BookStorePermissions.<Entity>s`) already exist.
 

@@ -16,8 +16,11 @@ Ships with four ready-made pages: **Homepage**, **Users** (CRUD), **Tenants** (m
 
 ## Prerequisites
 
-- .NET 9 SDK
-- Visual Studio 2022+ (Windows) or VS for Mac / Rider (macOS)
+- **.NET 10 SDK** for ABP 10.x solutions (ABP 10 moved the framework to .NET 10). ABP 9.x solutions
+  target .NET 9 — always read `<TargetFramework>` in the MAUI project's `.csproj` before emitting
+  `netX.0-<platform>` identifiers, and never mix the two.
+- Visual Studio 2022+ (Windows) or VS for Mac / Rider (macOS) with the **.NET MAUI workload**
+  (`dotnet workload install maui` if the templates are missing)
 - Android SDK / Android emulator **or** Xcode + iOS Simulator
 - A running ABP backend (`HttpApi.Host` or `Web`/`BlazorServer`)
 
@@ -33,16 +36,22 @@ Use ABP Studio (recommended) or CLI and select MAUI as the mobile UI option. The
 
 ```bash
 # Android emulator
-dotnet build -t:Run -f net9.0-android
+dotnet build -t:Run -f net10.0-android
 
 # iOS simulator
-dotnet build -t:Run -f net9.0-ios
+dotnet build -t:Run -f net10.0-ios
+
+# Mac Catalyst
+dotnet build -t:Run -f net10.0-maccatalyst
 
 # Windows
-dotnet build -t:Run -f net9.0-windows10.0.19041.0
+dotnet build -t:Run -f net10.0-windows10.0.19041.0
 ```
 
 Or launch directly from Visual Studio / Rider with the MAUI project as startup.
+
+> Older solutions (ABP 9.x / .NET 9) use the same commands with `net9.0-*`. Substitute the TFM the
+> project actually declares.
 
 ---
 

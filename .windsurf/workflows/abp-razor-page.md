@@ -7,6 +7,11 @@ description: Scaffold ABP Razor Pages UI — list page, create/edit modals, Java
 
 A Windsurf Cascade workflow that creates a complete Razor Pages UI for managing an ABP entity.
 
+> **Stack check first.** Detect the project's UI: `Pages/**/*.cshtml` → Razor Pages (this workflow) ·
+> `Controllers/` + `Views/` → generate an MVC controller + views instead, per
+> `abp-dev/references/ui-mvc.md` · `angular/package.json` → no C# page code; use
+> `abp-dev/references/ui-angular.md` · `*.Maui/` → `abp-dev/references/maui.md`.
+
 ## Inputs
 
 Before starting, ask the user:
@@ -20,6 +25,10 @@ Before starting, ask the user:
 ## Step 1 — Read reference files
 
 Read:
+- `abp-dev/references/context-intake.md` ← Phase 0: first read an existing `Pages/**/Index.cshtml` +
+  its `.js` and reuse its theme, tag helpers, DataTable and `abp.ModalManager` patterns; verify the
+  app service / DTOs / permission constants you bind to exist; for a new look ask whether the **Stitch
+  MCP** is connected (real screens + design tokens), otherwise the existing UI is the reference
 - `abp-dev/references/ui-razorpages.md`
 - `abp-dev/references/authorization.md`
 

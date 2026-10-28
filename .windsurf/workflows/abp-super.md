@@ -16,7 +16,7 @@ Ask the user the following questions before proceeding:
 1. **Scenario description** — what does the feature do? (e.g. "Manage products with categories, archive zero-stock items nightly, and show them in a Razor Page")
 2. **Entities** — list each entity name and its properties (name : type : required/optional)
 3. **Audit level** — FullAudit / Audit / None for each entity
-4. **Razor Pages UI?** — Yes / No
+4. **UI stack?** — Razor Pages / MVC / Angular / MAUI / none (detect from the project: `Pages/` vs `Views/`+`Controllers/` vs `angular/package.json` vs `*.Maui/`)
 5. **Background job or worker?** — Yes / No. If yes: fire-and-forget job or periodic worker? What does it do?
 6. **Specification(s)?** — Yes / No. If yes: what are the filter criteria?
 7. **Domain Events?** — Yes / No. If yes: Local or Distributed? What event(s) should be raised and handled?
@@ -24,16 +24,39 @@ Ask the user the following questions before proceeding:
 
 ---
 
-## Step 1 — Read reference files
+## Step 1 — Context intake, then read reference files
 
-Read ALL of the following before generating any code:
+**Phase 0 first** (full procedure: `abp-dev/references/context-intake.md`):
+
+1. **Existing code through a knowledge graph** — use `@Codebase` / a connected repo-wiki or code-graph
+   MCP (Grep+Read as fallback) to record root namespace, ABP version from `*.csproj`, layers, UI
+   stack, theme package, and every existing entity, domain service, app service, DTO, permission
+   constant and `DbSet`, plus the conventions those files use. If nothing is indexed, say so instead
+   of assuming symbols exist.
+2. **Plan and design docs** — `README.md`, `DESIGN.md`, `docs/**`, `plans/**`, `specs/**`,
+   `openspec/**`, ADRs. An approved plan overrides your preference; flag deviations and ask.
+3. **UI source of truth** (if UI is in scope) — ask the user whether the **Stitch MCP** is connected;
+   Stitch gives real screens and design tokens. Otherwise take the **existing UI as the reference**
+   and reuse its theme, components, markup and JS patterns. Never add a CSS framework, palette, font
+   or component library the project does not already use.
+4. **Confirm before generating** — present a reuse / extend / add summary with open questions and ask
+   which phases are wanted (backend only vs UI + seed + migration).
+5. **SOLID / pattern check** — aggregate boundary plus repository / specification / domain events /
+   strategy-via-DI / interceptor choices, in one line.
+
+Then read ALL of the following before generating any code:
+- `abp-dev/references/context-intake.md`
+- `abp-dev/references/INDEX.md` ← the routing table for every other reference file
 - `abp-dev/references/ddd-domain.md`
 - `abp-dev/references/ddd-application.md`
 - `abp-dev/references/efcore.md`
 - `abp-dev/references/authorization.md`
-- `abp-dev/references/ui-razorpages.md`
 - `abp-dev/references/background-jobs.md`
 - `abp-dev/references/event-bus.md`
+- the UI reference matching the stack detected in question 4:
+  `ui-razorpages.md` · `ui-mvc.md` · `ui-angular.md` · `maui.md`
+
+Never emit Razor files into an Angular/MAUI solution or Angular components into a `*.Web` project.
 
 ---
 
@@ -46,7 +69,7 @@ Show the user a parsed summary:
 | Entities | PascalCase names | ... |
 | Properties | per entity | ... |
 | Audit level | per entity | ... |
-| Razor Pages? | | Yes / No |
+| UI stack? | | Razor Pages / MVC / Angular / MAUI / none |
 | Background task? | type + purpose | ... |
 | Specification(s)? | criteria | ... |
 | Data seed? | records | ... |
@@ -149,9 +172,15 @@ dotnet run --project src/Acme.BookStore.DbMigrator
 
 ---
 
-## Step 9 — Execute Phase 6: Razor Pages UI (if requested)
+## Step 9 — Execute Phase 6: UI (if requested; stack from question 4)
 
-Run the logic of **workflow: `abp-razor-page`** for each entity.
+- **Razor Pages** → run workflow `abp-razor-page` for each entity (`abp-dev/references/ui-razorpages.md`).
+- **MVC** → controller + `Views/<Entity>s/` view + `Index.js` + menu contributor, per
+  `abp-dev/references/ui-mvc.md`. Tag helpers require all `@addTagHelper` lines in `_ViewImports.cshtml`.
+- **Angular** → `abp generate-proxy -t ng`, standalone component + route with `requiredPolicy`,
+  menu via `data.route`, per `abp-dev/references/ui-angular.md`. No C# page files.
+- **MAUI** → ViewModel + C# client proxy + OIDC/`appsettings.json` check, per
+  `abp-dev/references/maui.md` (use the TFM the project declares).
 
 ---
 

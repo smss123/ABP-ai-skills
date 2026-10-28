@@ -33,9 +33,12 @@ A collection of curated AI agent prompts, slash commands, and workflow definitio
 | What | Where | Purpose |
 |---|---|---|
 | **Super agent** | platform-specific (see below) | Orchestrates all sub-agents from a plain-language scenario |
-| **15 scaffold agents** | `.github/prompts/`, `.claude/commands/`, `.windsurf/workflows/`, `.continue/config.yaml` | One agent per ABP layer / concern (plus super agent = 16 total per platform) |
-| **38 reference files** | `abp-dev/references/` | Curated, correct ABP patterns for every topic |
-| **Platform instructions** | `.github/copilot-instructions.md`, `CLAUDE.md`, `.windsurfrules`, `.continue/config.yaml` | Injects ABP expertise into the AI assistant |
+| **Scaffold agents** | Copilot: 16 prompts · Claude: 18 commands · Windsurf: 17 workflows · Continue: 15 agents | One agent per ABP layer / concern, incl. super agent, feature scaffold and (Claude/Windsurf) theming |
+| **Phase 0 — context intake** | `abp-dev/references/context-intake.md` | Before any code: existing-code knowledge graph → repo plan/design `.md` files → UI source of truth (Stitch MCP if connected, otherwise your existing UI as the reference) → confirm scope with you → SOLID & design-pattern check |
+| **Reference files** | `abp-dev/references/` | Curated, correct ABP patterns for every topic |
+| **`references/INDEX.md`** | `abp-dev/references/INDEX.md` | The single routing table (topic → reference → live doc URL). All platform instruction files point here, so no reference can become unreachable |
+| **UI stack coverage** | `ui-razorpages.md`, `ui-mvc.md`, `ui-angular.md`, `maui.md`, `react-native.md`, `theming.md` | Agents detect the project's UI (MVC / Razor Pages / Angular / MAUI) before generating UI code |
+| **Platform instructions** | `.github/copilot-instructions.md`, `CLAUDE.md`, `.windsurfrules`, `.continue/config.yaml`, `AGENT.md` | Injects ABP expertise into the AI assistant |
 
 ---
 
@@ -96,12 +99,17 @@ cd ABP-ai-skills
 
 The `abp-super` agent is the top-level orchestrator. Give it a plain-language description of what you want to build and it will:
 
-1. **Parse** entities, properties, and optional features (background jobs, specs, UI, seeding) from your description
-2. **Show** a confirmed analysis table — no code is written until you approve
-3. **Present** a full file-by-file execution plan grouped by layer
-4. **Execute** each sub-agent in the correct dependency order:
+1. **Run Phase 0 — context intake** before writing a single line: read the existing code through a
+   codebase knowledge graph, read the repo's plan/design `.md` files, settle the UI source of truth
+   (connect the **Stitch MCP** for real screens and tokens if you have it — otherwise your existing
+   UI becomes the reference), then confirm with you what is reused, extended and newly added
+2. **Parse** entities, properties, and optional features (background jobs, specs, UI, seeding) from your description
+3. **Show** a confirmed analysis table — no code is written until you approve
+4. **Present** a full file-by-file execution plan grouped by layer
+5. **Execute** each sub-agent in the correct dependency order:
 
 ```
+Phase 0 → Context intake     existing-code graph · plan docs · UI reference (Stitch or your pages) · SOLID check
 Phase 1 → Domain layer       entity class · domain service (Manager) · repository interface
 Phase 2 → App.Contracts      permission constants · DTOs · app service interface
 Phase 3 → Application        app service implementation · AutoMapper · specification · background worker
@@ -111,13 +119,14 @@ Phase 6 → UI (optional)      Razor Pages list + create/edit modals + JS DataTa
 Phase 7 → Seed (optional)    IDataSeedContributor with idempotent guard
 ```
 
-5. **Print** a summary: total files generated, layer breakdown, next-steps checklist
+6. **Print** a summary: total files generated, layer breakdown, next-steps checklist
 
 ### Example prompt
 
 > *"I want to manage Products. Each Product has a Name (required, max 128 chars), a decimal Price, and an IsActive flag. I need Razor Pages UI and some seed data with 3 sample products."*
 
-The Super Agent will scaffold ~15 files across all 7 phases without any further input.
+The Super Agent first runs Phase 0 (it reads your existing code, your plan documents and your current
+UI, then confirms scope with you), then scaffolds ~15 files across the remaining phases.
 
 ---
 
@@ -162,12 +171,13 @@ Use this when you've already run `abp-entity` and now need to wire up everything
 | **abp-permissions** | `#abp-permissions.prompt.md` | `/project:abp-permissions` | `abp-permissions` | Permission constants + `PermissionDefinitionProvider` + `en.json` localization keys |
 | **abp-specification** | `#abp-specification.prompt.md` | `/project:abp-specification` | `abp-specification` | `Specification<T>` with `.And()/.Or()/.Not()` combinators |
 | **abp-background-worker** | `#abp-background-worker.prompt.md` | `/project:abp-background-worker` | `abp-background-worker` | `AsyncBackgroundJob<TArgs>` (fire-and-forget) or `AsyncPeriodicBackgroundWorkerBase` (periodic) |
-| **abp-razor-page** | `#abp-razor-page.prompt.md` | `/project:abp-razor-page` | `abp-razor-page` | Razor Pages list page · JS DataTable · create/edit modals · menu registration |
+| **abp-razor-page** | `#abp-razor-page.prompt.md` | `/project:abp-razor-page` | `abp-razor-page` | Server-side UI: list page · JS DataTable · create/edit modals · menu registration. Detects the stack first — Razor Pages (`Pages/`) or MVC (`Views/` + `Controllers/`); Angular/MAUI projects are routed to `ui-angular.md` / `maui.md` instead of getting C# page files |
 | **abp-data-seed** | `#abp-data-seed.prompt.md` | `/project:abp-data-seed` | `abp-data-seed` | `IDataSeedContributor` — idempotent guard, `IGuidGenerator`, `autoSave: true` |
 | **abp-event-bus** | `#abp-event-bus.prompt.md` | `/project:abp-event-bus` | `abp-event-bus` | ETO class + `ILocalEventHandler<T>` or `IDistributedEventHandler<T>` + event bus wiring |
 | **abp-multi-tenancy** | `#abp-multi-tenancy.prompt.md` | `/project:abp-multi-tenancy` | `abp-multi-tenancy` | `IMustHaveTenant`/`IMayHaveTenant`, `ICurrentTenant`, data filters, per-tenant databases |
 | **abp-settings** | `#abp-settings.prompt.md` | `/project:abp-settings` | `abp-settings` | `SettingDefinitionProvider` + `ISettingProvider` (read) + `ISettingManager` (write) |
 | **abp-caching** | `#abp-caching.prompt.md` | `/project:abp-caching` | `abp-caching` | `IDistributedCache<TCacheItem>`, `GetOrAddAsync`, cache invalidation, Redis setup |
+| **abp-theming** | — | `/project:abp-theming` | `abp-theming` | Custom theme / layout for the server-side UIs: layout pages, branding, bundles (`references/theming.md`) |
 
 > **Continue.dev** users: all agents are available via the agent picker (including the Super Agent at the top of the list).
 
@@ -247,12 +257,17 @@ ABP-ai-skills/
 ├── abp-dev/
 │   ├── SKILL.md                        ← Master skill definition (all platforms)
 │   └── references/
+│       ├── INDEX.md                               ← Routing table: topic → file → verified doc URL (single source)
+│       ├── context-intake.md                      ← Phase 0: existing-code graph, plan docs, UI source of truth, SOLID/patterns
 │       ├── ddd-domain.md                          ← Entities, AggregateRoot, Domain Services, Repositories
 │       ├── ddd-application.md                     ← Application Services, DTOs, CRUD patterns
 │       ├── efcore.md                              ← EF Core DbContext, migrations, multi-DBMS switching
 │       ├── authorization.md                       ← Permissions, [Authorize], PermissionDefinitionProvider, Audit Logging
 │       ├── api.md                                 ← Auto API Controllers, Versioning, Integration Services, Static/Dynamic Proxies
 │       ├── ui-razorpages.md                       ← Razor Pages, page models, tag helpers, JS API
+│       ├── ui-mvc.md                              ← ASP.NET Core MVC UI, AbpController, _ViewImports, bundling
+│       ├── ui-angular.md                          ← Angular SPA: generate-proxy, environment.ts, guards, theming
+│       ├── maui.md                                ← .NET MAUI mobile UI (ABP 10 / .NET 10 TFMs, OIDC, adb reverse)
 │       ├── cli-structure.md                       ← ABP CLI, startup templates, solution structure
 │       ├── background-jobs.md                     ← Background jobs and periodic workers
 │       ├── event-bus.md                           ← Local domain events & Distributed Event Bus
@@ -357,16 +372,23 @@ ABP-ai-skills/
 
 ## Reference files
 
-Every agent reads the relevant reference file(s) before generating any code, and fetches the official ABP docs URL when the network is available.
+Every agent runs **Phase 0** (`references/context-intake.md`) before generating code, then reads
+`references/INDEX.md` — it maps each topic to its reference file and to a documentation URL that is
+verified live — then reads the mapped file and fetches the official ABP docs URL when the network is
+available.
 
 | Reference file | Topics covered |
 |---|---|
+| `references/context-intake.md` | **Phase 0**: read existing code through a knowledge graph, read repo plan/design `.md` files, UI source of truth (Stitch MCP or the project's own UI as reference), confirm scope with the user, SOLID + ABP design-pattern check |
+| `references/INDEX.md` | **Routing table**: every topic → reference file → verified doc URL, plus the UI-stack decision matrix and the list of topics not yet written up |
 | `references/ddd-domain.md` | Entities, AggregateRoot, Value Objects, Domain Services, Repositories |
 | `references/ddd-application.md` | Application Services, DTOs, CRUD patterns, ObjectMapper |
 | `references/efcore.md` | DbContext, EF Core repositories, migrations, data seeding, multi-DBMS switching (MySQL/PostgreSQL/Oracle/SQLite) |
 | `references/authorization.md` | Permission constants, `PermissionDefinitionProvider`, `[Authorize]`, resource permissions, dynamic claims, audit log module |
 | `references/api.md` | Auto API Controllers, API versioning, integration services, static & dynamic C# client proxies, Swagger |
 | `references/ui-razorpages.md` | Razor Pages, page models, tag helpers, JS API proxy |
+| `references/ui-mvc.md` | ASP.NET Core MVC UI: `AbpController`, `Views/` + `_ViewImports`, tag helpers, bundling, `abp install-libs`, menu/toolbars |
+| `references/ui-angular.md` | Angular SPA: `environment.ts`, `abp generate-proxy -t ng`, route-based menu, `*abpPermission`/`PermissionService`, localization, LeptonX theming, SSR/PWA |
 | `references/cli-structure.md` | ABP CLI commands, startup templates, solution structure |
 | `references/background-jobs.md` | Background jobs, periodic background workers |
 | `references/event-bus.md` | Local domain events, pre-built entity events, Distributed Event Bus, ETOs |

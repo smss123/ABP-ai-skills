@@ -2,7 +2,7 @@
 
 > 📖 Official docs:
 > - Localization: https://abp.io/docs/latest/framework/fundamentals/localization
-> - ABP CLI: https://abp.io/docs/latest/framework/fundamentals/cli-structure
+> - ABP CLI: https://abp.io/docs/latest/cli
 >
 > Fetch these pages for the latest API details before generating localization code.
 

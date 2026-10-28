@@ -2,7 +2,7 @@
 
 > 📖 Official docs:
 > - Authorization & Permissions: https://docs.abp.io/en/abp/latest/Authorization
-> - Permission Management: https://docs.abp.io/en/abp/latest/Permission-Management
+> - Permission Management: https://abp.io/docs/latest/modules/permission-management
 > - Current User: https://docs.abp.io/en/abp/latest/CurrentUser
 > - Audit Logging: https://docs.abp.io/en/abp/latest/Audit-Logging
 >

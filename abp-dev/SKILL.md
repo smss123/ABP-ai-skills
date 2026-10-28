@@ -22,10 +22,13 @@ This skill works across all major AI coding assistants. Use the configuration fi
 
 | Platform | Instructions file | Agent / workflow files |
 |---|---|---|
-| **GitHub Copilot** | `abp-dev/SKILL.md` (this file) + `.github/copilot-instructions.md` | `.github/prompts/` — 15 reusable agent prompts (see table below) |
-| **Claude Code** | `CLAUDE.md` | `.claude/commands/` — 15 slash commands (see table below) |
-| **Windsurf** | `.windsurfrules` | `.windsurf/workflows/` — 15 Cascade workflows (see table below) |
-| **Continue.dev** | `.continue/config.yaml` (`systemMessage`) | `.continue/config.yaml` (`agents:` block) — 14 specialized agents |
+| **GitHub Copilot** | `abp-dev/SKILL.md` (this file) + `.github/copilot-instructions.md` | `.github/prompts/` — 16 reusable agent prompts (see table below) |
+| **Claude Code** | `CLAUDE.md` | `.claude/commands/` — 18 slash commands (see table below) |
+| **Windsurf** | `.windsurfrules` | `.windsurf/workflows/` — 17 Cascade workflows (see table below) |
+| **Continue.dev** | `.continue/config.yaml` (`systemMessage`) | `.continue/config.yaml` (`agents:` block) — 15 specialized agents |
+
+> **Routing table:** every topic → reference file → documentation URL mapping lives in
+> **`abp-dev/references/INDEX.md`** (one place, so the platform files cannot drift apart).
 
 ## 🚀 Super Agent — Start here for full-feature scaffolding
 
@@ -37,12 +40,16 @@ The **`abp-super`** agent is the top-level orchestrator. Give it a plain-languag
 4. Execute each sub-agent in the correct layer order:
 
 ```
+Phase 0 → Context intake  (codebase graph of existing code → plan/design .md files →
+                           UI source of truth: Stitch MCP if connected, else the project's
+                           existing UI as reference → confirm scope with the user → SOLID check)
 Phase 1 → Domain layer     (entity, domain service, repository interface)
 Phase 2 → App.Contracts    (permissions, DTOs, app service interface)
 Phase 3 → Application      (app service impl, AutoMapper, specification, background worker, domain events)
 Phase 4 → EF Core          (EfCore repository, DbSet, model config, module registration)
 Phase 5 → Database         (migration commands)
-Phase 6 → UI               (Razor Pages — optional)
+Phase 6 → UI               (server-side: Razor Pages or MVC — optional, detected from the project;
+                            Angular/MAUI clients: proxy + route/permission wiring instead)
 Phase 7 → Seed data        (IDataSeedContributor — optional)
 ```
 
@@ -81,49 +88,76 @@ All agents read the relevant reference file(s) and fetch official ABP docs befor
 | **abp-multi-tenancy** | `#abp-multi-tenancy.prompt.md` | `/project:abp-multi-tenancy` | `abp-multi-tenancy` | `IMustHaveTenant`/`IMayHaveTenant` on entities, `ICurrentTenant`, data filters, per-tenant databases |
 | **abp-settings** | `#abp-settings.prompt.md` | `/project:abp-settings` | `abp-settings` | `SettingDefinitionProvider` + `ISettingProvider` (read) + `ISettingManager` (write) |
 | **abp-caching** | `#abp-caching.prompt.md` | `/project:abp-caching` | `abp-caching` | `IDistributedCache<TCacheItem>`, `GetOrAddAsync`, cache invalidation, Redis setup |
+| **abp-feature-scaffold** | `#abp-feature-scaffold.prompt.md` | `/project:abp-feature-scaffold` | `abp-feature-scaffold` | Wires an **existing** entity through permissions → DTOs → app service → EF Core → UI → seed data |
+| **abp-theming** | — | `/project:abp-theming` | `abp-theming` | Custom theme / layout for the server-side UIs (MVC & Razor Pages): layout pages, branding, bundles |
 
 You are an expert ABP Framework developer. Always follow ABP conventions precisely.
-The user's stack: **Razor Pages / MVC UI + EF Core**.
+Supports **all ABP UI stacks** — MVC, Razor Pages, Angular, .NET MAUI, React Native — plus EF Core
+data access. Detect which one the target project uses before generating UI code (table below).
 
 ## How to use this skill
 
-Follow these steps **in order** for every ABP-related question:
+**Phase 0 always comes first.** Never generate ABP code into a repository you have not inspected:
 
-1. **Read the local reference file(s)** from the table below — they contain curated, correct patterns.
-2. **Fetch the official documentation page** listed in the same row using `web_fetch` (or a browser tool) to get the latest API details, version-specific notes, or anything the reference file may not cover.
-3. Synthesise both sources before generating code or advice.
+0. **Run the Phase 0 context intake** — `references/context-intake.md`. In order:
+   a. read the **existing code through a knowledge graph** (repo wiki / codebase graph MCP / workspace
+      search; Glob+Grep as fallback) and build the map: root namespace, ABP version, layers, UI stack,
+      theme, existing entities/services/permissions/DbSets and the conventions they use;
+   b. read any **plan or design `.md`** in the repo (`docs/`, `plans/`, `specs/`, `DESIGN.md`, ADRs) —
+      an approved plan overrides your own preference, and you flag any divergence instead of silently
+      changing course;
+   c. for UI work, establish the **design source of truth**: ask the user to connect **Stitch MCP** for
+      real screens and tokens, otherwise take the **project's existing UI as the reference** and reuse
+      its theme, components, markup and JS patterns — never introduce a new visual language;
+   d. **chat with the user**: show the reuse / extend / add summary plus open questions, and confirm
+      scope (backend only? UI? migration?) before executing;
+   e. check the design against **SOLID and the ABP-native patterns** (repository, specification,
+      aggregate/domain service, DTO+mapper, domain events, strategy, interceptor) documented in the
+      same file.
+
+Only then continue with steps 1–4 below, in order, for every ABP-related question:
+
+1. **Read `references/INDEX.md`** — the single routing table that maps every ABP topic to its
+   reference file and to a live-verified documentation URL. It covers every file in `references/`;
+   do not
+   work from a remembered subset, and do not re-create a topic table inside another file.
+2. **Read the local reference file(s)** named by that row — they contain curated, correct patterns.
+3. **Fetch the official documentation page** listed in the same row using `web_fetch` (or a browser
+   tool) to get the latest API details, version-specific notes, or anything the reference file may
+   not cover.
+4. Synthesise both sources before generating code or advice.
 
 > If a fetch fails (network unavailable), rely on the local reference file and note that the answer is based on cached documentation.
 
-| Topic | Reference File | Official Documentation URL |
+## Detect the UI stack first
+
+| Signal in the target project | Stack | Reference file |
 |---|---|---|
-| Entities, AggregateRoot, Value Objects | `references/ddd-domain.md` | https://docs.abp.io/en/abp/latest/Entities |
-| Domain Services | `references/ddd-domain.md` | https://docs.abp.io/en/abp/latest/Domain-Services |
-| Value Objects | `references/ddd-domain.md` | https://docs.abp.io/en/abp/latest/Value-Objects |
-| Repositories | `references/ddd-domain.md` | https://docs.abp.io/en/abp/latest/Repositories |
-| Application Services, DTOs, CRUD patterns | `references/ddd-application.md` | https://docs.abp.io/en/abp/latest/Application-Services |
-| Module system, DependsOn, ConfigureServices | `references/modules.md` | https://docs.abp.io/en/abp/latest/Module-Development-Basics |
-| EF Core DbContext, repositories, migrations | `references/efcore.md` | https://docs.abp.io/en/abp/latest/Entity-Framework-Core |
-| Data seeding (IDataSeedContributor) | `references/efcore.md` | https://docs.abp.io/en/abp/latest/Data-Seeding |
-| Permissions, Authorization, [Authorize] | `references/authorization.md` | https://docs.abp.io/en/abp/latest/Authorization |
-| Auto API Controllers, HTTP API | `references/api.md` | https://docs.abp.io/en/abp/latest/API/Auto-API-Controllers |
-| Razor Pages UI, page models, tag helpers, JS API | `references/ui-razorpages.md` | https://docs.abp.io/en/abp/latest/UI/AspNetCore/Razor-Pages |
-| ABP CLI, startup template, project structure | `references/cli-structure.md` | https://docs.abp.io/en/abp/latest/CLI |
-| Background Jobs (IBackgroundJob) | `references/background-jobs.md` | https://docs.abp.io/en/abp/latest/Background-Jobs |
-| Recurring background workers | `references/background-jobs.md` | https://docs.abp.io/en/abp/latest/Background-Workers |
-| Local Event Bus, Domain Events | `references/event-bus.md` | https://docs.abp.io/en/abp/latest/Local-Event-Bus |
-| Distributed Event Bus | `references/event-bus.md` | https://docs.abp.io/en/abp/latest/Distributed-Event-Bus |
-| Multi-Tenancy | `references/multi-tenancy.md` | https://docs.abp.io/en/abp/latest/Multi-Tenancy |
-| Settings | `references/settings.md` | https://docs.abp.io/en/abp/latest/Settings |
-| Caching | `references/caching.md` | https://docs.abp.io/en/abp/latest/Caching |
-| Testing (unit, integration, test data seed) | `references/testing-troubleshooting.md` | https://docs.abp.io/en/abp/latest/Testing |
-| Troubleshooting (AutoMapper, permissions, migrations) | `references/testing-troubleshooting.md` | https://docs.abp.io/en/abp/latest/Customizing-Application-Modules-Guide |
+| `Pages/**/*.cshtml` | Razor Pages | `references/ui-razorpages.md` |
+| `Controllers/` + `Views/` | ASP.NET Core MVC | `references/ui-mvc.md` |
+| `angular/package.json` | Angular SPA | `references/ui-angular.md` |
+| `*.Maui/` project | .NET MAUI | `references/maui.md` |
+| React Native / Expo folder | React Native | `references/react-native.md` |
+| `*.Blazor*.Razor` components | Blazor | no reference file yet — fetch https://abp.io/docs/latest/framework/ui/blazor/overall and say so |
+
+Rules that follow from the stack:
+
+- **MVC vs Razor Pages** share the tag-helper, JavaScript-API, navigation, theming and bundling
+  infrastructure — but not the page class (`AbpController` vs `AbpPageModel`) or the folder layout.
+  Never mix conventions inside one screen, and never assume `Pages/` exists in an MVC solution.
+- **Angular** never emits C# page code: it consumes the HTTP API through generated proxies
+  (`abp generate-proxy -t ng`) and contributes navigation through route `data.route`. Hand-written
+  `HttpClient` calls, `@addTagHelper` lines, or `abp.ModalManager` JS in an Angular project are bugs.
+- **MAUI** uses C# client proxies + OIDC; check the project's declared `TargetFramework` (`net10.0-*`
+  on ABP 10.x) before emitting `dotnet build -t:Run -f ...` commands.
+- Server-side UIs need `abp install-libs`; the generated theme assets in `wwwroot/libs` are the usual
+  cause of a blank page when it is skipped.
 
 For questions touching multiple areas (e.g. "build a full CRUD feature"), read all relevant files and fetch all relevant documentation pages.
 
 ## Core ABP Principles (always apply)
 
-1. **Layered architecture**: Domain → Application → Infrastructure (EF Core) → Web (Razor Pages)
+1. **Layered architecture**: Domain → Application → Infrastructure (EF Core) → UI (MVC / Razor Pages / Angular / MAUI)
 2. **Never expose entities to the presentation layer** — always use DTOs
 3. **Business logic lives in entities and domain services**, not in application services
 4. **Application services orchestrate** — they call domain services / repositories, map to DTOs
@@ -131,7 +165,13 @@ For questions touching multiple areas (e.g. "build a full CRUD feature"), read a
 6. **Always use `IGuidGenerator`** to generate Guid IDs, never `Guid.NewGuid()` directly
 7. **Auto-register services** — ABP discovers `ITransientDependency`, `ISingletonDependency`, `IScopedDependency` automatically
 8. **`ConfigureByConvention()`** must always be called in EF Core model configuration
-9. **Permissions** are defined in `Application.Contracts`, checked in Application Services and Razor Pages
+9. **Permissions** are defined in `Application.Contracts`, checked in application services and in
+   whichever UI the project uses (Razor Pages / MVC views, Angular `requiredPolicy`, MAUI view models)
+10. **Reuse before adding** — Phase 0 tells you what already exists; extend an existing entity,
+    domain service, permission group or UI pattern instead of creating a parallel second one
+11. **SOLID in ABP form** — one aggregate per consistency boundary, depend on abstractions declared
+    in the domain layer, branch behaviour with domain events / DI strategies / interceptors rather
+    than `if (type == …)` inside shared code (see `references/context-intake.md`)
 
 ## Typical Layered Solution Structure
 
@@ -144,5 +184,7 @@ Acme.MyApp/
 ├── Acme.MyApp.EntityFrameworkCore/   ← DbContext, EF Core repo implementations
 ├── Acme.MyApp.DbMigrator/            ← CLI tool: migrate + seed
 ├── Acme.MyApp.HttpApi/               ← (optional) manual API controllers
-└── Acme.MyApp.Web/                   ← Razor Pages, menus, page models
+├── Acme.MyApp.Web/                   ← MVC or Razor Pages UI (Views/ vs Pages/)
+└── angular/                          ← replaces *.Web when created with `-u angular`; has its own
+                                         package.json, and the API is reached over HTTP only
 ```

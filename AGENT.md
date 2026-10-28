@@ -6,7 +6,14 @@ This file tells any AI coding assistant how to install ABP AI Skills into an ABP
 
 ## What this repository provides
 
-- **38 reference files** in `abp-dev/references/` — curated ABP Framework patterns
+- **Reference files** in `abp-dev/references/` — curated ABP Framework patterns
+  (UI coverage: `ui-razorpages.md`, `ui-mvc.md`, `ui-angular.md`, `maui.md`, `react-native.md`, `theming.md`)
+- **`abp-dev/references/INDEX.md`** — the single routing table: topic → reference file → live-verified
+  doc URL. Every platform instruction file points at it; read it before answering any ABP question.
+- **`abp-dev/references/context-intake.md`** — the mandatory **Phase 0** every agent runs before
+  writing code: read the existing code through a knowledge graph, read the repo's plan/design `.md`
+  files, pick the UI source of truth (Stitch MCP if connected, otherwise the project's existing UI as
+  the reference), confirm scope with the user, then apply SOLID and the ABP design patterns.
 - **Agent commands** for Claude Code, GitHub Copilot, Windsurf, and Continue.dev
 - **Install scripts**: `install.sh` (bash) and `install.ps1` (PowerShell)
 

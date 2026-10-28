@@ -19,7 +19,7 @@ Before starting, ask the user:
 
 ## Step 1 — Read reference file
 
-Read `abp-dev/references/ddd-domain.md` and fetch https://docs.abp.io/en/abp/latest/Specifications.
+Read `abp-dev/references/ddd-domain.md` and fetch https://abp.io/docs/latest/framework/architecture/domain-driven-design/specifications
 
 ---
 

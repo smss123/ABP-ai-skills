@@ -1,7 +1,7 @@
 # ABP: Razor Pages / MVC UI
 
 > 📖 Official docs:
-> - Razor Pages UI: https://docs.abp.io/en/abp/latest/UI/AspNetCore/Razor-Pages
+> - Razor Pages UI: https://abp.io/docs/latest/framework/ui/mvc-razor-pages/overall
 > - Tag Helpers: https://docs.abp.io/en/abp/latest/UI/AspNetCore/Tag-Helpers/Index
 > - JavaScript API / Modal Manager: https://docs.abp.io/en/abp/latest/UI/AspNetCore/JavaScript-API/Index
 > - Navigation & Menus: https://docs.abp.io/en/abp/latest/UI/AspNetCore/Navigation-Menu
