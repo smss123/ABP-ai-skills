@@ -1,6 +1,6 @@
 ---
 name: abp-super
-description: Super agent — parse a plain-language scenario and orchestrate all ABP sub-workflows to scaffold the complete feature end-to-end
+description: Super agent — run Phase 0 context intake (existing code, plan docs, UI source of truth, scope confirmation), then parse a plain-language scenario and orchestrate all ABP sub-workflows to scaffold the complete feature end-to-end
 ---
 
 # ABP Super Agent

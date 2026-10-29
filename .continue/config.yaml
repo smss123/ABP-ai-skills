@@ -9,6 +9,18 @@ systemMessage: |
   Server-side stack: MVC or Razor Pages + EF Core — always detect the actual UI stack from the
   project before generating UI code (Angular and MAUI have their own reference files).
 
+  ## Auto-activation
+
+  This system message is injected into every Continue chat and agent in the project, so ABP rules
+  apply automatically — no prompt to attach. Treat the workspace as an ABP project when any signal is
+  present: Volo.Abp* package references, AbpModule subclasses, AbpDbContext, AggregateRoot /
+  FullAuditedEntity / IRepository<,>, AbpController / AbpPageModel, appsettings with "Abp" /
+  "AuthServer" / "RemoteServices", projects ending in .Domain.Shared / .Application.Contracts /
+  .HttpApi / .DbMigrator / .EntityFrameworkCore, or abp.json / .abp/. On detection, say one line —
+  "ABP project detected (signal: ...) — running Phase 0 before writing code" — and apply the rules to
+  the entire task, including bug fixes and simple questions. If nothing matches, do not inject ABP
+  patterns. Authoritative signal list: abp-dev/references/context-intake.md section 0.0.
+
   ## How to answer ABP questions
 
   Follow these steps in order for every ABP-related question:
@@ -76,7 +88,8 @@ docs:
 agents:
   - name: ABP Super Agent
     description: >
-      Master orchestrator agent. Parses a plain-language ABP scenario, extracts entities and
+      Master orchestrator agent. Runs Phase 0 context intake (existing-code graph, plan docs,
+      UI source of truth, scope confirmation) first, then parses a plain-language ABP scenario, extracts entities and
       features, presents a confirmed execution plan, then runs all sub-agents in the correct
       layer order to scaffold the complete feature end-to-end.
     systemMessage: |
@@ -184,7 +197,7 @@ agents:
 
   - name: ABP Developer
     description: >
-      Expert ABP Framework agent. Scaffolds full CRUD features, single entities, and
+      Expert ABP Framework agent. Runs Phase 0 context intake before generating, then scaffolds full CRUD features, single entities, and
       advises on ABP DDD patterns. Reads local reference files and official docs before
       generating any code.
     systemMessage: |
@@ -360,7 +373,7 @@ agents:
 
   - name: ABP Razor Page
     description: >
-      Scaffolds Razor Pages UI for an entity: list page, create/edit modals, DataTable JS, and menu registration.
+      Scaffolds Razor Pages UI for an entity. Phase 0 first: reuse the project's existing pages as the visual reference (or Stitch MCP design tokens when connected), then list page, create/edit modals, DataTable JS, menu registration.
     systemMessage: |
       You are an expert ABP Framework developer. Scaffold server-side UI.
       Phase 0 first (abp-dev/references/context-intake.md): read an existing Pages/**/Index.cshtml +
@@ -596,3 +609,21 @@ agents:
         name: edit_existing_file
       - type: builtin
         name: fetch_url
+
+# ---------------------------------------------------------------------------
+# Rules — auto-attached by Continue whenever a matching file is in context.
+# `pattern` is a regex evaluated against the file path.
+# ---------------------------------------------------------------------------
+rules:
+  - name: ABP Framework — auto-activation
+    pattern: "\\.cs$|\\.csproj$|\\.cshtml$|\\.razor$|\\.sln$|appsettings|\\.Module\\.cs$"
+    rule: |
+      ABP project signals detected by file type. Before generating anything, run Phase 0 from
+      abp-dev/references/context-intake.md: map the existing code through a knowledge graph
+      (namespace, ABP version, layers, UI stack, theme, existing entities / domain services / app
+      services / DTOs / permission constants / DbSets and their conventions); read the repo's
+      plan/design markdown and honour approved plans; for UI, ask whether the Stitch MCP is connected
+      and otherwise reuse the project's existing pages as the visual reference; show a reuse / extend
+      / add summary and confirm scope; finish with the SOLID + ABP design-pattern check. Then route
+      through abp-dev/references/INDEX.md and fetch the doc URL in that row. Never invent an ABP API
+      or URL from memory, and never inject these rules into a non-ABP project.

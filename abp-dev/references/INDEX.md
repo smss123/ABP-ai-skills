@@ -7,13 +7,16 @@ caused references to become unreachable and counts to drift.
 
 How to use:
 
-1. **Read `context-intake.md` first** — Phase 0: inspect the existing code through a knowledge graph,
+1. **Confirm the project really is ABP** — `context-intake.md` §0.0 lists the detection signals; the
+   auto-loaded files (`AGENTS.md`, `.github/instructions/abp.instructions.md`, `.windsurfrules`,
+   `CLAUDE.md`, `.continue/config.yaml`) apply it without being asked.
+2. **Read `context-intake.md`** — Phase 0: inspect the existing code through a knowledge graph,
    read the repo's plan/design `.md` files, pick the UI source of truth (Stitch MCP if connected,
    otherwise the project's existing UI as the reference), confirm scope with the user, then apply the
    SOLID / design-pattern check. No code generation before that.
-2. Find the topic row below, read that reference file.
-3. Fetch the doc URL in the same row (live-verified against ABP 10.x as of 2026-10-29).
-4. Synthesise both, then generate code.
+3. Find the topic row below, read that reference file.
+4. Fetch the doc URL in the same row (live-verified against ABP 10.x as of 2026-10-29).
+5. Synthesise both, then generate code.
 
 > When a fetch fails, use the local reference file and state that the answer is based on cached
 > documentation.

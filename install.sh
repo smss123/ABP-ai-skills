@@ -142,6 +142,9 @@ echo ""
 echo "📚 Reference files (all platforms)..."
 copy_item "$SRC_DIR/abp-dev" "$TARGET_DIR"
 
+echo "🧭 Auto-activation rules (AGENTS.md-aware tools: Copilot, Codex, Cursor, Zed, Qoder…)"
+copy_item "$SRC_DIR/AGENTS.md" "$TARGET_DIR"
+
 if [[ "$PLATFORM" == "all" || "$PLATFORM" == "copilot" ]]; then
   echo ""
   echo "🤖 GitHub Copilot..."

@@ -14,6 +14,10 @@ This file tells any AI coding assistant how to install ABP AI Skills into an ABP
   writing code: read the existing code through a knowledge graph, read the repo's plan/design `.md`
   files, pick the UI source of truth (Stitch MCP if connected, otherwise the project's existing UI as
   the reference), confirm scope with the user, then apply SOLID and the ABP design patterns.
+- **`AGENTS.md`** — the always-on auto-activation rule for every tool that reads the open `AGENTS.md`
+  standard (Copilot, Codex, Cursor, Zed, Qoder, Amp, Jules). Installed into the project root.
+- **`.github/instructions/abp.instructions.md`** — path-scoped Copilot instructions, auto-attached when
+  a `*.cs` / `*.csproj` / `*.cshtml` / `*.razor` / `appsettings*.json` file is in context.
 - **Agent commands** for Claude Code, GitHub Copilot, Windsurf, and Continue.dev
 - **Install scripts**: `install.sh` (bash) and `install.ps1` (PowerShell)
 
@@ -63,6 +67,8 @@ curl -sSL https://raw.githubusercontent.com/smss123/ABP-ai-skills/main/install.s
 | Item | Destination | Condition |
 |---|---|---|
 | `abp-dev/references/` | `<target>/abp-dev/references/` | Always |
+| `AGENTS.md` | `<target>/AGENTS.md` | Always — auto-activates ABP rules in AGENTS.md-aware tools |
+| `.github/instructions/` | `<target>/.github/instructions/` | Platform `all` or `copilot` (copied with `.github`) |
 | `.claude/` + `CLAUDE.md` | `<target>/` | Platform `all` or `claude` |
 | `.github/` | `<target>/` | Platform `all` or `copilot` |
 | `.windsurf/` + `.windsurfrules` | `<target>/` | Platform `all` or `windsurf` |

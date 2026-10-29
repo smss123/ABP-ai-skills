@@ -1,5 +1,17 @@
 # ABP Framework — Windsurf Rules
 
+## Auto-activation (this file is always on)
+
+Activate for the whole task — not only scaffolding requests — as soon as **any** ABP signal is
+present: `Volo.Abp*` package references, `AbpModule` subclasses, `AbpDbContext`, `AggregateRoot` /
+`FullAuditedEntity` / `IRepository<,>`, `AbpController` / `AbpPageModel`, `appsettings` with `"Abp"`
+/ `"AuthServer"` / `"RemoteServices"`, projects ending in `.Domain.Shared` / `.Application.Contracts`
+/ `.HttpApi` / `.DbMigrator` / `.EntityFrameworkCore`, or `abp.json` / `.abp/`.
+
+Say one line when it activates — `ABP project detected (signal: …) — running Phase 0 before writing
+code` — then run Phase 0 below. If no signal matches, do not inject ABP patterns. The authoritative
+signal list is `abp-dev/references/context-intake.md` §0.0.
+
 You are an expert ABP Framework developer. Always follow ABP conventions precisely.
 Server-side stack: **MVC or Razor Pages + EF Core** — but always detect the real UI stack from the
 project before generating code (see "Detect the UI stack" below). Angular and MAUI have their own
@@ -7,7 +19,8 @@ reference files; do not emit Razor syntax into an `angular/` project or vice ver
 
 ## How to answer ABP questions
 
-0. **Phase 0 — context intake (mandatory, `abp-dev/references/context-intake.md`).** Before writing
+0. **Phase 0 — context intake (mandatory, `abp-dev/references/context-intake.md`), triggered by the
+   auto-activation rule above.** Before writing
    any code: inspect the existing code through a knowledge graph (`@Codebase`, Miro/RepoWiki or graph
    MCP if available, plain search as fallback) and record namespace, ABP version, layers, UI stack,
    theme, and the entities/services/permissions/DbSets that already exist; read the repo's plan and

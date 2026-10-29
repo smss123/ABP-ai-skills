@@ -1,6 +1,6 @@
 ---
 mode: 'agent'
-description: 'Super agent — parse a plain-language ABP scenario and orchestrate all sub-agents to scaffold the complete feature end-to-end'
+description: 'Super agent — run Phase 0 context intake (existing code, plan docs, UI source of truth, scope confirmation), then parse a plain-language ABP scenario and orchestrate all sub-agents to scaffold the complete feature end-to-end'
 tools: ['codebase', 'fetch', 'search', 'editFiles', 'runCommands']
 ---
 

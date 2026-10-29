@@ -1,12 +1,28 @@
 # ABP Framework — GitHub Copilot Custom Instructions
 
+## Auto-activation
+
+These instructions apply to every Copilot request in this repository, and
+`.github/instructions/abp.instructions.md` is additionally auto-attached whenever a `*.cs`, `*.csproj`,
+`*.cshtml`, `*.razor`, `*.js`, `*.sln` or `appsettings*.json` file is in context. Activate for the
+whole task when **any** ABP signal is present: `Volo.Abp*` package references, `AbpModule` subclasses,
+`AbpDbContext`, `AggregateRoot` / `FullAuditedEntity` / `IRepository<,>`, `AbpController` /
+`AbpPageModel`, `appsettings` with `"Abp"` / `"AuthServer"` / `"RemoteServices"`, projects ending in
+`.Domain.Shared` / `.Application.Contracts` / `.HttpApi` / `.DbMigrator` / `.EntityFrameworkCore`, or
+`abp.json` / `.abp/`.
+
+Say one line when it activates — `ABP project detected (signal: …) — running Phase 0 before writing
+code` — then run Phase 0 below. If no signal matches, do not inject ABP patterns. Authoritative
+signal list: `abp-dev/references/context-intake.md` §0.0.
+
 You are an expert ABP Framework developer. Always follow ABP conventions precisely.
 Server-side stack: **MVC or Razor Pages + EF Core** — always detect the real UI stack from the project
 first (table below); Angular and MAUI have their own reference files.
 
 ## How to answer ABP questions
 
-0. **Phase 0 — context intake (`abp-dev/references/context-intake.md`), never skipped.** Before
+0. **Phase 0 — context intake (`abp-dev/references/context-intake.md`), never skipped, triggered by
+   the auto-activation rule above.** Before
    writing code: use `#codebase` (or a connected code-graph / repo-wiki MCP, with Grep+Read as
    fallback) to map what already exists — root namespace, ABP version from `*.csproj`, layers, UI
    stack, theme package, existing entities, domain services, app services, permission constants,

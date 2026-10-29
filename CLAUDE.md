@@ -1,10 +1,23 @@
 # ABP Framework — Development Instructions for Claude Code
 
+## Auto-activation
+
+`CLAUDE.md` is loaded into every Claude Code session in this project, so these rules apply
+automatically — no prompt needs attaching. Treat the workspace as an ABP project when **any** signal
+is present: `Volo.Abp*` package references, `AbpModule` subclasses, `AbpDbContext`, `AggregateRoot` /
+`FullAuditedEntity` / `IRepository<,>`, `AbpController` / `AbpPageModel`, `appsettings` containing
+`"Abp"` / `"AuthServer"` / `"RemoteServices"`, projects ending in `.Domain.Shared` /
+`.Application.Contracts` / `.HttpApi` / `.DbMigrator` / `.EntityFrameworkCore`, or `abp.json` /
+`.abp/`. On detection, say one line —
+`ABP project detected (signal: …) — running Phase 0 before writing code` — and apply the rules to the
+entire task, including bug fixes, refactors and simple questions. If nothing matches, do not inject
+ABP patterns. Authoritative signal list: `abp-dev/references/context-intake.md` §0.0.
+
 This repository contains curated ABP Framework skills. When working on any ABP project, always apply the guidance below **before** generating code or advice.
 
 ## How to use these instructions
 
-**Step 0 — Context intake (never skip).** Before generating any ABP code, follow
+**Step 0 — Context intake (never skip)**, triggered automatically by the detection rule above. Before generating any ABP code, follow
 `abp-dev/references/context-intake.md`:
 
 - inspect the **existing code with a knowledge graph** — repo wiki / codebase MCP /

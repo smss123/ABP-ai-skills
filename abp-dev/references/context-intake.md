@@ -13,6 +13,39 @@ Bootstrap project, or a scaffold that contradicts an approved plan.
 
 ---
 
+## 0.0 ABP project detection (how the skill activates itself)
+
+This section is the **single source of truth for detection** — `AGENTS.md`, `.windsurfrules`,
+`CLAUDE.md`, `.github/copilot-instructions.md`, `.github/instructions/abp.instructions.md` and
+`.continue/config.yaml` all point here instead of keeping their own copy.
+
+Treat the workspace as an **ABP project** when **any one** of these signals is present:
+
+| Signal | How to see it |
+|---|---|
+| `Volo.Abp*` package reference | any `*.csproj` / `Directory.Packages.props` / `*.props` line `PackageReference Include="Volo.Abp…"` |
+| An ABP module class | `class … : AbpModule`, `[DependsOn(typeof(…Module))]`, `*.Module.cs` in `src/` |
+| ABP app settings | `appsettings*.json` with `"Abp"`, `"AuthServer"`, `"RemoteServices"`, or `__AbpCurrentTenant` keys |
+| ABP base types in code | `AbpDbContext`, `AggregateRoot`, `FullAuditedEntity`, `ITransientDependency`, `IRepository<,>`, `AbpController`, `AbpPageModel` |
+| ABP solution shape | folders/projects ending in `.Domain.Shared`, `.Application.Contracts`, `.HttpApi`, `.DbMigrator`, `.EntityFrameworkCore`, plus `angular/` |
+| ABP tooling | `abp.json`, `abp-template.json`, `.abp` folder, `etc/` from ABP Studio, `abp` CLI in scripts |
+| The skill is already installed | an `abp-dev/references/` folder in the project root |
+
+**On detection, activate automatically — do not wait to be asked:**
+
+1. Announce in one line: `ABP project detected (signal: Volo.Abp package refs) — running Phase 0 before writing code.`
+2. Load `abp-dev/SKILL.md` + `abp-dev/references/INDEX.md` (and the Phase 0 steps below) as the
+   governing conventions for the whole task.
+3. Apply the same rules to *any* request touching that project — a "simple" question about an entity,
+   a bug fix, a refactor, a UI change — not only to scaffolding prompts.
+4. If **no** signal matches, say so and answer as ordinary ASP.NET Core / the project's own stack; do
+   not inject ABP patterns into a non-ABP codebase.
+
+Detection runs again per session — a repo can gain the signals (e.g. ABP added mid-task), and a
+subdirectory may be a separate non-ABP service inside an ABP solution.
+
+---
+
 ## 0.1 Read the existing code through a knowledge graph
 
 Use the code-intelligence layer available in the current harness, in this priority order:

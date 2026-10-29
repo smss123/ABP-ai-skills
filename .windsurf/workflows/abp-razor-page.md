@@ -1,6 +1,6 @@
 ---
 name: abp-razor-page
-description: Scaffold ABP Razor Pages UI — list page, create/edit modals, JavaScript DataTable, and menu item
+description: Scaffold ABP Razor Pages UI — Phase 0 first (existing pages as the visual reference, or Stitch MCP design tokens), then list page, create/edit modals, JavaScript DataTable, and menu item
 ---
 
 # ABP Razor Pages UI Scaffold

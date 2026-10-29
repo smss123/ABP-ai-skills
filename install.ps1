@@ -92,6 +92,8 @@ Write-Host ''
 
 Write-Host 'Reference files (all platforms)...'
 Copy-Item-Safe (Join-Path $SrcDir 'abp-dev') $TargetDir
+Write-Host 'AGENTS.md (auto-activation for AGENTS.md-aware tools)...'
+Copy-Item-Safe (Join-Path $SrcDir 'AGENTS.md') $TargetDir
 
 if ($Platform -in 'all', 'copilot') {
     Write-Host ''; Write-Host 'GitHub Copilot...'

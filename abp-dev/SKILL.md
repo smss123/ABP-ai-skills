@@ -2,13 +2,18 @@
 name: abp-dev
 description: >
   Expert guide for developing applications with the ABP Framework (abp.io) using ASP.NET Core,
-  DDD patterns, and Razor Pages / MVC UI. Use this skill whenever the user mentions ABP, abp.io,
+  DDD patterns, and MVC / Razor Pages / Angular / .NET MAUI / React Native UI. Use this skill
+  whenever the user mentions ABP, abp.io,
   Volo.Abp, AbpModule, application services, aggregate roots, domain services, ABP CLI, 
   IRepository, PermissionDefinitionProvider, IDataSeedContributor, Auto API Controllers,
   AbpDbContext, or any ABP-specific concept. Also trigger for questions about layered ABP project
   structure, startup templates, or ABP module dependencies. Always consult this skill before
   generating any ABP-related code, architecture advice, or explaining ABP concepts — even for
-  seemingly simple questions like "how do I create an entity in ABP".
+  seemingly simple questions like "how do I create an entity in ABP". Every task starts with
+  Phase 0 context intake: inspect the existing code through a knowledge graph, read the repo's
+  plan/design markdown, settle the UI source of truth (Stitch MCP if connected, otherwise the
+  project's existing UI as the reference), confirm scope with the user, then apply ABP standards,
+  SOLID and design patterns.
   source: "https://docs.abp.io/en/abp/latest/"
 ---
 # Author:"Samer Abdallah"
@@ -29,6 +34,31 @@ This skill works across all major AI coding assistants. Use the configuration fi
 
 > **Routing table:** every topic → reference file → documentation URL mapping lives in
 > **`abp-dev/references/INDEX.md`** (one place, so the platform files cannot drift apart).
+
+## Automatic activation — no prompt needs attaching
+
+This skill switches itself on. Treat the workspace as an ABP project when **any** signal is present:
+`Volo.Abp*` package references · `AbpModule` subclasses or `[DependsOn(typeof(…))]` · `AbpDbContext`,
+`AggregateRoot`, `FullAuditedEntity`, `IRepository<,>`, `AbpController`, `AbpPageModel` · `appsettings`
+with `"Abp"`, `"AuthServer"` or `"RemoteServices"` · projects ending in `.Domain.Shared`,
+`.Application.Contracts`, `.HttpApi`, `.DbMigrator`, `.EntityFrameworkCore` · `abp.json` / `.abp/` /
+ABP Studio `etc/`.
+
+On detection, announce it in one line — `ABP project detected (signal: …) — running Phase 0 before
+writing code` — then apply this skill to the **entire task**, including bug fixes, refactors and
+"simple" questions, not only scaffolding. If nothing matches, do not inject ABP patterns into the
+project. The authoritative signal list and its edge cases are in
+`references/context-intake.md` §0.0.
+
+Which file carries the auto-activation rule per platform:
+
+| Platform | Auto-loaded entry point |
+|---|---|
+| Copilot, Codex, Cursor, Zed, Qoder, Amp, Jules (open standard) | `AGENTS.md` at the project root |
+| GitHub Copilot chat | `.github/copilot-instructions.md` + path-scoped `.github/instructions/abp.instructions.md` (`applyTo` globs for `*.cs`, `*.csproj`, `*.cshtml`, `*.razor`, `appsettings*.json`) |
+| Claude Code | `CLAUDE.md` (every session) and this `SKILL.md` description |
+| Windsurf | `.windsurfrules` (always on) |
+| Continue.dev | `.continue/config.yaml` `systemMessage` + `rules:` with a file-path `pattern` |
 
 ## 🚀 Super Agent — Start here for full-feature scaffolding
 

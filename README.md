@@ -32,6 +32,7 @@ A collection of curated AI agent prompts, slash commands, and workflow definitio
 
 | What | Where | Purpose |
 |---|---|---|
+| **Automatic activation** | `AGENTS.md`, `.github/instructions/abp.instructions.md`, `.windsurfrules`, `CLAUDE.md`, `.continue/config.yaml` | The skill turns itself on when it detects an ABP project (`Volo.Abp*` refs, `AbpModule`, `AbpDbContext`, ABP project layout) — no prompt to attach, and it applies to bug fixes and refactors too |
 | **Super agent** | platform-specific (see below) | Orchestrates all sub-agents from a plain-language scenario |
 | **Scaffold agents** | Copilot: 16 prompts · Claude: 18 commands · Windsurf: 17 workflows · Continue: 15 agents | One agent per ABP layer / concern, incl. super agent, feature scaffold and (Claude/Windsurf) theming |
 | **Phase 0 — context intake** | `abp-dev/references/context-intake.md` | Before any code: existing-code knowledge graph → repo plan/design `.md` files → UI source of truth (Stitch MCP if connected, otherwise your existing UI as the reference) → confirm scope with you → SOLID & design-pattern check |
@@ -254,6 +255,7 @@ The config also indexes the official ABP documentation (`docs.abp.io`) so you ca
 ```
 ABP-ai-skills/
 │
+├── AGENTS.md                             ← Auto-activation rules (loaded by Copilot/Codex/Cursor/Zed/Qoder)
 ├── abp-dev/
 │   ├── SKILL.md                        ← Master skill definition (all platforms)
 │   └── references/
@@ -428,7 +430,8 @@ available.
 
 Every agent in this repository enforces these rules — they are non-negotiable in generated code:
 
-1. **Layered architecture** — Domain → Application → Infrastructure (EF Core) → Web (Razor Pages)
+0. **Phase 0 — context intake before any code** — read the existing code through a knowledge graph, read the repo's plan/design markdown, settle the UI source of truth (Stitch MCP if connected, otherwise the project's existing UI as the reference), confirm scope with the user, then apply SOLID — see [`abp-dev/references/context-intake.md`](abp-dev/references/context-intake.md)
+1. **Layered architecture** — Domain → Application → Infrastructure (EF Core) → UI (MVC / Razor Pages / Angular / MAUI), detected from the target project
 2. **Never expose entities** to the presentation layer — always map to DTOs with `ObjectMapper.Map<>()`
 3. **Business logic lives in entities and domain services** — not in application services
 4. **Application services orchestrate** — they call domain services / repositories and return DTOs
@@ -436,8 +439,9 @@ Every agent in this repository enforces these rules — they are non-negotiable 
 6. **Always use `IGuidGenerator`** to create Guid IDs — never `Guid.NewGuid()` directly
 7. **Auto-register services** — ABP discovers `ITransientDependency`, `ISingletonDependency`, `IScopedDependency` automatically
 8. **`ConfigureByConvention()`** must always be called in EF Core model configuration
-9. **Permissions** are defined in `Application.Contracts`, enforced with `[Authorize]` in app services and Razor Pages
+9. **Permissions** are defined in `Application.Contracts`, enforced with `[Authorize]` in app services and in whichever UI the project uses
 10. **`IDataSeedContributor`** must be idempotent — guard with `GetCountAsync() > 0` before inserting
+11. **Reuse before adding** — extend an existing entity, domain service, permission group or UI pattern instead of creating a parallel second one
 
 ---
 

@@ -1,6 +1,6 @@
 ---
 mode: 'agent'
-description: 'Scaffold ABP Razor Pages UI — list page, create/edit modals, JavaScript, and menu item'
+description: 'Scaffold ABP Razor Pages UI — first Phase 0 (read the existing pages as the visual reference, or Stitch MCP design tokens), then list page, create/edit modals, JavaScript, and menu item'
 tools: ['codebase', 'fetch', 'search', 'editFiles']
 ---
 
