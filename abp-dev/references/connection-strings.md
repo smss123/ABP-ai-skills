@@ -1,3 +1,12 @@
+---
+applies_to_abp: "10.x"
+doc_verified_on: "2026-10-29"
+docs:
+  - https://abp.io/docs/latest/framework/fundamentals/connection-strings
+  - https://abp.io/docs/latest/framework/architecture/multi-tenancy
+  - https://abp.io/docs/latest/framework/data/entity-framework-core/migrations
+---
+
 # ABP: Connection Strings
 
 > 📖 Official docs:

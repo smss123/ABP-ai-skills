@@ -1,3 +1,13 @@
+---
+applies_to_abp: "10.x"
+doc_verified_on: "2026-10-29"
+docs:
+  - https://docs.abp.io/en/abp/latest/Background-Jobs
+  - https://docs.abp.io/en/abp/latest/Background-Workers
+  - https://docs.abp.io/en/abp/latest/Background-Jobs-Hangfire
+  - https://docs.abp.io/en/abp/latest/Background-Jobs-Quartz
+---
+
 # ABP: Background Jobs & Workers
 
 > 📖 Official docs:

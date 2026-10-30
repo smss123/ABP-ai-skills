@@ -1,3 +1,15 @@
+---
+applies_to_abp: "10.x"
+doc_verified_on: "2026-10-29"
+docs:
+  - https://abp.io/docs/latest/framework/ui/mvc-razor-pages/overall
+  - https://abp.io/docs/latest/framework/ui/mvc-razor-pages/tag-helpers
+  - https://abp.io/docs/latest/framework/ui/mvc-razor-pages/javascript-api
+  - https://abp.io/docs/latest/framework/ui/mvc-razor-pages/modals
+  - https://abp.io/docs/latest/framework/ui/mvc-razor-pages/data-tables
+  - https://abp.io/docs/latest/framework/ui/mvc-razor-pages/navigation-menu
+---
+
 # ABP: ASP.NET Core MVC UI
 
 > 📖 Official docs (verified live against ABP 10.x):

@@ -1,3 +1,12 @@
+---
+applies_to_abp: "10.x"
+doc_verified_on: "2026-10-29"
+docs:
+  - https://docs.abp.io/en/abp/latest/Multi-Tenancy
+  - https://docs.abp.io/en/abp/latest/Modules/Tenant-Management
+  - https://docs.abp.io/en/abp/latest/Connection-Strings
+---
+
 # ABP: Multi-Tenancy
 
 > 📖 Official docs:

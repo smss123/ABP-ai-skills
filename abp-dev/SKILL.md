@@ -27,10 +27,13 @@ This skill works across all major AI coding assistants. Use the configuration fi
 
 | Platform | Instructions file | Agent / workflow files |
 |---|---|---|
-| **GitHub Copilot** | `abp-dev/SKILL.md` (this file) + `.github/copilot-instructions.md` | `.github/prompts/` — 16 reusable agent prompts (see table below) |
-| **Claude Code** | `CLAUDE.md` | `.claude/commands/` — 18 slash commands (see table below) |
-| **Windsurf** | `.windsurfrules` | `.windsurf/workflows/` — 17 Cascade workflows (see table below) |
-| **Continue.dev** | `.continue/config.yaml` (`systemMessage`) | `.continue/config.yaml` (`agents:` block) — 15 specialized agents |
+| **GitHub Copilot** | `abp-dev/SKILL.md` (this file) + `.github/copilot-instructions.md` | `.github/prompts/` — 22 reusable agent prompts (see table below) |
+| **Claude Code** | `CLAUDE.md` | `.claude/commands/` — 22 slash commands (see table below) |
+| **Windsurf** | `.windsurfrules` | `.windsurf/workflows/` — 22 Cascade workflows (see table below) |
+| **Continue.dev** | `.continue/config.yaml` (`systemMessage`) | `.continue/config.yaml` (`agents:` block) — 22 specialized agents |
+
+> The four platforms expose the **same 22 capabilities**; `scripts/verify-skill.sh` fails CI if one
+> platform gains an agent the others do not have, or if a documented count drifts from what is on disk.
 
 > **Routing table:** every topic → reference file → documentation URL mapping lives in
 > **`abp-dev/references/INDEX.md`** (one place, so the platform files cannot drift apart).
@@ -119,7 +122,12 @@ All agents read the relevant reference file(s) and fetch official ABP docs befor
 | **abp-settings** | `#abp-settings.prompt.md` | `/project:abp-settings` | `abp-settings` | `SettingDefinitionProvider` + `ISettingProvider` (read) + `ISettingManager` (write) |
 | **abp-caching** | `#abp-caching.prompt.md` | `/project:abp-caching` | `abp-caching` | `IDistributedCache<TCacheItem>`, `GetOrAddAsync`, cache invalidation, Redis setup |
 | **abp-feature-scaffold** | `#abp-feature-scaffold.prompt.md` | `/project:abp-feature-scaffold` | `abp-feature-scaffold` | Wires an **existing** entity through permissions → DTOs → app service → EF Core → UI → seed data |
-| **abp-theming** | — | `/project:abp-theming` | `abp-theming` | Custom theme / layout for the server-side UIs (MVC & Razor Pages): layout pages, branding, bundles |
+| **abp-theming** | `#abp-theming.prompt.md` | `/project:abp-theming` | `abp-theming` | Custom theme / layout for the server-side UIs (MVC & Razor Pages): layout pages, branding, bundles |
+| **abp-mvc-page** | `#abp-mvc-page.prompt.md` | `/project:abp-mvc-page` | `abp-mvc-page` | ASP.NET Core MVC UI — `AbpController` + views + JS DataTable + modal + toolbar/menu registration |
+| **abp-angular-feature** | `#abp-angular-feature.prompt.md` | `/project:abp-angular-feature` | `abp-angular-feature` | Angular SPA feature — `abp generate-proxy -t ng`, service proxy, template-driven component, route + nav |
+| **abp-test-runner** | `#abp-test-runner.prompt.md` | `/project:abp-test-runner` | `abp-test-runner` | Picks the right test fixture per layer, writes xUnit tests, runs `dotnet test`, reports failures |
+| **abp-developer** | `#abp-developer.prompt.md` | `/project:abp-developer` | `abp-developer` | General ABP engineer for anything that is not a scaffold — bug fixes, refactors, reviews (runs Phase 0 first) |
+| **abp-install** | `#abp-install.prompt.md` | `/project:abp-install` | `abp-install` | Installs this skill set into a target ABP project directory for the chosen platform(s) |
 
 You are an expert ABP Framework developer. Always follow ABP conventions precisely.
 Supports **all ABP UI stacks** — MVC, Razor Pages, Angular, .NET MAUI, React Native — plus EF Core

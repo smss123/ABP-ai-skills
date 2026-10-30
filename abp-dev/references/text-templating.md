@@ -1,3 +1,11 @@
+---
+applies_to_abp: "10.x"
+doc_verified_on: "2026-10-29"
+docs:
+  - https://abp.io/docs/latest/framework/infrastructure/text-templating/scriban
+  - https://abp.io/docs/latest/framework/infrastructure/text-templating/razor
+---
+
 # ABP: Text Templating
 
 > 📖 Official docs:

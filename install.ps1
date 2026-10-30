@@ -97,7 +97,13 @@ Copy-Item-Safe (Join-Path $SrcDir 'AGENTS.md') $TargetDir
 
 if ($Platform -in 'all', 'copilot') {
     Write-Host ''; Write-Host 'GitHub Copilot...'
-    Copy-Item-Safe (Join-Path $SrcDir '.github') $TargetDir
+    # Copy the Copilot assets individually: this repo's .github/workflows/ is CI for the skill
+    # itself and must never end up in a user's project.
+    $ghDir = Join-Path $TargetDir '.github'
+    if (-not (Test-Path $ghDir)) { New-Item -ItemType Directory -Path $ghDir | Out-Null }
+    Copy-Item-Safe (Join-Path $SrcDir '.github\copilot-instructions.md') $ghDir
+    Copy-Item-Safe (Join-Path $SrcDir '.github\prompts')                 $ghDir
+    Copy-Item-Safe (Join-Path $SrcDir '.github\instructions')            $ghDir
 }
 
 if ($Platform -in 'all', 'claude') {

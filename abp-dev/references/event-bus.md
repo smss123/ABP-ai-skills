@@ -1,3 +1,13 @@
+---
+applies_to_abp: "10.x"
+doc_verified_on: "2026-10-29"
+docs:
+  - https://abp.io/docs/latest/framework/infrastructure/event-bus
+  - https://docs.abp.io/en/abp/latest/Local-Event-Bus
+  - https://docs.abp.io/en/abp/latest/Distributed-Event-Bus
+  - https://abp.io/docs/latest/framework/architecture/domain-driven-design/entities
+---
+
 # ABP: Local & Distributed Event Bus
 
 > 📖 Official docs:

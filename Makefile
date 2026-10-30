@@ -14,6 +14,9 @@ help:
 	@echo "  make windsurf  TARGET=/path/to/abp-project"
 	@echo "  make continue  TARGET=/path/to/abp-project"
 	@echo ""
+	@echo "  make verify    Check routing, platform parity and ABP rules in the skill itself"
+	@echo "  make links     Also HEAD-check every documentation URL (needs network)"
+	@echo ""
 
 install:
 	@if [ -z "$(TARGET)" ]; then \
@@ -34,4 +37,12 @@ windsurf:
 continue:
 	@$(MAKE) install PLATFORM=continue
 
-.PHONY: help install claude copilot windsurf continue
+# Structural self-check of the skill — routing, parity, Phase 0, ABP rules, installers.
+verify:
+	@bash scripts/verify-skill.sh
+
+# Same, plus a live HEAD request against every documentation URL.
+links:
+	@bash scripts/verify-skill.sh --links
+
+.PHONY: help install claude copilot windsurf continue verify links

@@ -15,7 +15,11 @@ How to use:
    otherwise the project's existing UI as the reference), confirm scope with the user, then apply the
    SOLID / design-pattern check. No code generation before that.
 3. Find the topic row below, read that reference file.
-4. Fetch the doc URL in the same row (live-verified against ABP 10.x as of 2026-10-29).
+4. Fetch the doc URL in the same row. Each reference file declares the ABP version it was written for
+   and the date its documentation was last verified in its own frontmatter
+   (`applies_to_abp` / `doc_verified_on`). `doc_verified_on: unverified` means the content has not been
+   re-checked against the live docs, so fetch before trusting an API signature; `n/a` means the file is
+   this skill's own procedure and cites no ABP documentation.
 5. Synthesise both, then generate code.
 
 > When a fetch fails, use the local reference file and state that the answer is based on cached
@@ -27,7 +31,7 @@ How to use:
 
 | Step | File | Notes |
 |---|---|---|
-| Existing-code inspection, plan docs, UI source of truth, user confirmation, SOLID & patterns | `context-intake.md` | https://abp.io/docs/latest/framework/architecture/domain-driven-design/general |
+| Existing-code inspection, plan docs, UI source of truth, user confirmation, SOLID & patterns | `context-intake.md` | https://abp.io/docs/latest/framework/architecture/domain-driven-design |
 
 ---
 
@@ -40,10 +44,12 @@ How to use:
 | Angular SPA (separate `angular/` folder, no `*.Web` project) | `-u angular` | `ui-angular.md` |
 | .NET MAUI mobile app | mobile UI option in ABP Studio | `maui.md` |
 | React Native / Expo mobile app | `-m react-native` | `react-native.md` |
+| Blazor (WebAssembly / Server / WebApp) | `-u blazor` | `ui-blazor.md` |
 | Server-side UI theming & layout system (MVC + Razor) | — | `theming.md` |
 
 Detect the stack from the target project before generating anything: `Pages/` → Razor Pages,
-`Views/` + `Controllers/` → MVC, `angular/package.json` → Angular, `*.Maui/` → MAUI.
+`Views/` + `Controllers/` → MVC, `**/*.razor` + `Microsoft.AspNetCore.Components*` packages → Blazor,
+`angular/package.json` → Angular, `*.Maui/` → MAUI.
 
 ---
 
@@ -64,6 +70,7 @@ Detect the stack from the target project before generating anything: `Pages/` �
 |---|---|---|
 | Application Services, DTOs, CRUD, object mapping | `ddd-application.md` | https://docs.abp.io/en/abp/latest/Application-Services |
 | Auto API Controllers, API versioning, integration services | `api.md` | https://docs.abp.io/en/abp/latest/API/Auto-API-Controllers |
+| Swagger / OpenAPI generation, OAuth+OIDC document, exposing or hiding `/swagger` | `openapi-swagger.md` | https://abp.io/docs/latest/framework/api-development/swagger |
 | Permission definitions & checks | `authorization.md` | https://docs.abp.io/en/abp/latest/Authorization |
 | Permission Management module (UI + storage) | `authorization.md` | https://abp.io/docs/latest/modules/permission-management |
 | Data seeding | `efcore.md` | https://docs.abp.io/en/abp/latest/Data-Seeding |
@@ -86,6 +93,8 @@ Detect the stack from the target project before generating anything: `Pages/` �
 | Settings (`ISettingProvider` / `ISettingManager`) | `settings.md` | https://docs.abp.io/en/abp/latest/Settings |
 | Caching (`IDistributedCache<T>`, Redis) | `caching.md` | https://docs.abp.io/en/abp/latest/Caching |
 | Background jobs & periodic workers | `background-jobs.md` | https://docs.abp.io/en/abp/latest/Background-Jobs |
+| Recurring/periodic background workers, dynamic workers, clustered execution | `background-workers.md` | https://abp.io/docs/latest/framework/infrastructure/background-workers |
+| Blob storing (`IBlobContainer`, providers, encryption, pipeline) | `blob-storing.md` | https://abp.io/docs/latest/framework/infrastructure/blob-storing |
 | Local event bus, distributed event bus | `event-bus.md` | https://docs.abp.io/en/abp/latest/Local-Event-Bus |
 | SignalR real-time hubs | `signalr.md` | https://abp.io/docs/latest/framework/real-time/signalr |
 | Localization (`L["Key"]`, `StringLocalizer`, JSON resources) | `localization.md` | https://abp.io/docs/latest/framework/fundamentals/localization |
@@ -109,6 +118,13 @@ Detect the stack from the target project before generating anything: `Pages/` �
 | OpenIddict module (applications, scopes, token lifetimes) | `openiddict.md` | https://abp.io/docs/latest/modules/openiddict |
 | IdentityServer4 → OpenIddict migration | `migration-identityserver-openiddict.md` | https://abp.io/docs/latest/release-info/migration-guides/openiddict-step-by-step |
 | CMS Kit (pages, blogs, comments, tags, menus) | `cms-kit.md` | https://abp.io/docs/latest/modules/cms-kit |
+| Audit logging & security logs (module storage, UI, `AbpAuditingOptions`, entity history) | `audit-logging.md` | https://abp.io/docs/latest/modules/audit-logging · https://abp.io/docs/latest/framework/infrastructure/audit-logging |
+
+## Architecture & scale-out
+
+| Topic | File | Official docs |
+|---|---|---|
+| Microservice solution (`apps` / `gateways` / `services`, YARP gateway, RabbitMQ distributed event bus, outbox/inbox, per-service DBs) | `microservices.md` | https://abp.io/docs/latest/framework/architecture/microservices · https://abp.io/docs/latest/solution-templates/microservice |
 
 ## UI — server-side
 
@@ -132,6 +148,7 @@ Detect the stack from the target project before generating anything: `Pages/` �
 | Angular service proxies (`abp generate-proxy -t ng`) | `ui-angular.md` | https://abp.io/docs/latest/framework/ui/angular/service-proxies |
 | .NET MAUI: OIDC, `adb reverse`, C# proxies | `maui.md` | https://abp.io/docs/latest/framework/ui/maui |
 | React Native / Expo | `react-native.md` | https://abp.io/docs/latest/framework/ui/react-native |
+| Blazor (WebAssembly / Server / WebApp): components, theming, menus, toolbars, C# proxies | `ui-blazor.md` | https://abp.io/docs/latest/framework/ui/blazor/overall · https://abp.io/docs/latest/framework/ui/blazor/theming |
 
 ## Tooling, testing & operations
 
@@ -142,22 +159,16 @@ Detect the stack from the target project before generating anything: `Pages/` �
 | Testing (unit, integration, test fixtures) | `testing-troubleshooting.md` | https://docs.abp.io/en/abp/latest/Testing |
 | Troubleshooting & FAQ | `testing-troubleshooting.md` | https://docs.abp.io/en/abp/latest/Customizing-Application-Modules-Guide |
 | Deployment (IIS/K8s, SSL, production config) | `deployment.md` | https://abp.io/docs/latest/deployment |
+| Production hardening (cache/lock prefixes, passphrases, data-protection keys, forwarded headers, HSTS, secrets) | `production-hardening.md` | https://abp.io/docs/latest/deployment/configuring-production · https://abp.io/docs/latest/deployment/clustered-environment |
 
 ---
 
-## Coverage not yet written as a reference file
+## Topics with no reference file
 
-Flag these explicitly instead of improvising, and fetch the doc page:
-
-| Topic | Docs |
-|---|---|
-| Blazor UI (WebAssembly / Server / Hybrid) | https://abp.io/docs/latest/framework/ui/blazor/overall |
-| Microservice solution (RabbitMQ, YARP gateway, outbox/inbox) | https://abp.io/docs/latest/framework/architecture/microservices |
-| Blob Storing | https://abp.io/docs/latest/framework/infrastructure/blob-storing |
-| Audit logging & security logs | https://abp.io/docs/latest/modules/audit-logging |
-| OpenAPI / Swagger generation | https://abp.io/docs/latest/framework/api-development/swagger |
-| Recurring background workers | https://abp.io/docs/latest/framework/infrastructure/background-workers |
-| Production configuration hardening | https://abp.io/docs/latest/deployment/configuring-production |
+Anything not routed above has **no verified reference file**. Say so, fetch the matching page from
+https://abp.io/docs/latest, and answer from that page rather than from memory. If the topic will come up
+again, add a row to this index and write the file — that is how the previous gaps (Blazor UI, microservices,
+blob storing, audit logging, Swagger, recurring workers, production hardening) were closed.
 
 If a topic has no verified URL in this file, say so and search https://abp.io/docs/latest — never
 guess a URL or an API signature from memory.

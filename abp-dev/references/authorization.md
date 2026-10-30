@@ -1,3 +1,13 @@
+---
+applies_to_abp: "10.x"
+doc_verified_on: "2026-10-29"
+docs:
+  - https://docs.abp.io/en/abp/latest/Authorization
+  - https://abp.io/docs/latest/modules/permission-management
+  - https://docs.abp.io/en/abp/latest/CurrentUser
+  - https://docs.abp.io/en/abp/latest/Audit-Logging
+---
+
 # ABP: Authorization & Permissions
 
 > 📖 Official docs:

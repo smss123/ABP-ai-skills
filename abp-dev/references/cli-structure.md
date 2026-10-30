@@ -1,3 +1,12 @@
+---
+applies_to_abp: "10.x"
+doc_verified_on: "2026-10-29"
+docs:
+  - https://docs.abp.io/en/abp/latest/CLI
+  - https://docs.abp.io/en/abp/latest/Startup-Templates/Application
+  - https://docs.abp.io/en/abp/latest/Startup-Templates/Application#solution-structure
+---
+
 # ABP: CLI & Startup Templates
 
 > 📖 Official docs:

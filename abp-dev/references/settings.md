@@ -1,3 +1,11 @@
+---
+applies_to_abp: "10.x"
+doc_verified_on: "2026-10-29"
+docs:
+  - https://docs.abp.io/en/abp/latest/Settings
+  - https://docs.abp.io/en/abp/latest/Modules/Setting-Management
+---
+
 # ABP: Settings
 
 > 📖 Official docs:

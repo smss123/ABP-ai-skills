@@ -1,3 +1,13 @@
+---
+applies_to_abp: "10.x"
+doc_verified_on: "2026-10-29"
+docs:
+  - https://docs.abp.io/en/abp/latest/Entities
+  - https://docs.abp.io/en/abp/latest/Domain-Services
+  - https://docs.abp.io/en/abp/latest/Value-Objects
+  - https://docs.abp.io/en/abp/latest/Repositories
+---
+
 # ABP: DDD Domain Layer
 
 > 📖 Official docs:

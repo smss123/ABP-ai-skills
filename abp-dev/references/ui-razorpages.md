@@ -1,3 +1,14 @@
+---
+applies_to_abp: "10.x"
+doc_verified_on: "2026-10-29"
+docs:
+  - https://abp.io/docs/latest/framework/ui/mvc-razor-pages/overall
+  - https://docs.abp.io/en/abp/latest/UI/AspNetCore/Tag-Helpers/Index
+  - https://docs.abp.io/en/abp/latest/UI/AspNetCore/JavaScript-API/Index
+  - https://docs.abp.io/en/abp/latest/UI/AspNetCore/Navigation-Menu
+  - https://docs.abp.io/en/abp/latest/Localization
+---
+
 # ABP: Razor Pages / MVC UI
 
 > 📖 Official docs:

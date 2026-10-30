@@ -1,0 +1,81 @@
+name: Verify skill
+
+# This workflow lives in the skill repository only. install.sh / install.ps1 copy
+# .github/copilot-instructions.md, .github/prompts and .github/instructions into a
+# target project — never .github/workflows, so this file never runs in a user's repo.
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  schedule:
+    - cron: '0 6 * * 1'   # Mondays: abp.io rewrites doc paths without notice
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  structure:
+    name: Structure, routing and parity
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Run the skill harness
+        run: bash scripts/verify-skill.sh
+
+      - name: PowerShell installer parses
+        shell: pwsh
+        run: |
+          $errors = $null
+          $null = [System.Management.Automation.Language.Parser]::ParseFile(
+            'install.ps1', [ref]$null, [ref]$errors)
+          if ($errors) {
+            $errors | ForEach-Object { Write-Host $_.Message -ForegroundColor Red }
+            exit 1
+          }
+          Write-Host 'install.ps1 parsed cleanly.'
+
+  smoke-install:
+    name: Installer smoke test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install into a synthetic ABP project and assert the result
+        run: |
+          set -euo pipefail
+          TARGET=/tmp/abp-target
+          mkdir -p "$TARGET/src/MyApp.Domain"
+          cat > "$TARGET/src/MyApp.Domain/MyApp.Domain.csproj" <<'CSPROJ'
+          <Project Sdk="Microsoft.NET.Sdk">
+            <ItemGroup>
+              <PackageReference Include="Volo.Abp.Ddd.Domain" Version="10.0.0" />
+            </ItemGroup>
+          </Project>
+          CSPROJ
+          bash install.sh "$TARGET" --overwrite
+          test -f "$TARGET/abp-dev/references/INDEX.md"
+          test -f "$TARGET/abp-dev/references/context-intake.md"
+          test -f "$TARGET/AGENTS.md"
+          test -f "$TARGET/CLAUDE.md"
+          test -f "$TARGET/.windsurfrules"
+          test -f "$TARGET/.continue/config.yaml"
+          test -f "$TARGET/.github/copilot-instructions.md"
+          test -d "$TARGET/.github/prompts"
+          test -d "$TARGET/.github/instructions"
+          # The skill's own CI must not be shipped into someone else's repository.
+          test ! -e "$TARGET/.github/workflows"
+          echo "installed tree:"
+          ls -a "$TARGET"
+
+  doc-links:
+    name: Documentation links are alive
+    # Network-dependent, so it stays off the push/PR gate and runs weekly instead.
+    if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Check every abp.io URL referenced by the skill
+        run: bash scripts/verify-skill.sh --links

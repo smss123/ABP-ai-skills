@@ -1,3 +1,15 @@
+---
+applies_to_abp: "10.x"
+doc_verified_on: "2026-10-29"
+docs:
+  - https://abp.io/docs/latest/framework/ui/angular/overview
+  - https://abp.io/docs/latest/framework/ui/angular/quick-start
+  - https://abp.io/docs/latest/framework/ui/angular/service-proxies
+  - https://abp.io/docs/latest/framework/ui/angular/config-state-service
+  - https://abp.io/docs/latest/framework/ui/angular/authorization
+  - https://abp.io/docs/latest/framework/ui/angular/current-user
+---
+
 # ABP: Angular UI
 
 > 📖 Official docs (verified live against ABP 10.x):

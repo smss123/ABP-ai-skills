@@ -1,3 +1,14 @@
+---
+applies_to_abp: "10.x"
+doc_verified_on: "2026-10-29"
+docs:
+  - https://abp.io/docs/latest/testing/integration-tests
+  - https://abp.io/docs/latest/testing/ui-tests
+  - https://docs.abp.io/en/abp/latest/Testing
+  - https://docs.abp.io/en/abp/latest/Object-To-Object-Mapping
+  - https://docs.abp.io/en/abp/latest/Entity-Framework-Core-Migrations
+---
+
 # ABP: Troubleshooting & Testing
 
 > 📖 Official docs:

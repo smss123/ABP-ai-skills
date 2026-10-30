@@ -1,3 +1,10 @@
+---
+applies_to_abp: "10.x"
+doc_verified_on: "2026-10-29"
+docs:
+  - https://abp.io/docs/latest/framework/infrastructure/string-encryption
+---
+
 # ABP: String Encryption
 
 > 📖 Official docs: https://abp.io/docs/latest/framework/infrastructure/string-encryption

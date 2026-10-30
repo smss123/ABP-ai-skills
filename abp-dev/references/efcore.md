@@ -1,3 +1,12 @@
+---
+applies_to_abp: "10.x"
+doc_verified_on: "2026-10-29"
+docs:
+  - https://docs.abp.io/en/abp/latest/Entity-Framework-Core
+  - https://docs.abp.io/en/abp/latest/Data-Seeding
+  - https://docs.abp.io/en/abp/latest/Connection-Strings
+---
+
 # ABP: EF Core Integration & Data Seeding
 
 > 📖 Official docs:

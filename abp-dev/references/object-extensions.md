@@ -1,3 +1,14 @@
+---
+applies_to_abp: "10.x"
+doc_verified_on: "2026-10-29"
+docs:
+  - https://abp.io/docs/latest/framework/fundamentals/object-extensions
+  - https://abp.io/docs/latest/framework/architecture/modularity/extending/module-entity-extensions
+  - https://abp.io/docs/latest/framework/architecture/modularity/extending/customizing-application-modules-extending-entities
+  - https://abp.io/docs/latest/framework/architecture/modularity/extending/customizing-application-modules-overriding-services
+  - https://abp.io/docs/latest/framework/architecture/modularity/extending/customizing-application-modules-guide
+---
+
 # ABP: Object Extensions & Module Customization
 
 > 📖 Official docs:

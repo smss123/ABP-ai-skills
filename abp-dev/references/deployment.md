@@ -1,3 +1,13 @@
+---
+applies_to_abp: "10.x"
+doc_verified_on: "2026-10-29"
+docs:
+  - https://abp.io/docs/latest/deployment/ssl
+  - https://abp.io/docs/latest/deployment/configuring-openiddict
+  - https://abp.io/docs/latest/deployment/configuring-production
+  - https://abp.io/docs/latest/deployment/clustered-environment
+---
+
 # ABP: Deployment
 
 > 📖 Official docs:

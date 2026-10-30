@@ -148,7 +148,12 @@ copy_item "$SRC_DIR/AGENTS.md" "$TARGET_DIR"
 if [[ "$PLATFORM" == "all" || "$PLATFORM" == "copilot" ]]; then
   echo ""
   echo "🤖 GitHub Copilot..."
-  copy_item "$SRC_DIR/.github" "$TARGET_DIR"
+  # Copy the Copilot assets individually: this repo's .github/workflows/ is CI for the skill
+  # itself and must never end up in a user's project.
+  mkdir -p "$TARGET_DIR/.github"
+  copy_item "$SRC_DIR/.github/copilot-instructions.md" "$TARGET_DIR/.github"
+  copy_item "$SRC_DIR/.github/prompts"                 "$TARGET_DIR/.github"
+  copy_item "$SRC_DIR/.github/instructions"            "$TARGET_DIR/.github"
 fi
 
 if [[ "$PLATFORM" == "all" || "$PLATFORM" == "claude" ]]; then

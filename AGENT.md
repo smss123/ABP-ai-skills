@@ -7,7 +7,8 @@ This file tells any AI coding assistant how to install ABP AI Skills into an ABP
 ## What this repository provides
 
 - **Reference files** in `abp-dev/references/` — curated ABP Framework patterns
-  (UI coverage: `ui-razorpages.md`, `ui-mvc.md`, `ui-angular.md`, `maui.md`, `react-native.md`, `theming.md`)
+  (UI coverage: `ui-razorpages.md`, `ui-mvc.md`, `ui-angular.md`, `ui-blazor.md`, `maui.md`,
+  `react-native.md`, `theming.md`)
 - **`abp-dev/references/INDEX.md`** — the single routing table: topic → reference file → live-verified
   doc URL. Every platform instruction file points at it; read it before answering any ABP question.
 - **`abp-dev/references/context-intake.md`** — the mandatory **Phase 0** every agent runs before
@@ -18,8 +19,12 @@ This file tells any AI coding assistant how to install ABP AI Skills into an ABP
   standard (Copilot, Codex, Cursor, Zed, Qoder, Amp, Jules). Installed into the project root.
 - **`.github/instructions/abp.instructions.md`** — path-scoped Copilot instructions, auto-attached when
   a `*.cs` / `*.csproj` / `*.cshtml` / `*.razor` / `appsettings*.json` file is in context.
-- **Agent commands** for Claude Code, GitHub Copilot, Windsurf, and Continue.dev
+- **Agent commands** — the same 22 capabilities on all four platforms: `.github/prompts/`,
+  `.claude/commands/`, `.windsurf/workflows/` and the `agents:` block in `.continue/config.yaml`
 - **Install scripts**: `install.sh` (bash) and `install.ps1` (PowerShell)
+- **`scripts/verify-skill.sh`** — the self-verification harness (`make verify`). Checks routing,
+  four-platform parity, Phase 0 coverage, documented counts, ABP anti-patterns in the code samples and
+  the freshness metadata of every reference file. Runs in CI on every push and pull request.
 
 ---
 
@@ -51,6 +56,10 @@ bash install.sh /path/to/abp-project --platform continue --overwrite
 make install  TARGET=/path/to/abp-project
 make claude   TARGET=/path/to/abp-project
 make copilot  TARGET=/path/to/abp-project
+
+# In this repository only — check the skill itself before shipping
+make verify          # structural checks, offline
+make links           # additionally HEAD-checks every documentation URL
 ```
 
 ### Option 4 — One-liner (no clone needed)
@@ -66,13 +75,15 @@ curl -sSL https://raw.githubusercontent.com/smss123/ABP-ai-skills/main/install.s
 
 | Item | Destination | Condition |
 |---|---|---|
-| `abp-dev/references/` | `<target>/abp-dev/references/` | Always |
+| `abp-dev/` | `<target>/abp-dev/` | Always — `SKILL.md` + every file in `references/` |
 | `AGENTS.md` | `<target>/AGENTS.md` | Always — auto-activates ABP rules in AGENTS.md-aware tools |
-| `.github/instructions/` | `<target>/.github/instructions/` | Platform `all` or `copilot` (copied with `.github`) |
+| `.github/copilot-instructions.md`, `.github/prompts/`, `.github/instructions/` | `<target>/.github/` | Platform `all` or `copilot` |
 | `.claude/` + `CLAUDE.md` | `<target>/` | Platform `all` or `claude` |
-| `.github/` | `<target>/` | Platform `all` or `copilot` |
 | `.windsurf/` + `.windsurfrules` | `<target>/` | Platform `all` or `windsurf` |
 | `.continue/` | `<target>/` | Platform `all` or `continue` |
+
+> `.github/workflows/`, `install.sh`, `install.ps1`, `Makefile` and `scripts/` are deliberately **not**
+> copied: they are CI and tooling for this skills repository, not files a user's ABP project should run.
 
 ---
 

@@ -1,3 +1,10 @@
+---
+applies_to_abp: "10.x"
+doc_verified_on: "2026-10-29"
+docs:
+  - https://abp.io/docs/latest/framework/real-time/signalr
+---
+
 # ABP: SignalR Real-Time Communication
 
 > 📖 Official docs:

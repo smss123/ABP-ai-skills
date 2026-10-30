@@ -21,6 +21,7 @@ A collection of curated AI agent prompts, slash commands, and workflow definitio
   - [Windsurf](#windsurf)
   - [Continue.dev](#continuedev)
 - [Repository structure](#repository-structure)
+- [Keeping the skill honest](#keeping-the-skill-honest)
 - [Reference files](#reference-files)
 - [Core ABP principles enforced by every agent](#core-abp-principles-enforced-by-every-agent)
 - [Typical ABP solution structure](#typical-abp-solution-structure)
@@ -34,12 +35,13 @@ A collection of curated AI agent prompts, slash commands, and workflow definitio
 |---|---|---|
 | **Automatic activation** | `AGENTS.md`, `.github/instructions/abp.instructions.md`, `.windsurfrules`, `CLAUDE.md`, `.continue/config.yaml` | The skill turns itself on when it detects an ABP project (`Volo.Abp*` refs, `AbpModule`, `AbpDbContext`, ABP project layout) — no prompt to attach, and it applies to bug fixes and refactors too |
 | **Super agent** | platform-specific (see below) | Orchestrates all sub-agents from a plain-language scenario |
-| **Scaffold agents** | Copilot: 16 prompts · Claude: 18 commands · Windsurf: 17 workflows · Continue: 15 agents | One agent per ABP layer / concern, incl. super agent, feature scaffold and (Claude/Windsurf) theming |
+| **Scaffold agents** | 22 capabilities, identical on all four platforms (Copilot prompts · Claude commands · Windsurf workflows · Continue agents) | One agent per ABP layer / concern: super agent, feature scaffold, CRUD, MVC / Razor Pages / Angular UI, theming, testing, install |
 | **Phase 0 — context intake** | `abp-dev/references/context-intake.md` | Before any code: existing-code knowledge graph → repo plan/design `.md` files → UI source of truth (Stitch MCP if connected, otherwise your existing UI as the reference) → confirm scope with you → SOLID & design-pattern check |
 | **Reference files** | `abp-dev/references/` | Curated, correct ABP patterns for every topic |
 | **`references/INDEX.md`** | `abp-dev/references/INDEX.md` | The single routing table (topic → reference → live doc URL). All platform instruction files point here, so no reference can become unreachable |
-| **UI stack coverage** | `ui-razorpages.md`, `ui-mvc.md`, `ui-angular.md`, `maui.md`, `react-native.md`, `theming.md` | Agents detect the project's UI (MVC / Razor Pages / Angular / MAUI) before generating UI code |
+| **UI stack coverage** | `ui-razorpages.md`, `ui-mvc.md`, `ui-angular.md`, `ui-blazor.md`, `maui.md`, `react-native.md`, `theming.md` | Agents detect the project's UI (MVC / Razor Pages / Angular / Blazor / MAUI) before generating UI code |
 | **Platform instructions** | `.github/copilot-instructions.md`, `CLAUDE.md`, `.windsurfrules`, `.continue/config.yaml`, `AGENT.md` | Injects ABP expertise into the AI assistant |
+| **Self-verification** | `scripts/verify-skill.sh` + `.github/workflows/verify-skill.yml` | `make verify` checks routing, four-platform parity, Phase 0 coverage, documented counts, ABP anti-patterns in samples and per-file doc freshness — in CI on every push |
 
 ---
 
@@ -160,9 +162,14 @@ Use this when you've already run `abp-entity` and now need to wire up everything
 
 ## All agents at a glance
 
+Every capability below ships on **all four platforms** — a Copilot prompt, a Claude command, a Windsurf
+workflow and a Continue.dev agent. `scripts/verify-skill.sh` fails the build if one platform gains or
+loses a capability, so this table cannot go stale.
+
 | Agent | Copilot | Claude Code | Windsurf | What it generates |
 |---|---|---|---|---|
 | ⭐ **abp-super** | `#abp-super.prompt.md` | `/project:abp-super` | `abp-super` | **Full feature end-to-end** — orchestrates all sub-agents in phase order |
+| 🧑‍💻 **abp-developer** | `#abp-developer.prompt.md` | `/project:abp-developer` | `abp-developer` | General ABP work — Phase 0, then the layers the request actually touches (bug fixes, refactors, "add X") |
 | 🔧 **abp-feature-scaffold** | `#abp-feature-scaffold.prompt.md` | `/project:abp-feature-scaffold` | `abp-feature-scaffold` | **Application layer for an existing entity** — error codes · localization · FluentValidation · permissions · app service · AutoMapper · optional Razor Pages UI (domain layer untouched) |
 | **abp-crud** | `#abp-crud.prompt.md` | `/project:abp-crud` | `abp-crud` | All 12 CRUD files: entity · domain service · repo · DTOs · app service · EF Core · optional Razor Pages |
 | **abp-entity** | `#abp-entity.prompt.md` | `/project:abp-entity` | `abp-entity` | Domain entity class + repository interface + domain service (domain layer only) |
@@ -178,7 +185,11 @@ Use this when you've already run `abp-entity` and now need to wire up everything
 | **abp-multi-tenancy** | `#abp-multi-tenancy.prompt.md` | `/project:abp-multi-tenancy` | `abp-multi-tenancy` | `IMustHaveTenant`/`IMayHaveTenant`, `ICurrentTenant`, data filters, per-tenant databases |
 | **abp-settings** | `#abp-settings.prompt.md` | `/project:abp-settings` | `abp-settings` | `SettingDefinitionProvider` + `ISettingProvider` (read) + `ISettingManager` (write) |
 | **abp-caching** | `#abp-caching.prompt.md` | `/project:abp-caching` | `abp-caching` | `IDistributedCache<TCacheItem>`, `GetOrAddAsync`, cache invalidation, Redis setup |
-| **abp-theming** | — | `/project:abp-theming` | `abp-theming` | Custom theme / layout for the server-side UIs: layout pages, branding, bundles (`references/theming.md`) |
+| **abp-mvc-page** | `#abp-mvc-page.prompt.md` | `/project:abp-mvc-page` | `abp-mvc-page` | MVC UI: controller · views · JS DataTable · toolbar contributor · menu entry (`references/ui-mvc.md`) |
+| **abp-angular-feature** | `#abp-angular-feature.prompt.md` | `/project:abp-angular-feature` | `abp-angular-feature` | Angular feature: `abp generate-proxy -t ng` · list component · modal form · route + nav with `requiredPolicy` · localization (`references/ui-angular.md`) |
+| **abp-theming** | `#abp-theming.prompt.md` | `/project:abp-theming` | `abp-theming` | Custom theme / layout for the server-side UIs: layout pages, branding, bundles (`references/theming.md`) |
+| **abp-test-runner** | `#abp-test-runner.prompt.md` | `/project:abp-test-runner` | `abp-test-runner` | Tests at the right layer — xunit unit tests, `ApplicationTestBase` integration tests, Shouldly + NSubstitute — then runs `dotnet test` and reports (`references/testing-troubleshooting.md`) |
+| **abp-install** | `#abp-install.prompt.md` | `/project:abp-install` | `abp-install` | Installs these skills into another ABP project: checks what exists, backs up hand-written rule files, runs `install.sh` / `install.ps1` |
 
 > **Continue.dev** users: all agents are available via the agent picker (including the Super Agent at the top of the list).
 
@@ -299,76 +310,67 @@ ABP-ai-skills/
 │       ├── cms-kit.md                             ← CMS Kit module: blogs, pages, comments, reactions, tags
 │       ├── openiddict.md                          ← OpenIddict module: OAuth endpoints, token lifetimes, claims
 │       ├── database-tables.md                     ← Module DB table prefixes, connection string names
-│       ├── maui.md                                ← .NET MAUI mobile UI, OIDC, adb reverse
+│       ├── ui-blazor.md                           ← Blazor WASM/Server/WebApp: components, theming, proxies
+│       ├── microservices.md                       ← Microservice solution: apps/gateways/services, YARP, RabbitMQ
+│       ├── blob-storing.md                        ← IBlobContainer, providers, encryption, pipelines
+│       ├── audit-logging.md                       ← AuditLog/EntityChange, AbpAuditingOptions, security logs
+│       ├── openapi-swagger.md                     ← Volo.Abp.Swashbuckle, AddAbpSwaggerGen, OIDC document
+│       ├── background-workers.md                  ← AsyncPeriodicBackgroundWorkerBase, dynamic/cron workers
+│       ├── production-hardening.md                ← Production checklist: prefixes, keys, headers, secrets
 │       ├── react-native.md                        ← React Native / Expo mobile UI
 │       └── migration-identityserver-openiddict.md ← IdentityServer4 → OpenIddict migration guide
 │
 ├── .github/
 │   ├── copilot-instructions.md         ← Copilot global instructions (auto-loaded)
-│   └── prompts/
-│       ├── abp-super.prompt.md         ⭐ Super agent
-│       ├── abp-crud.prompt.md
-│       ├── abp-entity.prompt.md
-│       ├── abp-domain-service.prompt.md
-│       ├── abp-repository.prompt.md
-│       ├── abp-app-service.prompt.md
-│       ├── abp-permissions.prompt.md
-│       ├── abp-specification.prompt.md
-│       ├── abp-background-worker.prompt.md
-│       ├── abp-razor-page.prompt.md
-│       ├── abp-data-seed.prompt.md
-│       ├── abp-event-bus.prompt.md
-│       ├── abp-multi-tenancy.prompt.md
-│       ├── abp-settings.prompt.md
-│       ├── abp-caching.prompt.md
-│       └── abp-feature-scaffold.prompt.md
+│   ├── instructions/
+│   │   └── abp.instructions.md         ← path-scoped ABP rules (`applyTo` globs: .cs/.csproj/.cshtml/…)
+│   ├── prompts/                        ← one file per capability (see "All agents at a glance")
+│   │   └── abp-*.prompt.md                abp-super, abp-developer, abp-crud, abp-entity, …
+│   └── workflows/
+│       └── verify-skill.yml            ← CI for the skill itself; never copied into a target project
 │
 ├── .claude/
-│   └── commands/
-│       ├── abp-super.md                ⭐ /project:abp-super
-│       ├── abp-crud.md
-│       ├── abp-entity.md
-│       ├── abp-domain-service.md
-│       ├── abp-repository.md
-│       ├── abp-app-service.md
-│       ├── abp-permissions.md
-│       ├── abp-specification.md
-│       ├── abp-background-worker.md
-│       ├── abp-razor-page.md
-│       ├── abp-data-seed.md
-│       ├── abp-event-bus.md
-│       ├── abp-multi-tenancy.md
-│       ├── abp-settings.md
-│       ├── abp-caching.md
-│       └── abp-feature-scaffold.md
+│   └── commands/                       ← the same capabilities as /project:abp-* commands
 │
 ├── .windsurf/
-│   └── workflows/
-│       ├── abp-super.md                ⭐ run workflow abp-super
-│       ├── abp-crud.md
-│       ├── abp-entity.md
-│       ├── abp-domain-service.md
-│       ├── abp-repository.md
-│       ├── abp-app-service.md
-│       ├── abp-permissions.md
-│       ├── abp-specification.md
-│       ├── abp-background-worker.md
-│       ├── abp-razor-page.md
-│       ├── abp-data-seed.md
-│       ├── abp-event-bus.md
-│       ├── abp-multi-tenancy.md
-│       ├── abp-settings.md
-│       ├── abp-caching.md
-│       └── abp-feature-scaffold.md
+│   └── workflows/                      ← the same capabilities as Cascade workflows
 │
 ├── .continue/
-│   └── config.yaml                     ← System message + docs index + all agents
+│   └── config.yaml                     ← System message + docs index + all agents (`# id:` per agent)
 │
+├── scripts/
+│   └── verify-skill.sh                 ← Self-verification harness (`make verify`, `make links`)
+│
+├── install.sh / install.ps1            ← Installers for macOS·Linux / Windows
+├── Makefile                            ← make install · make verify · make links
+├── AGENT.md                            ← Machine-readable install guide for AI agents
 ├── .windsurfrules                      ← Windsurf global rules (auto-loaded)
 ├── CLAUDE.md                           ← Claude Code global instructions (auto-loaded)
 ├── LICENSE
 └── README.md                           ← This file
 ```
+
+---
+
+## Keeping the skill honest
+
+This repository verifies itself. `make verify` runs `scripts/verify-skill.sh`, and the same script runs
+in CI (`.github/workflows/verify-skill.yml`) on every push and pull request:
+
+| Check | What fails the build |
+|---|---|
+| Routing | `INDEX.md` names a reference file that does not exist · a file exists that `INDEX.md` never routes to |
+| Parity | one platform exposes a capability the others do not (all four must carry the same set) |
+| Phase 0 | an always-loaded entry point stops referencing `context-intake.md` or stops delegating detection to §0.0 |
+| Counts | a documented capability count disagrees with what is on disk; a hardcoded reference-file count appears at all |
+| ABP rules | a code sample recommends `Guid.NewGuid()` or `throw new Exception` instead of `GuidGenerator.Create()` / `BusinessException` |
+| Installers | `install.sh` / `install.ps1` fail to parse, or copy a path that does not exist |
+| Freshness | a reference file loses its `applies_to_abp` / `doc_verified_on` frontmatter, or declares a date while its URLs were never checked |
+
+A separate CI job installs the skill into a synthetic ABP project and asserts the resulting tree —
+including that the skill's own `.github/workflows/` is **never** copied into someone's repository.
+Documentation liveness (`make links`) runs weekly rather than on every push, so a transient abp.io
+outage cannot block a merge.
 
 ---
 
@@ -382,7 +384,7 @@ available.
 | Reference file | Topics covered |
 |---|---|
 | `references/context-intake.md` | **Phase 0**: read existing code through a knowledge graph, read repo plan/design `.md` files, UI source of truth (Stitch MCP or the project's own UI as reference), confirm scope with the user, SOLID + ABP design-pattern check |
-| `references/INDEX.md` | **Routing table**: every topic → reference file → verified doc URL, plus the UI-stack decision matrix and the list of topics not yet written up |
+| `references/INDEX.md` | **Routing table**: every topic → reference file → verified doc URL, plus the UI-stack decision matrix |
 | `references/ddd-domain.md` | Entities, AggregateRoot, Value Objects, Domain Services, Repositories |
 | `references/ddd-application.md` | Application Services, DTOs, CRUD patterns, ObjectMapper |
 | `references/efcore.md` | DbContext, EF Core repositories, migrations, data seeding, multi-DBMS switching (MySQL/PostgreSQL/Oracle/SQLite) |
@@ -423,6 +425,18 @@ available.
 | `references/maui.md` | .NET MAUI mobile UI, OIDC with Secure Storage, `adb reverse`, C# proxy injection |
 | `references/react-native.md` | React Native / Expo mobile UI, `Environment.ts`, OpenIddict mobile client setup |
 | `references/migration-identityserver-openiddict.md` | Step-by-step IdentityServer4 → OpenIddict migration for ABP v6+ |
+| `references/ui-blazor.md` | Blazor WebAssembly / Server / WebApp: ABP components, `IMenuManager`/`IToolbarManager`/`IBrandingProvider`, theming + bundles, `abp generate-proxy -t csharp` |
+| `references/microservices.md` | Microservice solution: `apps` / `gateways` / `services`, YARP gateway, RabbitMQ distributed event bus, outbox/inbox, per-service databases, DbMigrator |
+| `references/blob-storing.md` | `IBlobContainer`, `IBlobContainer<T>`, `[BlobContainerName]`, File System/Database/Azure/AWS-S3/Minio/Google providers, `UseEncryption()`, pipeline contributors |
+| `references/audit-logging.md` | Audit logging module + infrastructure: `AuditLog`, `AuditLogAction`, `EntityChange`, `AbpAuditingOptions`, `IAuditLogStore`, security logs, module extension |
+| `references/openapi-swagger.md` | `Volo.Abp.Swashbuckle`, `AddAbpSwaggerGen*` / `UseAbpSwaggerUI`, OAuth + OIDC variants, `HideAbpEndpoints()`, exposing or protecting `/swagger` |
+| `references/background-workers.md` | `AsyncPeriodicBackgroundWorkerBase`, `AbpAsyncTimer`, `IBackgroundWorkerManager`, `IDynamicBackgroundWorkerManager` (cron), clustered execution + distributed locks |
+| `references/production-hardening.md` | Production checklist: cache/lock `KeyPrefix`, passphrases, data-protection keys, forwarded headers, HSTS, secrets, Swagger off, logging, migrations at boot |
+
+> Each reference file declares the ABP version it targets and the date its documentation was last
+> verified in a frontmatter block (`applies_to_abp` / `doc_verified_on`); `make links` (or
+> `bash scripts/verify-skill.sh --links`) HEAD-checks every abp.io URL the skill references, so a moved
+> doc page shows up as a failure instead of as bad code generation.
 
 ---
 

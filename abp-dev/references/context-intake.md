@@ -1,3 +1,8 @@
+---
+applies_to_abp: "all versions"
+doc_verified_on: "n/a"
+---
+
 # Phase 0 — Context intake (run before generating any code)
 
 No ABP task starts with code. It starts with four questions answered from evidence:

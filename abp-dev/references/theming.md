@@ -1,3 +1,13 @@
+---
+applies_to_abp: "10.x"
+doc_verified_on: "2026-10-29"
+docs:
+  - https://abp.io/docs/latest/ui-themes
+  - https://abp.io/docs/latest/framework/ui/mvc-razor-pages/theming
+  - https://abp.io/docs/latest/ui-themes/lepton-x
+  - https://abp.io/docs/latest/ui-themes/basic-theme
+---
+
 # ABP: UI Theming & Customization
 
 > 📖 Official docs:

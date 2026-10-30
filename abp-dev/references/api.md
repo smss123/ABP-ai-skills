@@ -1,3 +1,15 @@
+---
+applies_to_abp: "10.x"
+doc_verified_on: "2026-10-29"
+docs:
+  - https://docs.abp.io/en/abp/latest/API/Auto-API-Controllers
+  - https://abp.io/docs/latest/framework/api-development/versioning
+  - https://abp.io/docs/latest/framework/api-development/integration-services
+  - https://abp.io/docs/latest/framework/api-development/static-csharp-clients
+  - https://docs.abp.io/en/abp/latest/API/Dynamic-CSharp-API-Clients
+  - https://docs.abp.io/en/abp/latest/API/Swagger-Integration
+---
+
 # ABP: Auto API Controllers & HTTP API Layer
 
 > 📖 Official docs:

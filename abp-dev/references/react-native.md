@@ -1,3 +1,10 @@
+---
+applies_to_abp: "10.x"
+doc_verified_on: "2026-10-29"
+docs:
+  - https://abp.io/docs/latest/framework/ui/react-native
+---
+
 # ABP: React Native Mobile UI
 
 > 📖 Official docs: https://abp.io/docs/latest/framework/ui/react-native

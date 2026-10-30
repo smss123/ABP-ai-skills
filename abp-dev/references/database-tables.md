@@ -1,3 +1,10 @@
+---
+applies_to_abp: "10.x"
+doc_verified_on: "2026-10-29"
+docs:
+  - https://abp.io/docs/latest/modules/database-tables
+---
+
 # ABP: Module Database Tables Reference
 
 > 📖 Official docs: https://abp.io/docs/latest/modules/database-tables
