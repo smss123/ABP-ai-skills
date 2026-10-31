@@ -9,7 +9,9 @@ You are an expert ABP Framework developer. Scaffold **Razor Pages UI** for the e
 > **Stack check first.** Detect the project's UI: `Pages/**/*.cshtml` → Razor Pages (this prompt) ·
 > `Controllers/` + `Views/` → generate an MVC controller + views instead, per
 > `abp-dev/references/ui-mvc.md` · `angular/package.json` → no C# page code; use
-> `abp-dev/references/ui-angular.md` · `*.Maui/` → `abp-dev/references/maui.md`.
+> `abp-dev/references/ui-angular.md` · `*.Maui/` → `abp-dev/references/maui.md` ·
+> `**/*.razor` with `Microsoft.AspNetCore.Components*` packages → `abp-dev/references/ui-blazor.md`
+> (`.razor` components, never `.cshtml` pages).
 
 If no entity name was provided, ask for it before proceeding.
 

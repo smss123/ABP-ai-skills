@@ -292,6 +292,37 @@ elif [[ -z "$no_fm" && $FAILURES -eq $fm_before ]]; then
   pass "no reference file is awaiting documentation verification"
 fi
 
+# ── 9. UI-stack tables stay in sync ─────────────────────────────────────────
+head2 "9. UI-stack tables list every UI stack"
+
+# abp-dev/SKILL.md is the authority for which reference files describe a UI stack.
+ui_stack_refs() {
+  grep -oE '`[a-zA-Z0-9_./-]+\.md`' "$1" | tr -d '`' | awk -F/ '{print $NF}' \
+    | grep -E '^(ui-|maui|react-native)' | sort -u
+}
+ui_refs=$(ui_stack_refs abp-dev/SKILL.md)
+ui_total=$(id_count "$ui_refs")
+
+if [[ -z "$ui_refs" ]]; then
+  fail "abp-dev/SKILL.md names no UI reference file — the stack table cannot be checked"
+else
+  desynced=0
+  for doc in $ALWAYS_LOADED AGENT.md \
+             .github/prompts/abp-super.prompt.md \
+             .claude/commands/abp-super.md \
+             .windsurf/workflows/abp-super.md; do
+    [[ -f "$doc" ]] || continue
+    named=$(ui_stack_refs "$doc")
+    [[ -n "$named" ]] || continue   # no UI-stack table here, nothing to keep in sync
+    absent=$(comm -23 <(printf '%s\n' "$ui_refs") <(printf '%s\n' "$named"))
+    for f in $absent; do
+      fail "$doc has a UI-stack table that omits $f"
+      desynced=$((desynced + 1))
+    done
+  done
+  [[ $desynced -eq 0 ]] && pass "every UI-stack table covers all $ui_total UI stacks"
+fi
+
 # ── summary ──────────────────────────────────────────────────────────────────
 echo
 if [[ $FAILURES -eq 0 ]]; then

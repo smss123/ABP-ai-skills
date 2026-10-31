@@ -61,6 +61,7 @@ the cached reference file. Never invent an ABP class, member or URL from memory.
 - `IGuidGenerator` instead of `Guid.NewGuid()`; `ConfigureByConvention()` in every EF Core model config.
 - Permissions in `Application.Contracts`, enforced with `[Authorize]` in app services and in the UI stack the project actually uses.
 - Detect the UI stack before writing UI code: `Pages/` → Razor Pages, `Views/` + `Controllers/` → MVC,
-  `angular/package.json` → Angular (proxies, no C# page code), `*.Maui/` → MAUI, Expo/React Native folder → RN.
+  `angular/package.json` → Angular (proxies, no C# page code), `**/*.razor` with
+  `Microsoft.AspNetCore.Components*` packages → Blazor, `*.Maui/` → MAUI, Expo/React Native folder → RN.
 - Reuse before adding: extend the existing entity, service, permission group or page pattern instead
   of creating a parallel second one.

@@ -14,7 +14,9 @@ Read `abp-dev/references/ui-razorpages.md` and `abp-dev/references/authorization
 > `Pages/**/*.cshtml` → Razor Pages (this command) · `Controllers/` + `Views/` → generate MVC
 > controller + views instead, per `abp-dev/references/ui-mvc.md` · `angular/package.json` → no C#
 > page code at all; use `abp-dev/references/ui-angular.md` (proxy + component + route) ·
-> `*.Maui/` → `abp-dev/references/maui.md` (ViewModel + C# client proxy).
+> `*.Maui/` → `abp-dev/references/maui.md` (ViewModel + C# client proxy) · `**/*.razor` with
+> `Microsoft.AspNetCore.Components*` packages → `abp-dev/references/ui-blazor.md` (`.razor`
+> components, never `.cshtml` pages).
 
 Assumes the application service (`I<Entity>AppService`) and permissions (`BookStorePermissions.<Entity>s`) already exist.
 

@@ -46,8 +46,9 @@ Never invent an ABP API or documentation URL from memory.
 - Entities never reach the UI; map with `ObjectMapper.Map<>()`.
 - `IGuidGenerator` instead of `Guid.NewGuid()`; `ConfigureByConvention()` in every EF Core model config.
 - Permissions live in `Application.Contracts` and are enforced with `[Authorize]` in app services and in
-  whichever UI the project uses (Razor Pages / MVC views, Angular `requiredPolicy`, MAUI view models).
+  whichever UI the project uses (Razor Pages / MVC views, Angular `requiredPolicy`, Blazor `AbpAuthorizeView`, MAUI view models).
 - Detect the UI stack before writing UI code: `Pages/` → Razor Pages · `Views/` + `Controllers/` → MVC ·
-  `angular/package.json` → Angular (generated proxies, no C# page code) · `*.Maui/` → MAUI · Expo folder → React Native.
+  `angular/package.json` → Angular (generated proxies, no C# page code) · `**/*.razor` with
+  `Microsoft.AspNetCore.Components*` packages → Blazor · `*.Maui/` → MAUI · Expo folder → React Native.
 - Reuse before adding: extend the existing entity, service, permission group or page pattern rather than
   creating a parallel second one.

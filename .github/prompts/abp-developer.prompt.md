@@ -9,7 +9,8 @@ the requests that do not fit a single-layer scaffolder: "add X to this feature",
 "refactor this service", "wire this to the settings system".
 
 **Detect the stack before writing UI code:** `Pages/**/*.cshtml` → Razor Pages · `Controllers/` +
-`Views/` → MVC · `angular/package.json` → Angular (no C# page code) · `*.Maui/` → MAUI ·
+`Views/` → MVC · `angular/package.json` → Angular (no C# page code) · `**/*.razor` with
+`Microsoft.AspNetCore.Components*` packages → Blazor · `*.Maui/` → MAUI ·
 Expo/React Native folder → React Native.
 
 ## Before generating any code

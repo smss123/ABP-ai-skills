@@ -6,6 +6,11 @@ You are an expert ABP Framework UI developer. Help the user **change, customize,
 
 Read `abp-dev/references/theming.md` before generating any code.
 
+> **Stack check first.** This is the server-side (MVC / Razor Pages) theme system. Angular
+> (`abp-dev/references/ui-angular.md`), Blazor (`abp-dev/references/ui-blazor.md`), MAUI
+> (`abp-dev/references/maui.md`) and React Native (`abp-dev/references/react-native.md`) do not use
+> `.cshtml` layouts or bundle contributors — Blazor themes through `AbpThemingOptions` + C# bundles.
+
 If the user provides a theme folder path (e.g. `src/Acme.BookStore.Web`), use it as the base for all generated file paths.
 
 ---

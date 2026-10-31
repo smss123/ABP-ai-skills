@@ -2,7 +2,7 @@
 name: abp-dev
 description: >
   Expert guide for developing applications with the ABP Framework (abp.io) using ASP.NET Core,
-  DDD patterns, and MVC / Razor Pages / Angular / .NET MAUI / React Native UI. Use this skill
+  DDD patterns, and MVC / Razor Pages / Angular / Blazor / .NET MAUI / React Native UI. Use this skill
   whenever the user mentions ABP, abp.io,
   Volo.Abp, AbpModule, application services, aggregate roots, domain services, ABP CLI, 
   IRepository, PermissionDefinitionProvider, IDataSeedContributor, Auto API Controllers,
@@ -81,8 +81,9 @@ Phase 2 → App.Contracts    (permissions, DTOs, app service interface)
 Phase 3 → Application      (app service impl, AutoMapper, specification, background worker, domain events)
 Phase 4 → EF Core          (EfCore repository, DbSet, model config, module registration)
 Phase 5 → Database         (migration commands)
-Phase 6 → UI               (server-side: Razor Pages or MVC — optional, detected from the project;
-                            Angular/MAUI clients: proxy + route/permission wiring instead)
+Phase 6 → UI               (the stack detected above: Razor Pages / MVC / Blazor render the UI,
+                            Angular / Blazor WASM / MAUI / React Native consume the HTTP API through
+                            generated proxies instead — UI is optional in every phase)
 Phase 7 → Seed data        (IDataSeedContributor — optional)
 ```
 
@@ -130,7 +131,7 @@ All agents read the relevant reference file(s) and fetch official ABP docs befor
 | **abp-install** | `#abp-install.prompt.md` | `/project:abp-install` | `abp-install` | Installs this skill set into a target ABP project directory for the chosen platform(s) |
 
 You are an expert ABP Framework developer. Always follow ABP conventions precisely.
-Supports **all ABP UI stacks** — MVC, Razor Pages, Angular, .NET MAUI, React Native — plus EF Core
+Supports **all ABP UI stacks** — MVC, Razor Pages, Angular, Blazor, .NET MAUI, React Native — plus EF Core
 data access. Detect which one the target project uses before generating UI code (table below).
 
 ## How to use this skill
@@ -174,9 +175,9 @@ Only then continue with steps 1–4 below, in order, for every ABP-related quest
 | `Pages/**/*.cshtml` | Razor Pages | `references/ui-razorpages.md` |
 | `Controllers/` + `Views/` | ASP.NET Core MVC | `references/ui-mvc.md` |
 | `angular/package.json` | Angular SPA | `references/ui-angular.md` |
+| `**/*.razor` + `Microsoft.AspNetCore.Components*` packages | Blazor (WASM / Server / WebApp) | `references/ui-blazor.md` |
 | `*.Maui/` project | .NET MAUI | `references/maui.md` |
 | React Native / Expo folder | React Native | `references/react-native.md` |
-| `*.Blazor*.Razor` components | Blazor | no reference file yet — fetch https://abp.io/docs/latest/framework/ui/blazor/overall and say so |
 
 Rules that follow from the stack:
 
@@ -188,6 +189,10 @@ Rules that follow from the stack:
   `HttpClient` calls, `@addTagHelper` lines, or `abp.ModalManager` JS in an Angular project are bugs.
 - **MAUI** uses C# client proxies + OIDC; check the project's declared `TargetFramework` (`net10.0-*`
   on ABP 10.x) before emitting `dotnet build -t:Run -f ...` commands.
+- **Blazor** is C# components, not `.cshtml` pages: WASM / Hybrid apps consume the HTTP API through
+  `abp generate-proxy -t csharp` (Blazor Server may inject the application service directly), and theme
+  through `AbpThemingOptions` + bundles (`BlazorWebAssemblyStandardBundles`); tag helpers and
+  `abp.ModalManager` JS do not belong in it.
 - Server-side UIs need `abp install-libs`; the generated theme assets in `wwwroot/libs` are the usual
   cause of a blank page when it is skipped.
 
@@ -195,7 +200,7 @@ For questions touching multiple areas (e.g. "build a full CRUD feature"), read a
 
 ## Core ABP Principles (always apply)
 
-1. **Layered architecture**: Domain → Application → Infrastructure (EF Core) → UI (MVC / Razor Pages / Angular / MAUI)
+1. **Layered architecture**: Domain → Application → Infrastructure (EF Core) → UI (MVC / Razor Pages / Angular / Blazor / MAUI)
 2. **Never expose entities to the presentation layer** — always use DTOs
 3. **Business logic lives in entities and domain services**, not in application services
 4. **Application services orchestrate** — they call domain services / repositories, map to DTOs
@@ -204,7 +209,7 @@ For questions touching multiple areas (e.g. "build a full CRUD feature"), read a
 7. **Auto-register services** — ABP discovers `ITransientDependency`, `ISingletonDependency`, `IScopedDependency` automatically
 8. **`ConfigureByConvention()`** must always be called in EF Core model configuration
 9. **Permissions** are defined in `Application.Contracts`, checked in application services and in
-   whichever UI the project uses (Razor Pages / MVC views, Angular `requiredPolicy`, MAUI view models)
+   whichever UI the project uses (Razor Pages / MVC views, Angular `requiredPolicy`, Blazor `AbpAuthorizeView`, MAUI view models)
 10. **Reuse before adding** — Phase 0 tells you what already exists; extend an existing entity,
     domain service, permission group or UI pattern instead of creating a parallel second one
 11. **SOLID in ABP form** — one aggregate per consistency boundary, depend on abstractions declared
@@ -223,6 +228,8 @@ Acme.MyApp/
 ├── Acme.MyApp.DbMigrator/            ← CLI tool: migrate + seed
 ├── Acme.MyApp.HttpApi/               ← (optional) manual API controllers
 ├── Acme.MyApp.Web/                   ← MVC or Razor Pages UI (Views/ vs Pages/)
+├── Acme.MyApp.Blazor/                ← replaces *.Web with `-u blazor` / `-u blazor-webapp`;
+│                                         `-u blazor` (WebAssembly) adds a *.Blazor.Client project
 └── angular/                          ← replaces *.Web when created with `-u angular`; has its own
                                          package.json, and the API is reached over HTTP only
 ```

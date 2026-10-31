@@ -10,7 +10,9 @@ A Windsurf Cascade workflow that creates a complete Razor Pages UI for managing 
 > **Stack check first.** Detect the project's UI: `Pages/**/*.cshtml` → Razor Pages (this workflow) ·
 > `Controllers/` + `Views/` → generate an MVC controller + views instead, per
 > `abp-dev/references/ui-mvc.md` · `angular/package.json` → no C# page code; use
-> `abp-dev/references/ui-angular.md` · `*.Maui/` → `abp-dev/references/maui.md`.
+> `abp-dev/references/ui-angular.md` · `*.Maui/` → `abp-dev/references/maui.md` ·
+> `**/*.razor` with `Microsoft.AspNetCore.Components*` packages →
+> `abp-dev/references/ui-blazor.md` (`.razor` components, never `.cshtml` pages).
 
 ## Inputs
 

@@ -35,7 +35,7 @@ A collection of curated AI agent prompts, slash commands, and workflow definitio
 |---|---|---|
 | **Automatic activation** | `AGENTS.md`, `.github/instructions/abp.instructions.md`, `.windsurfrules`, `CLAUDE.md`, `.continue/config.yaml` | The skill turns itself on when it detects an ABP project (`Volo.Abp*` refs, `AbpModule`, `AbpDbContext`, ABP project layout) — no prompt to attach, and it applies to bug fixes and refactors too |
 | **Super agent** | platform-specific (see below) | Orchestrates all sub-agents from a plain-language scenario |
-| **Scaffold agents** | 22 capabilities, identical on all four platforms (Copilot prompts · Claude commands · Windsurf workflows · Continue agents) | One agent per ABP layer / concern: super agent, feature scaffold, CRUD, MVC / Razor Pages / Angular UI, theming, testing, install |
+| **Scaffold agents** | 22 capabilities, identical on all four platforms (Copilot prompts · Claude commands · Windsurf workflows · Continue agents) | One agent per ABP layer / concern: super agent, feature scaffold, CRUD, MVC / Razor Pages / Angular / Blazor UI, theming, testing, install |
 | **Phase 0 — context intake** | `abp-dev/references/context-intake.md` | Before any code: existing-code knowledge graph → repo plan/design `.md` files → UI source of truth (Stitch MCP if connected, otherwise your existing UI as the reference) → confirm scope with you → SOLID & design-pattern check |
 | **Reference files** | `abp-dev/references/` | Curated, correct ABP patterns for every topic |
 | **`references/INDEX.md`** | `abp-dev/references/INDEX.md` | The single routing table (topic → reference → live doc URL). All platform instruction files point here, so no reference can become unreachable |
@@ -179,7 +179,7 @@ loses a capability, so this table cannot go stale.
 | **abp-permissions** | `#abp-permissions.prompt.md` | `/project:abp-permissions` | `abp-permissions` | Permission constants + `PermissionDefinitionProvider` + `en.json` localization keys |
 | **abp-specification** | `#abp-specification.prompt.md` | `/project:abp-specification` | `abp-specification` | `Specification<T>` with `.And()/.Or()/.Not()` combinators |
 | **abp-background-worker** | `#abp-background-worker.prompt.md` | `/project:abp-background-worker` | `abp-background-worker` | `AsyncBackgroundJob<TArgs>` (fire-and-forget) or `AsyncPeriodicBackgroundWorkerBase` (periodic) |
-| **abp-razor-page** | `#abp-razor-page.prompt.md` | `/project:abp-razor-page` | `abp-razor-page` | Server-side UI: list page · JS DataTable · create/edit modals · menu registration. Detects the stack first — Razor Pages (`Pages/`) or MVC (`Views/` + `Controllers/`); Angular/MAUI projects are routed to `ui-angular.md` / `maui.md` instead of getting C# page files |
+| **abp-razor-page** | `#abp-razor-page.prompt.md` | `/project:abp-razor-page` | `abp-razor-page` | Server-side UI: list page · JS DataTable · create/edit modals · menu registration. Detects the stack first — Razor Pages (`Pages/`) or MVC (`Views/` + `Controllers/`); Angular, Blazor, MAUI and React Native projects are routed to `ui-angular.md` / `ui-blazor.md` / `maui.md` / `react-native.md` instead of getting C# page files |
 | **abp-data-seed** | `#abp-data-seed.prompt.md` | `/project:abp-data-seed` | `abp-data-seed` | `IDataSeedContributor` — idempotent guard, `IGuidGenerator`, `autoSave: true` |
 | **abp-event-bus** | `#abp-event-bus.prompt.md` | `/project:abp-event-bus` | `abp-event-bus` | ETO class + `ILocalEventHandler<T>` or `IDistributedEventHandler<T>` + event bus wiring |
 | **abp-multi-tenancy** | `#abp-multi-tenancy.prompt.md` | `/project:abp-multi-tenancy` | `abp-multi-tenancy` | `IMustHaveTenant`/`IMayHaveTenant`, `ICurrentTenant`, data filters, per-tenant databases |
@@ -365,7 +365,9 @@ in CI (`.github/workflows/verify-skill.yml`) on every push and pull request:
 | Counts | a documented capability count disagrees with what is on disk; a hardcoded reference-file count appears at all |
 | ABP rules | a code sample recommends `Guid.NewGuid()` or `throw new Exception` instead of `GuidGenerator.Create()` / `BusinessException` |
 | Installers | `install.sh` / `install.ps1` fail to parse, or copy a path that does not exist |
+| URLs | a documentation link is not an official `abp.io` URL (and, with `make links`, a URL that no longer returns 200) |
 | Freshness | a reference file loses its `applies_to_abp` / `doc_verified_on` frontmatter, or declares a date while its URLs were never checked |
+| UI stacks | an entry point has a UI-stack table that omits one of the stacks `abp-dev/SKILL.md` covers — the reason a Blazor or React Native rule can no longer be added in one place and forgotten everywhere else |
 
 A separate CI job installs the skill into a synthetic ABP project and asserts the resulting tree —
 including that the skill's own `.github/workflows/` is **never** copied into someone's repository.
@@ -445,7 +447,7 @@ available.
 Every agent in this repository enforces these rules — they are non-negotiable in generated code:
 
 0. **Phase 0 — context intake before any code** — read the existing code through a knowledge graph, read the repo's plan/design markdown, settle the UI source of truth (Stitch MCP if connected, otherwise the project's existing UI as the reference), confirm scope with the user, then apply SOLID — see [`abp-dev/references/context-intake.md`](abp-dev/references/context-intake.md)
-1. **Layered architecture** — Domain → Application → Infrastructure (EF Core) → UI (MVC / Razor Pages / Angular / MAUI), detected from the target project
+1. **Layered architecture** — Domain → Application → Infrastructure (EF Core) → UI (MVC / Razor Pages / Angular / Blazor / MAUI), detected from the target project
 2. **Never expose entities** to the presentation layer — always map to DTOs with `ObjectMapper.Map<>()`
 3. **Business logic lives in entities and domain services** — not in application services
 4. **Application services orchestrate** — they call domain services / repositories and return DTOs

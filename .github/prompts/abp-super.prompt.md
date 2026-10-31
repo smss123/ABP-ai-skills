@@ -40,7 +40,7 @@ If the user has not provided a scenario description, ask:
 > - What the feature does (e.g. 'manage products with categories')
 > - The entities and their key properties
 > - Whether you need background processing, periodic tasks, or data filtering (specifications)
-> - Which UI you want (MVC / Razor Pages / Angular / MAUI) — or none
+> - Which UI you want (MVC / Razor Pages / Angular / Blazor / MAUI) — or none
 > - Whether you need initial seed data"
 
 ---
@@ -65,9 +65,13 @@ Read ALL the following reference files before generating anything:
 | `Pages/**/*.cshtml` | Razor Pages | `abp-dev/references/ui-razorpages.md` | page + `.js` + modals + menu contributor |
 | `Controllers/` + `Views/` | ASP.NET Core MVC | `abp-dev/references/ui-mvc.md` | controller + view + `.js` + menu contributor |
 | `angular/package.json` | Angular | `abp-dev/references/ui-angular.md` | `abp generate-proxy -t ng` + component + route `requiredPolicy` |
+| `**/*.razor` + `Microsoft.AspNetCore.Components*` packages | Blazor (WASM / Server / WebApp) | `abp-dev/references/ui-blazor.md` | `abp generate-proxy -t csharp` + `.razor` component + `AbpAuthorizeView` + menu/toolbar contributor |
 | `*.Maui/` project | .NET MAUI | `abp-dev/references/maui.md` | C# proxy call in a ViewModel + OIDC config |
+| React Native / Expo folder | React Native | `abp-dev/references/react-native.md` | screen + OIDC client + generated API client |
 
-Never emit Razor files into an Angular/MAUI solution or Angular components into a `*.Web` project.
+Never emit `.cshtml` pages or `abp.ModalManager` JS into an Angular, Blazor, MAUI or React Native
+solution, and never
+emit Angular components into a `*.Web` project.
 
 From the scenario, extract and list:
 
@@ -76,7 +80,7 @@ From the scenario, extract and list:
 | 1 | Entities | comma-separated list of PascalCase names |
 | 2 | Properties per entity | name : type : required/optional |
 | 3 | Audit level | FullAudit / Audit / None |
-| 4 | UI stack | Razor Pages / MVC / Angular / MAUI / none — detected from the project |
+| 4 | UI stack | Razor Pages / MVC / Angular / Blazor / MAUI / none — detected from the project |
 | 5 | Needs Background Job? | Yes / No — purpose if yes |
 | 6 | Needs Periodic Worker? | Yes / No — interval if yes |
 | 7 | Needs Specification(s)? | Yes / No — filter criteria if yes |

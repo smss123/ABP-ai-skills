@@ -16,7 +16,7 @@ Ask the user the following questions before proceeding:
 1. **Scenario description** — what does the feature do? (e.g. "Manage products with categories, archive zero-stock items nightly, and show them in a Razor Page")
 2. **Entities** — list each entity name and its properties (name : type : required/optional)
 3. **Audit level** — FullAudit / Audit / None for each entity
-4. **UI stack?** — Razor Pages / MVC / Angular / MAUI / none (detect from the project: `Pages/` vs `Views/`+`Controllers/` vs `angular/package.json` vs `*.Maui/`)
+4. **UI stack?** — Razor Pages / MVC / Angular / Blazor / MAUI / none (detect from the project: `Pages/` vs `Views/`+`Controllers/` vs `angular/package.json` vs `*.Maui/`)
 5. **Background job or worker?** — Yes / No. If yes: fire-and-forget job or periodic worker? What does it do?
 6. **Specification(s)?** — Yes / No. If yes: what are the filter criteria?
 7. **Domain Events?** — Yes / No. If yes: Local or Distributed? What event(s) should be raised and handled?
@@ -54,9 +54,11 @@ Then read ALL of the following before generating any code:
 - `abp-dev/references/background-jobs.md`
 - `abp-dev/references/event-bus.md`
 - the UI reference matching the stack detected in question 4:
-  `ui-razorpages.md` · `ui-mvc.md` · `ui-angular.md` · `maui.md`
+  `ui-razorpages.md` · `ui-mvc.md` · `ui-angular.md` · `ui-blazor.md` · `maui.md` · `react-native.md`
 
-Never emit Razor files into an Angular/MAUI solution or Angular components into a `*.Web` project.
+Never emit `.cshtml` pages or `abp.ModalManager` JS into an Angular, Blazor, MAUI or React Native
+solution, and never
+emit Angular components into a `*.Web` project.
 
 ---
 
@@ -69,7 +71,7 @@ Show the user a parsed summary:
 | Entities | PascalCase names | ... |
 | Properties | per entity | ... |
 | Audit level | per entity | ... |
-| UI stack? | | Razor Pages / MVC / Angular / MAUI / none |
+| UI stack? | | Razor Pages / MVC / Angular / Blazor / MAUI / none |
 | Background task? | type + purpose | ... |
 | Specification(s)? | criteria | ... |
 | Data seed? | records | ... |
@@ -181,6 +183,10 @@ dotnet run --project src/Acme.BookStore.DbMigrator
   menu via `data.route`, per `abp-dev/references/ui-angular.md`. No C# page files.
 - **MAUI** → ViewModel + C# client proxy + OIDC/`appsettings.json` check, per
   `abp-dev/references/maui.md` (use the TFM the project declares).
+- **Blazor** → `abp generate-proxy -t csharp`, `.razor` component + `AbpAuthorizeView` + menu/toolbar
+  contributor, per `abp-dev/references/ui-blazor.md`. No `.cshtml` pages, no `abp.ModalManager` JS.
+- **React Native** → screen + OIDC client + generated API client, per
+  `abp-dev/references/react-native.md`. No server-rendered markup.
 
 ---
 

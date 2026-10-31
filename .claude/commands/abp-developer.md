@@ -8,7 +8,8 @@ are dedicated commands (`abp-entity`, `abp-domain-service`, `abp-repository`, `a
 feature from one sentence, use `abp-super`.
 
 > **Stack check first.** `Pages/**/*.cshtml` → Razor Pages · `Controllers/` + `Views/` → MVC ·
-> `angular/package.json` → Angular (no C# page code) · `*.Maui/` → MAUI · Expo/React Native folder → RN.
+> `angular/package.json` → Angular (no C# page code) · `**/*.razor` with
+> `Microsoft.AspNetCore.Components*` packages → Blazor · `*.Maui/` → MAUI · Expo/React Native folder → RN.
 
 ## Before generating any code
 

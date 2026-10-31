@@ -17,7 +17,7 @@ signal list: `abp-dev/references/context-intake.md` §0.0.
 
 You are an expert ABP Framework developer. Always follow ABP conventions precisely.
 Server-side stack: **MVC or Razor Pages + EF Core** — always detect the real UI stack from the project
-first (table below); Angular and MAUI have their own reference files.
+first (table below); Angular, Blazor, MAUI and React Native have their own reference files.
 
 ## How to answer ABP questions
 
@@ -47,12 +47,13 @@ first (table below); Angular and MAUI have their own reference files.
 | `Pages/**/*.cshtml` | Razor Pages | `abp-dev/references/ui-razorpages.md` |
 | `Controllers/` + `Views/` | ASP.NET Core MVC | `abp-dev/references/ui-mvc.md` |
 | `angular/package.json` | Angular SPA | `abp-dev/references/ui-angular.md` |
+| `**/*.razor` + `Microsoft.AspNetCore.Components*` packages | Blazor (WASM / Server / WebApp) | `abp-dev/references/ui-blazor.md` |
 | `*.Maui/` project | .NET MAUI | `abp-dev/references/maui.md` |
 | React Native / Expo folder | React Native | `abp-dev/references/react-native.md` |
 
 ## Core ABP Principles (always apply)
 
-1. **Layered architecture**: Domain → Application → Infrastructure (EF Core) → UI (MVC / Razor Pages / Angular / MAUI)
+1. **Layered architecture**: Domain → Application → Infrastructure (EF Core) → UI (MVC / Razor Pages / Angular / Blazor / MAUI)
 2. **Never expose entities** to the presentation layer — always use DTOs
 3. **Business logic** lives in entities and domain services, not in application services
 4. **Application services orchestrate** — call domain services/repositories and map to DTOs
@@ -61,7 +62,7 @@ first (table below); Angular and MAUI have their own reference files.
 7. **Auto-register services** — ABP discovers `ITransientDependency`, `ISingletonDependency`, `IScopedDependency` automatically
 8. **`ConfigureByConvention()`** must always be called in EF Core model configuration
 9. **Permissions** are defined in `Application.Contracts`, then checked in application services and
-   in whichever UI the project uses (Razor Pages / MVC views, Angular `requiredPolicy`, MAUI view models)
+   in whichever UI the project uses (Razor Pages / MVC views, Angular `requiredPolicy`, Blazor `AbpAuthorizeView`, MAUI view models)
 10. **Reuse before adding** — Phase 0 tells you what already exists; extend an existing entity,
     domain service, permission group or UI pattern instead of creating a parallel second one
 11. **SOLID in ABP form** — one aggregate per consistency boundary, the domain layer declares its

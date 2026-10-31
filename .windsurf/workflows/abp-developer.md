@@ -15,7 +15,8 @@ workflow (`abp-entity`, `abp-domain-service`, `abp-repository`, `abp-app-service
 ## Step 1 — Detect the stack
 
 `Pages/**/*.cshtml` → Razor Pages · `Controllers/` + `Views/` → MVC · `angular/package.json` → Angular
-(no C# page code) · `*.Maui/` → MAUI · Expo/React Native folder → React Native.
+(no C# page code) · `**/*.razor` with `Microsoft.AspNetCore.Components*` packages → Blazor ·
+`*.Maui/` → MAUI · Expo/React Native folder → React Native.
 
 ## Step 2 — Phase 0 (mandatory, even for bug fixes)
 

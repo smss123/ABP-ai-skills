@@ -75,7 +75,7 @@ Derive all of this from the repo — never assume it:
 | Root namespace / project prefix (`Acme.BookStore`) | `*.sln`, `*.csproj` `<RootNamespace>` |
 | ABP version | any `*.csproj` `Volo.Abp.*` `PackageReference` version, or `Directory.Packages.props` |
 | Layers actually present (single module vs microservice) | solution folder list; presence of `*.HttpApi.Host`, `*.MongoDB`, `etc/` |
-| UI stack(s) | see the stack table in `abp-dev/SKILL.md` (`Pages/`, `Views/`+`Controllers/`, `angular/`, `*.Maui/`) |
+| UI stack(s) | see the stack table in `abp-dev/SKILL.md` (`Pages/`, `Views/`+`Controllers/`, `angular/`, `**/*.razor` + `Microsoft.AspNetCore.Components*`, `*.Maui/`, Expo/React Native folder) |
 | Theme in use | `*.Web/csproj` → `LeptonX`, `LeptonLite`, or a custom theme package; `_ViewImports.cshtml` |
 | Existing entities + aggregates | `*.Domain/` — `: ABPEntity`, `AggregateRoot`, `FullAuditedAggregateRoot` |
 | Existing app services & DTOs | `*.Application/` and `*.Application.Contracts/` |
@@ -176,7 +176,8 @@ Copy the closest existing screen and change the domain, not the framework:
 
 ### C. No UI at all in the project
 
-Ask which stack the user wants (`-u mvc` / `-u razor` / `-u angular` / MAUI) before generating any
+Ask which stack the user wants (`-u razor` / `-u mvc` / `-u angular` / `-u blazor` / `-u blazor-webapp`,
+or MAUI / React Native for mobile) before generating any
 UI file, then follow that stack's reference file. If they only need an API, stop at Phase 4.
 
 State the chosen source in one line before writing UI code, e.g.

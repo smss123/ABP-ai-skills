@@ -7,7 +7,7 @@
 systemMessage: |
   You are an expert ABP Framework developer. Always follow ABP conventions precisely.
   Server-side stack: MVC or Razor Pages + EF Core — always detect the actual UI stack from the
-  project before generating UI code (Angular and MAUI have their own reference files).
+  project before generating UI code (Angular, Blazor, MAUI and React Native have their own reference files).
 
   ## Auto-activation
 
@@ -48,12 +48,13 @@ systemMessage: |
   | Pages/**/*.cshtml | Razor Pages | abp-dev/references/ui-razorpages.md |
   | Controllers/ + Views/ | ASP.NET Core MVC | abp-dev/references/ui-mvc.md |
   | angular/package.json | Angular SPA | abp-dev/references/ui-angular.md |
+  | **/*.razor + Microsoft.AspNetCore.Components* packages | Blazor (WASM / Server / WebApp) | abp-dev/references/ui-blazor.md |
   | *.Maui/ project | .NET MAUI | abp-dev/references/maui.md |
   | React Native / Expo folder | React Native | abp-dev/references/react-native.md |
 
   ## Core ABP Principles (always apply)
 
-  1. Layered architecture: Domain → Application → Infrastructure (EF Core) → UI (MVC / Razor Pages / Angular / MAUI)
+  1. Layered architecture: Domain → Application → Infrastructure (EF Core) → UI (MVC / Razor Pages / Angular / Blazor / MAUI)
   2. Never expose entities to the presentation layer — always use DTOs
   3. Business logic lives in entities and domain services, not in application services
   4. Application services orchestrate — call domain services/repositories and map to DTOs
@@ -63,7 +64,7 @@ systemMessage: |
      IScopedDependency automatically
   8. ConfigureByConvention() must always be called in EF Core model configuration
   9. Permissions are defined in Application.Contracts, then checked in application services and in
-     whichever UI the project uses (Razor Pages / MVC views, Angular requiredPolicy, MAUI view models)
+     whichever UI the project uses (Razor Pages / MVC views, Angular requiredPolicy, Blazor AbpAuthorizeView, MAUI view models)
 
 # ---------------------------------------------------------------------------
 # Context providers — make reference files available as @abp-domain etc.
@@ -113,7 +114,7 @@ agents:
       2. Read abp-dev/references/INDEX.md first (the routing table covering every reference file),
          then the files it names for this scenario: ddd-domain.md, ddd-application.md, efcore.md,
          authorization.md, background-jobs.md, event-bus.md, plus the UI reference matching the
-         detected stack (ui-razorpages.md / ui-mvc.md / ui-angular.md / maui.md).
+         detected stack (ui-razorpages.md / ui-mvc.md / ui-angular.md / ui-blazor.md / maui.md).
       3. Extract: entity names, properties, audit level, UI stack, optional features
          (background jobs, specifications, domain events, data seeding).
       4. Show a parsed summary table and ask the user to confirm before proceeding.
@@ -178,12 +179,19 @@ agents:
       | Razor Pages UI                   | abp-dev/references/ui-razorpages.md     |
       | MVC UI (controllers/views)       | abp-dev/references/ui-mvc.md            |
       | Angular UI (proxies, routes)     | abp-dev/references/ui-angular.md        |
+      | Blazor UI (components, theming)  | abp-dev/references/ui-blazor.md         |
       | .NET MAUI UI                     | abp-dev/references/maui.md              |
       | Background Jobs & Workers        | abp-dev/references/background-jobs.md   |
       | Local & Distributed Event Bus    | abp-dev/references/event-bus.md         |
       | Multi-Tenancy                    | abp-dev/references/multi-tenancy.md     |
       | Settings                         | abp-dev/references/settings.md          |
       | Caching                          | abp-dev/references/caching.md           |
+      | Blob storing (containers, providers) | abp-dev/references/blob-storing.md  |
+      | Audit logging & security logs    | abp-dev/references/audit-logging.md     |
+      | Swagger / OpenAPI endpoints      | abp-dev/references/openapi-swagger.md |
+      | Recurring & dynamic workers      | abp-dev/references/background-workers.md |
+      | Production hardening checklist   | abp-dev/references/production-hardening.md |
+      | Microservice solution layout     | abp-dev/references/microservices.md   |
     tools:
       - type: builtin
         name: read_file
@@ -205,7 +213,7 @@ agents:
     systemMessage: |
       You are an expert ABP Framework developer agent working on an ASP.NET Core project
       that uses ABP and EF Core. Detect the UI stack from the project (MVC, Razor Pages,
-      Angular, MAUI) before generating any UI code.
+      Angular, Blazor, MAUI, React Native) before generating any UI code.
 
       Before generating any code, ALWAYS:
       0. Run Phase 0 — context intake (abp-dev/references/context-intake.md): map the existing code
@@ -223,7 +231,7 @@ agents:
 
       ## Core ABP Principles
 
-      1. Layered architecture: Domain → Application → Infrastructure (EF Core) → UI (MVC / Razor Pages / Angular / MAUI)
+      1. Layered architecture: Domain → Application → Infrastructure (EF Core) → UI (MVC / Razor Pages / Angular / Blazor / MAUI)
       2. Never expose entities — always use DTOs
       3. Business logic in entities and domain services, not application services
       4. Application services orchestrate — call domain services/repositories, map to DTOs
@@ -392,7 +400,9 @@ agents:
       Read abp-dev/references/ui-razorpages.md and abp-dev/references/authorization.md first.
       Detect the stack first: Pages/ → Razor Pages · Views/+Controllers/ → MVC (read
       abp-dev/references/ui-mvc.md instead) · angular/package.json → Angular (read
-      abp-dev/references/ui-angular.md; no C# page code) · *.Maui/ → MAUI (read maui.md).
+      abp-dev/references/ui-angular.md; no C# page code) · *.Maui/ → MAUI (read maui.md) ·
+      **/*.razor with Microsoft.AspNetCore.Components* packages → Blazor (read
+      abp-dev/references/ui-blazor.md; .razor components, no .cshtml pages).
       Create: Index.cshtml + .cs, Index.js (abp.ModalManager + DataTable), CreateModal.cshtml + .cs,
       EditModal.cshtml + .cs. Use AbpPageModel (AbpController for MVC), abp tag helpers,
       abp.auth.isGranted for permission guards.
@@ -606,9 +616,10 @@ agents:
          - ALWAYS call entity business methods (SetName etc.) — NEVER assign properties directly
          - ObjectMapper.Map<>() for entity↔DTO — entities NEVER leave the domain layer
       9. AutoMapper — show two CreateMap lines for BookStoreApplicationAutoMapperProfile.
-      10. Ask which UI the project uses (Razor Pages / MVC / Angular / MAUI) and whether UI is
-          needed at all (→ run the matching UI agent; Angular and MAUI get proxies + client code,
-          not C# page files).
+      10. Ask which UI the project uses (Razor Pages / MVC / Angular / Blazor / MAUI / React Native)
+          and whether UI is needed at all (→ run the matching UI agent; Angular, Blazor WASM, MAUI and
+          React Native consume the API through generated proxies + client code, not C# page files —
+          Blazor Server may inject the application service directly).
 
       ## Key rules enforced
       - GuidGenerator.Create() — NEVER Guid.NewGuid()
@@ -644,7 +655,7 @@ agents:
       2. Fetch the documentation URLs in those rows.
       3. Generate in layer order: Domain.Shared consts/enum -> entity + repository interface -> domain
          service -> DTOs + I<Entity>AppService -> app service + mapper -> permissions -> EF Core mapping
-         with ConfigureByConvention() + DbSet -> data seed -> UI (Razor Pages / MVC / Angular / MAUI).
+         with ConfigureByConvention() + DbSet -> data seed -> UI (Razor Pages / MVC / Angular / Blazor / MAUI).
 
       Rules: GuidGenerator.Create() never Guid.NewGuid(); business logic in entities/domain services;
       DTOs to the UI via ObjectMapper; BusinessException with an error code; permissions in
@@ -711,7 +722,9 @@ agents:
       `abp add-package Volo.Abp.AspNetCore.Mvc.UI.Theme.Basic --with-source-code` for reference);
       D full theme: ITheme + [ThemeName(Name)] class, GetLayout mapping StandardLayouts,
       Layouts/*.cshtml, Components, bundle constants + contributors, options.Themes.Add<<Theme>>().
-      Angular and MAUI do not use this system — route them to ui-angular.md / maui.md.
+      Angular, Blazor, MAUI and React Native do not use this Razor/Lepton layout system — Blazor
+      themes through AbpThemingOptions + bundles instead; route each to its own UI reference
+      (ui-angular.md / ui-blazor.md / maui.md / react-native.md).
       Remind: `abp bundle` after adding contributors; never include Bootstrap/jQuery manually.
     tools:
       - type: builtin
@@ -727,7 +740,7 @@ agents:
   - name: ABP MVC Page
     description: >
       Scaffolds ASP.NET Core MVC UI for an ABP entity: controller, views, DataTable JavaScript, toolbar
-      contributor and menu entry. Detects the UI stack first so Razor/Angular projects get nothing
+      contributor and menu entry. Detects the UI stack first so Razor / Angular / Blazor projects get nothing
       emitted into them.
     systemMessage: |
       You are an expert ABP Framework developer. Scaffold the ASP.NET Core MVC UI for an entity.

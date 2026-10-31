@@ -44,12 +44,12 @@ How to use:
 | Angular SPA (separate `angular/` folder, no `*.Web` project) | `-u angular` | `ui-angular.md` |
 | .NET MAUI mobile app | mobile UI option in ABP Studio | `maui.md` |
 | React Native / Expo mobile app | `-m react-native` | `react-native.md` |
-| Blazor (WebAssembly / Server / WebApp) | `-u blazor` | `ui-blazor.md` |
+| Blazor (WebAssembly / Server / WebApp) | `-u blazor` (WebAssembly) / `-u blazor-webapp` | `ui-blazor.md` |
 | Server-side UI theming & layout system (MVC + Razor) | — | `theming.md` |
 
 Detect the stack from the target project before generating anything: `Pages/` → Razor Pages,
 `Views/` + `Controllers/` → MVC, `**/*.razor` + `Microsoft.AspNetCore.Components*` packages → Blazor,
-`angular/package.json` → Angular, `*.Maui/` → MAUI.
+`angular/package.json` → Angular, `*.Maui/` → MAUI, Expo/React Native folder → React Native.
 
 ---
 

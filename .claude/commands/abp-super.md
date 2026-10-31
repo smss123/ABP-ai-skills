@@ -3,7 +3,7 @@ You are the **ABP Super Agent** — an expert ABP Framework orchestrator. Your j
 If no scenario was provided, ask the user to describe:
 - What the feature does
 - Entities and their key properties
-- Which UI is needed (MVC / Razor Pages / Angular / MAUI — or none)
+- Which UI is needed (MVC / Razor Pages / Angular / Blazor / MAUI — or none)
 - Whether background jobs/workers, specifications, or data seeding are required
 
 ---
@@ -49,10 +49,14 @@ Inspect the target project and pick exactly one:
 | `Pages/**/*.cshtml` | Razor Pages | `abp-dev/references/ui-razorpages.md` | page + `.js` + create/edit modals + menu contributor |
 | `Controllers/` + `Views/` | ASP.NET Core MVC | `abp-dev/references/ui-mvc.md` | controller + view + `.js` + menu contributor |
 | `angular/package.json` | Angular | `abp-dev/references/ui-angular.md` | `abp generate-proxy -t ng` + standalone component + route `requiredPolicy` |
+| `**/*.razor` + `Microsoft.AspNetCore.Components*` packages | Blazor (WASM / Server / WebApp) | `abp-dev/references/ui-blazor.md` | `abp generate-proxy -t csharp` + `.razor` component + `AbpAuthorizeView` + menu/toolbar contributor |
 | `*.Maui/` project | .NET MAUI | `abp-dev/references/maui.md` | C# client proxy call in a ViewModel + OIDC config check |
+| React Native / Expo folder | React Native | `abp-dev/references/react-native.md` | screen + OIDC client + generated API client |
 
-Never emit Razor files into an Angular or MAUI solution, and never emit Angular components into a
-`*.Web` project. If the project has no UI layer yet, ask which stack the user wants before Phase 6.
+Never emit `.cshtml` pages or `abp.ModalManager` JS into an Angular, Blazor, MAUI or React Native
+solution, and never
+emit Angular components into a `*.Web` project. If the project has no UI layer yet, ask which stack the
+user wants before Phase 6.
 
 ---
 

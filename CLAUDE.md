@@ -37,7 +37,7 @@ Then, in order:
 
 1. **Read `abp-dev/references/INDEX.md`** — the single routing table that maps every ABP topic to
    its reference file and its live-verified documentation URL. It also covers which UI stack the
-   project uses (MVC / Razor Pages / Angular / MAUI / React Native).
+   project uses (MVC / Razor Pages / Angular / Blazor / MAUI / React Native).
 2. **Read the reference file(s)** INDEX.md maps the question to.
 3. **Fetch the official documentation URL** listed in the same row using the `WebFetch` tool to get
    the latest API details.
@@ -56,15 +56,17 @@ the reason 24 references were unreachable. `INDEX.md` is authoritative and is up
 | `Pages/**/*.cshtml` | Razor Pages | `abp-dev/references/ui-razorpages.md` |
 | `Controllers/` + `Views/` | ASP.NET Core MVC | `abp-dev/references/ui-mvc.md` |
 | `angular/package.json` | Angular SPA | `abp-dev/references/ui-angular.md` |
+| `**/*.razor` + `Microsoft.AspNetCore.Components*` packages | Blazor (WASM / Server / WebApp) | `abp-dev/references/ui-blazor.md` |
 | `*.Maui/` project | .NET MAUI | `abp-dev/references/maui.md` |
 | React Native / Expo folder | React Native | `abp-dev/references/react-native.md` |
 
-Angular projects get `abp generate-proxy -t ng` services, never hand-written `HttpClient`; MAUI gets
-C# client proxies; MVC/Razor share the same tag-helper and JavaScript API infrastructure.
+Angular projects get `abp generate-proxy -t ng` services, never hand-written `HttpClient`; MAUI and
+Blazor WASM get C# client proxies (`abp generate-proxy -t csharp`); MVC/Razor share the same tag-helper
+and JavaScript API infrastructure; Blazor is `.razor` components, never `.cshtml` pages.
 
 ## Core ABP Principles (always apply)
 
-1. **Layered architecture**: Domain → Application → Infrastructure (EF Core) → UI (MVC / Razor Pages / Angular / MAUI)
+1. **Layered architecture**: Domain → Application → Infrastructure (EF Core) → UI (MVC / Razor Pages / Angular / Blazor / MAUI)
 2. **Never expose entities** to the presentation layer — always use DTOs
 3. **Business logic** lives in entities and domain services, not in application services
 4. **Application services orchestrate** — call domain services/repositories and map to DTOs
@@ -73,7 +75,7 @@ C# client proxies; MVC/Razor share the same tag-helper and JavaScript API infras
 7. **Auto-register services** — ABP discovers `ITransientDependency`, `ISingletonDependency`, `IScopedDependency` automatically
 8. **`ConfigureByConvention()`** must always be called in EF Core model configuration
 9. **Permissions** are defined in `Application.Contracts`, checked in application services and in
-   whichever UI the project uses (Razor Pages / MVC views, Angular `requiredPolicy`, MAUI view models)
+   whichever UI the project uses (Razor Pages / MVC views, Angular `requiredPolicy`, Blazor `AbpAuthorizeView`, MAUI view models)
 10. **Reuse before adding** — after Phase 0, extend existing entities, services, permissions and UI
     patterns instead of creating a parallel second set; SOLID over duplication
 
