@@ -18,7 +18,8 @@ permissions:
 jobs:
   structure:
     name: Structure, routing and parity
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04   # pinned: the image the harness is verified against
+    # (ubuntu-latest moves to Ubuntu 26 — see actions/runner-images#14748)
     steps:
       - uses: actions/checkout@v4
 
@@ -28,18 +29,21 @@ jobs:
       - name: PowerShell installer parses
         shell: pwsh
         run: |
+          # ParseFile needs real variables for its [ref] parameters; [ref]$null is not accepted.
+          $tokens = $null
           $errors = $null
           $null = [System.Management.Automation.Language.Parser]::ParseFile(
-            'install.ps1', [ref]$null, [ref]$errors)
+            'install.ps1', [ref]$tokens, [ref]$errors)
           if ($errors) {
             $errors | ForEach-Object { Write-Host $_.Message -ForegroundColor Red }
             exit 1
           }
-          Write-Host 'install.ps1 parsed cleanly.'
+          Write-Host "install.ps1 parsed cleanly ($($tokens.Count) tokens)."
 
   smoke-install:
     name: Installer smoke test
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04   # pinned: the image the harness is verified against
+    # (ubuntu-latest moves to Ubuntu 26 — see actions/runner-images#14748)
     steps:
       - uses: actions/checkout@v4
 
@@ -74,7 +78,8 @@ jobs:
     name: Documentation links are alive
     # Network-dependent, so it stays off the push/PR gate and runs weekly instead.
     if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04   # pinned: the image the harness is verified against
+    # (ubuntu-latest moves to Ubuntu 26 — see actions/runner-images#14748)
     steps:
       - uses: actions/checkout@v4
       - name: Check every abp.io URL referenced by the skill

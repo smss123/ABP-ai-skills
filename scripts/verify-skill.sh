@@ -217,7 +217,11 @@ done
 [[ $FAILURES -eq $copies_before ]] && pass "every install.sh source path exists ($(echo "$copy_srcs" | wc -l | tr -d ' ') items)"
 
 if command -v pwsh >/dev/null 2>&1; then
-  if pwsh -NoProfile -Command '$null = [System.Management.Automation.Language.Parser]::ParseFile("install.ps1", [ref]$null, [ref]$null)' >/dev/null 2>&1; then
+  if pwsh -NoProfile -Command '
+    $tokens = $null; $errors = $null
+    $null = [System.Management.Automation.Language.Parser]::ParseFile("install.ps1", [ref]$tokens, [ref]$errors)
+    if ($errors) { $errors | ForEach-Object { Write-Error $_.Message }; exit 1 }
+  ' >/dev/null 2>&1; then
     pass "install.ps1 parses"
   else
     fail "install.ps1 has a syntax error"
